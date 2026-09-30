@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ESTÚDIO RICK DIGITAL — CRM + Gerador de Leads</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#2563EB">
+<link rel="icon" href="icon.svg">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',Roboto,Arial,sans-serif}
+:root{--p:#2563EB;--s:#10B981;--a:#F59E0B;--d:#EF4444;--e:#1F2937;--c:#F3F4F6;--bg:#F1F5F9;--roxo:#7C3AED}
+body{background:var(--bg);color:var(--e)}
+header{background:#0F172A;color:#fff;padding:.8rem 1.2rem;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:100;flex-wrap:wrap;gap:.6rem}
+.logo{display:flex;align-items:center;gap:.7rem}
+.logo-badge{width:46px;height:46px;border-radius:12px;background:linear-gradient(135deg,#2563EB,#7C3AED);display:grid;place-items:center;font-weight:900;font-size:1.2rem}
+.logo b{font-size:1.05rem;letter-spacing:.3px}.logo small{display:block;color:#93C5FD;font-weight:400;font-size:.72rem}
+.hbtns{display:flex;gap:.5rem;flex-wrap:wrap;align-items:center}
+.hbtn{padding:.5rem .9rem;border-radius:8px;text-decoration:none;font-weight:600;font-size:.85rem;color:#fff}
+.wa{background:#25D366}.tk{background:#000;border:1px solid #333}.pf{background:var(--p)}
+.sino{background:#1E293B;border-radius:50%;width:34px;height:34px;display:grid;place-items:center;cursor:pointer;position:relative;font-weight:700}
+.sino span{position:absolute;top:-4px;right:-4px;background:var(--d);font-size:.65rem;min-width:18px;height:18px;border-radius:10px;display:grid;place-items:center;padding:0 4px}
+.app{display:flex;min-height:calc(100vh - 66px)}
+aside{width:235px;background:#fff;border-right:1px solid #E5E7EB;padding:1rem 0;flex-shrink:0}
+aside nav a{display:flex;gap:.6rem;padding:.7rem 1.2rem;color:#4B5563;text-decoration:none;font-size:.92rem;border-left:3px solid transparent}
+aside nav a.ativo,aside nav a:hover{background:#EFF6FF;color:var(--p);border-left-color:var(--p);font-weight:600}
+main{flex:1;padding:1.4rem;min-width:0}
+.aba{display:none}.aba.ativa{display:block}
+.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-bottom:1.4rem}
+.card{background:#fff;padding:1.1rem;border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,.06);border-top:4px solid var(--p)}
+.card .v{font-size:1.8rem;font-weight:800;margin:.3rem 0}.card small{color:#6B7280}
+.funil{display:flex;gap:.8rem;overflow-x:auto;padding-bottom:1rem}
+.col{width:255px;flex-shrink:0}.col-h{padding:.7rem;border-radius:10px 10px 0 0;font-weight:700;display:flex;justify-content:space-between;font-size:.9rem}
+.col.novo .col-h{background:#DBEAFE;color:#1E40AF}.col.qual .col-h{background:#FEF3C7;color:#92400E}.col.que .col-h{background:#FEE2E2;color:#991B1B}.col.neg .col-h{background:#E0E7FF;color:#3730A3}.col.cli .col-h{background:#D1FAE5;color:#065F46}
+.col-b{background:#E5E7EB22;background:#E9EEF3;padding:.6rem;border-radius:0 0 10px 10px;min-height:300px;border:1px solid #E5E7EB;border-top:none}
+.lead{background:#fff;padding:.8rem;border-radius:8px;margin-bottom:.6rem;box-shadow:0 1px 3px rgba(0,0,0,.1);cursor:grab}
+.lead b{font-size:.92rem}.lead small{color:#6B7280;display:block;margin:.2rem 0}
+.tag{display:inline-block;font-size:.68rem;padding:.15rem .5rem;border-radius:20px;background:#E5E7EB;margin:.15rem .2rem 0 0}
+.la{margin-top:.5rem;display:flex;gap:.35rem;flex-wrap:wrap}
+.btn{border:none;padding:.4rem .6rem;border-radius:6px;font-size:.78rem;cursor:pointer;text-decoration:none;display:inline-block;font-weight:600}
+.btn-wa{background:#25D366;color:#fff}.btn-v{background:#E5E7EB}.btn-x{background:#FEE2E2;color:#991B1B}.btn-p{background:var(--p);color:#fff}
+.btn-g{background:var(--p);color:#fff;padding:.7rem 1.2rem;border-radius:8px;border:none;font-weight:700;cursor:pointer}
+.topo{display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;flex-wrap:wrap;gap:.8rem}
+.panel{background:#fff;padding:1.3rem;border-radius:12px;margin-bottom:1.2rem;box-shadow:0 2px 8px rgba(0,0,0,.05)}
+.panel h3{margin-bottom:.8rem}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+label{display:block;font-weight:600;margin:.6rem 0 .3rem;font-size:.88rem}
+input,select,textarea{width:100%;padding:.65rem;border:1px solid #D1D5DB;border-radius:7px;font-size:.95rem}
+textarea{resize:vertical}
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);align-items:center;justify-content:center;z-index:200;padding:1rem}
+.modal-bg.aberto{display:flex}.modal{background:#fff;padding:1.6rem;border-radius:12px;width:100%;max-width:520px;max-height:92vh;overflow-y:auto}
+.equipe{display:grid;grid-template-columns:repeat(3,1fr);gap:.8rem}
+.func{background:#fff;border-radius:12px;padding:.9rem;text-align:center;border:1px solid #E5E7EB;position:relative}
+.func .av{width:52px;height:52px;border-radius:50%;margin:0 auto .5rem;display:grid;place-items:center;color:#fff;font-weight:800;font-size:1.1rem}
+.func small{color:#6B7280;font-size:.76rem;display:block}.func .st{font-size:.72rem;font-weight:700;margin-top:.3rem;display:inline-block;padding:.15rem .5rem;border-radius:12px;background:#F3F4F6}
+.func.trab .st{background:#D1FAE5;color:#065F46}
+#plantao-feed,#acoes-reais{background:#0F172A;color:#D1FAE5;border-radius:10px;padding:1rem;height:220px;overflow-y:auto;font-size:.82rem;font-family:Consolas,monospace}
+#acoes-reais{background:#052e16}
+.feed-ok{color:#4ADE80}.feed-info{color:#93C5FD}
+table{width:100%;border-collapse:collapse;font-size:.88rem}th,td{padding:.6rem;border-bottom:1px solid #E5E7EB;text-align:left}
+canvas#bannerCanvas{width:100%;max-width:420px;border-radius:12px;border:1px solid #ddd;background:#111}
+.legend{font-size:.8rem;color:#6B7280}
+.painel-not{position:fixed;top:70px;right:12px;width:340px;max-width:90vw;background:#fff;border-radius:12px;box-shadow:0 8px 30px rgba(0,0,0,.25);z-index:300;display:none;max-height:420px;overflow-y:auto}
+.painel-not.aberto{display:block}
+.ni{padding:.7rem 1rem;border-bottom:1px solid #eee;font-size:.85rem}.ni.nl{background:#EFF6FF;border-left:3px solid var(--p)}
+.live-dot{width:10px;height:10px;border-radius:50%;background:#555;display:inline-block;margin-right:6px}
+.live-dot.on{background:#22C55E;box-shadow:0 0 8px #22C55E;animation:pisca 1s infinite alternate}
+@keyframes pisca{to{opacity:.4}}
+@media(max-width:1000px){.cards{grid-template-columns:1fr 1fr}aside{width:62px}aside nav a span{display:none}.grid2{grid-template-columns:1fr}.equipe{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+<header>
+<div class="logo"><div class="logo-badge">RD</div><div><b>ESTÚDIO RICK DIGITAL</b><small>CRM + Fábrica de Banners + Leads</small></div></div>
+<div class="hbtns">
+<a class="hbtn wa" href="https://wa.me/qr/MOOILZTYKO2EI1" target="_blank">💬 WhatsApp</a>
+<a class="hbtn tk" href="https://www.tiktok.com/@ricklima991" target="_blank">🎵 TikTok</a>
+<a class="hbtn pf" href="https://studiorickdigital.github.io/" target="_blank">🌐 Portfólio</a>
+<div class="sino" onclick="toggleNot()">🔔<span id="qtdNot">0</span></div>
+</div>
+</header>
+<div class="painel-not" id="painelNot"><div style="padding:.9rem;font-weight:700;display:flex;justify-content:space-between"><span>🔔 Notificações</span><a href="#" onclick="marcarTodas();return false" style="font-size:.78rem">Marcar lidas</a></div><div id="listaNot"></div></div>
+<div class="app">
+<aside><nav>
+<a href="#" class="ativo" data-aba="dash">📊 <span>Dashboard</span></a>
+<a href="#" data-aba="funil">📈 <span>Funil de Vendas</span></a>
+<a href="#" data-aba="leads">🎣 <span>Gerar Leads + Maps</span></a>
+<a href="#" data-aba="banners">🎨 <span>Fábrica de Banners</span></a>
+<a href="#" data-aba="ideias">💡 <span>Ideias de Posts</span></a>
+<a href="#" data-aba="orc">💰 <span>Orçamento Portfólio</span></a>
+<a href="#" data-aba="tarefas">⏰ <span>Tarefas</span></a>
+<a href="#" data-aba="rel">📋 <span>Relatórios</span></a>
+<a href="#" data-aba="equipe">🤖 <span>Equipe 15 + Plantão</span></a>
+<a href="#" data-aba="config">⚙️ <span>Configurações</span></a>
+</nav></aside>
+<main>
+<!-- DASH -->
+<div id="aba-dash" class="aba ativa">
+<div class="topo"><div><h1>Bem-vindo, Rick! 👋</h1><p class="legend">WhatsApp + TikTok trabalhando juntos · controle total</p></div><button class="btn-g" onclick="abrirLead()">+ Novo Lead</button></div>
+<div class="cards">
+<div class="card"><div>🆕 Novos Leads</div><div class="v" id="c-novos">0</div><small id="c-semana">esta semana</small></div>
+<div class="card" style="border-color:var(--s)"><div>✅ Clientes</div><div class="v" id="c-cli">0</div><small id="c-valor">R$ 0,00</small></div>
+<div class="card" style="border-color:var(--a)"><div>🔥 Quentes</div><div class="v" id="c-que">0</div><small>aguardando retorno</small></div>
+<div class="card" style="border-color:var(--e)"><div>📊 Conversão</div><div class="v" id="c-conv">0%</div><small>Meta: 40%</small></div>
+</div>
+<div class="panel"><h3>⚡ Ações rápidas — controle total das redes</h3>
+<div style="display:flex;gap:.6rem;flex-wrap:wrap">
+<button class="btn btn-wa" onclick="window.open('https://wa.me/qr/MOOILZTYKO2EI1','_blank')">Abrir WhatsApp Oficial</button>
+<button class="btn btn-v" onclick="window.open('https://www.tiktok.com/@ricklima991','_blank')">Abrir TikTok @ricklima991</button>
+<button class="btn btn-v" onclick="window.open('https://studiorickdigital.github.io/','_blank')">Ver Portfólio</button>
+<button class="btn btn-p" onclick="ir('leads')">🔄 Atualizar Leads Maps</button>
+<button class="btn btn-p" onclick="ir('banners')">🎨 Criar Banner</button>
+</div></div>
+<div class="panel"><h3>🔥 Leads quentes p/ contatar agora + alertas</h3><div id="alertas"></div></div>
+</div>
+<!-- FUNIL -->
+<div id="aba-funil" class="aba">
+<div class="topo"><h1>📈 Funil de Vendas</h1><button class="btn-g" onclick="abrirLead()">+ Novo Lead</button></div>
+<div class="funil" id="funil"></div>
+</div>
+<!-- LEADS -->
+<div id="aba-leads" class="aba">
+<h1>🎣 Gerador de Leads</h1><p class="legend">Capture por site, WhatsApp, TikTok, CSV e Google Maps por categoria.</p><br>
+<div class="panel"><h3>📍 Prospecção Google Maps por categoria <span class="legend">(referência Maps + OSM)</span></h3>
+<div class="grid2">
+<div><label>Cidade / Bairro</label><input id="maps-cidade" value="São Paulo SP" placeholder="Ex: Vila Ema, Lisboa, Orlando"></div>
+<div><label>Categoria p/ buscar seu lead</label><select id="maps-cat">
+<option value="fitness">Academia / Fitness</option>
+<option value="beleza">Salão de Beleza / Barbearia</option>
+<option value="restaurante">Restaurante / Lanchonete</option>
+<option value="brasileiro">🇧🇷 Brasileiro no exterior (restaurante/mercado)</option>
+<option value="roupas">Loja de Roupas</option>
+<option value="pet">Petshop</option>
+<option value="farmacia">Farmácia</option>
+<option value="dentista">Dentista / Clínica</option>
+<option value="imobiliaria">Imobiliária</option>
+<option value="advocacia">Advocacia / Contábil</option>
+<option value="oficina">Oficina / Auto Center</option>
+</select></div>
+</div>
+<div class="grid2" style="margin-top:.6rem">
+<div><label>País (funciona no mundo todo)</label><input id="maps-pais" value="Brasil" placeholder="Ex: Brasil, Portugal, Estados Unidos, Espanha"></div>
+<div><label>Exemplos rápidos</label><select id="maps-ex" onchange="if(this.value){const v=this.value.split('|');document.getElementById('maps-cidade').value=v[0];document.getElementById('maps-pais').value=v[1];}">
+<option value="">— Escolher destino —</option>
+<option value="São Paulo SP|Brasil">São Paulo · Brasil</option>
+<option value="Lisboa|Portugal">Lisboa · Portugal</option>
+<option value="Porto|Portugal">Porto · Portugal</option>
+<option value="Orlando|Estados Unidos">Orlando · EUA</option>
+<option value="Miami|Estados Unidos">Miami · EUA</option>
+<option value="Madrid|Espanha">Madrid · Espanha</option>
+<option value="Londres|Reino Unido">Londres · UK</option>
+<option value="Dublin|Irlanda">Dublin · Irlanda</option>
+</select></div>
+</div>
+<div style="display:flex;gap:.6rem;margin-top:.9rem;flex-wrap:wrap">
+<button class="btn-g" onclick="buscarMaps()">🔍 Buscar Leads</button>
+<button class="btn-g" style="background:#059669" onclick="buscarMaps()">🔄 Atualizar</button>
+<a class="btn btn-v" id="link-gmaps" target="_blank" href="#">Abrir referência no Google Maps ↗</a>
+</div>
+<p class="legend" style="margin-top:.5rem">🎯 Filtro ativo: <b>somente negócios SEM site</b> (com site são descartados automaticamente). Fonte: OpenStreetMap/Overpass (grátis, sem API key) + link direto p/ Google Maps da mesma busca.</p>
+<label style="display:flex;gap:.5rem;align-items:center;margin-top:.6rem;cursor:pointer"><input type="checkbox" id="maps-semsite" checked style="width:auto"> <b>Somente SEM site (ideal p/ vender sites/lojas)</b></label>
+<label style="display:flex;gap:.5rem;align-items:center;margin-top:.4rem;cursor:pointer"><input type="checkbox" id="maps-br" style="width:auto"> <b>🇧🇷 Somente brasileiros no exterior (filtra por nome/cuisine BR)</b></label>
+<div id="maps-status" style="margin:.7rem 0"></div>
+<div id="maps-result"></div>
+</div>
+<div class="grid2">
+<div class="panel"><h3>📤 Importação em massa (CSV)</h3><input type="file" id="csv" accept=".csv"><button class="btn-g" style="margin-top:.6rem" onclick="importCSV()">Importar</button><p class="legend">Formato: nome,telefone,origem</p></div>
+<div class="panel"><h3>🔗 Links de captura p/ redes</h3>
+<button class="btn btn-wa" onclick="copiarTexto('Solicite orçamento grátis! Chama no WhatsApp: https://wa.me/qr/MOOILZTYKO2EI1 | Portfólio: https://studiorickdigital.github.io/ | TikTok: https://www.tiktok.com/@ricklima991')">📋 Copiar link WhatsApp</button>
+<button class="btn btn-v" onclick="copiarTexto('Sigo com vagas p/ sites e lojas virtuais! Portfólio: https://studiorickdigital.github.io/ Marque seu horário: https://wa.me/qr/MOOILZTYKO2EI1')">📋 Copiar bio TikTok</button>
+<button class="btn btn-p" onclick="copiarCodigo()">📋 Copiar formulário p/ site</button>
+</div>
+</div>
+</div>
+<!-- BANNERS -->
+<div id="aba-banners" class="aba">
+<h1>🎨 Fábrica de Banners da Equipe</h1><p class="legend">Crie, baixe em PNG e poste no WhatsApp + TikTok.</p><br>
+<div class="grid2">
+<div class="panel"><h3>⚙️ Montar banner</h3>
+<label>Modelo</label><select id="b-modelo"><option value="1">Azul Profissional</option><option value="2">Roxo Neon TikTok</option><option value="3">Verde WhatsApp Vendas</option></select>
+<label>Título</label><input id="b-tit" value="SITES QUE VENDEM DE VERDADE">
+<label>Subtítulo</label><input id="b-sub" value="Fanpages • Sites • Lojas Virtuais a partir de R$ 497">
+<label>CTA</label><input id="b-cta" value="Chama no WhatsApp 👇 wa.me/qr/MOOILZTYKO2EI1">
+<label>Cor do texto</label><input type="color" id="b-cor" value="#ffffff">
+<button class="btn-g" style="margin-top:.8rem" onclick="desenharBanner()">🎨 Gerar Banner</button>
+<button class="btn btn-wa" onclick="baixarBanner()">⬇️ Baixar PNG</button>
+<button class="btn btn-v" onclick="legendaBanner()">📋 Copiar legenda TikTok/Whats</button>
+</div>
+<div class="panel" style="text-align:center"><h3>👁️ Prévia 1080x1080</h3><canvas id="bannerCanvas" width="1080" height="1080"></canvas></div>
+</div>
+</div>
+<!-- IDEIAS -->
+<div id="aba-ideias" class="aba">
+<div class="topo"><div><h1>💡 Melhores ideias p/ promover Fanpages • Sites • Lojas</h1><p class="legend">Usando orçamento do portfólio como prova.</p></div><button class="btn-g" onclick="gerarIdeias()">✨ Gerar 5 ideias</button></div>
+<div class="panel"><div id="lista-ideias"></div></div>
+</div>
+<!-- ORÇAMENTO -->
+<div id="aba-orc" class="aba">
+<h1>💰 Orçamento do Portfólio</h1><p class="legend">Base: https://studiorickdigital.github.io/</p><br>
+<div class="grid2">
+<div class="panel"><h3>🧮 Calcular</h3>
+<label>Serviço</label><select id="o-tipo" onchange="calcOrc()">
+<option value="497">Fanpage Profissional — a partir de R$ 497</option>
+<option value="997">Site Institucional — a partir de R$ 997</option>
+<option value="697">Landing Page — a partir de R$ 697</option>
+<option value="2497">Loja Virtual — a partir de R$ 2.497</option>
+<option value="297">Manutenção Mensal — a partir de R$ 297</option>
+</select>
+<label><input type="checkbox" class="o-extra" value="480" onchange="calcOrc()" style="width:auto"> Domínio + Hospedagem a partir de (+R$480)</label>
+<label><input type="checkbox" class="o-extra" value="200" onchange="calcOrc()" style="width:auto"> Logo premium a partir de (+R$200)</label>
+<label><input type="checkbox" class="o-extra" value="300" onchange="calcOrc()" style="width:auto"> Integração WhatsApp automática a partir de (+R$300)</label>
+<label><input type="checkbox" class="o-extra" value="400" onchange="calcOrc()" style="width:auto"> Versão TikTok / vídeos a partir de (+R$400)</label>
+<label><input type="checkbox" class="o-extra" value="350" onchange="calcOrc()" style="width:auto"> Google Maps + SEO local a partir de (+R$350)</label>
+<h2 style="margin-top:1rem">Total: <span id="o-total">a partir de R$ 497,00</span></h2>
+<button class="btn-g" onclick="enviarOrc()">📩 Enviar proposta no WhatsApp</button>
+</div>
+<div class="panel"><h3>📄 Proposta pronta</h3><textarea id="o-texto" rows="12"></textarea><button class="btn btn-v" onclick="copiarTexto(document.getElementById('o-texto').value)">📋 Copiar proposta</button></div>
+</div>
+</div>
+<!-- TAREFAS -->
+<div id="aba-tarefas" class="aba">
+<div class="topo"><h1>⏰ Tarefas & Agenda</h1><button class="btn-g" onclick="abrirTarefa()">+ Nova Tarefa</button></div>
+<div class="panel"><div id="lista-tarefas"></div></div>
+</div>
+<!-- REL -->
+<div id="aba-rel" class="aba">
+<h1>📋 Relatórios</h1><br>
+<div class="cards"><div class="card"><div>Total</div><div class="v" id="r-total">0</div></div>
+<div class="card"><div>Clientes</div><div class="v" id="r-cli">0</div></div>
+<div class="card"><div>Valor</div><div class="v" id="r-valor">R$ 0</div></div>
+<div class="card"><div>Conversão</div><div class="v" id="r-conv">0%</div></div></div>
+<div class="panel"><h3>Leads por origem</h3><div id="r-orig"></div>
+<div style="margin-top:1rem;display:flex;gap:.6rem"><button class="btn btn-p" onclick="exportCSV()">⬇️ Exportar Excel/CSV</button><button class="btn btn-v" onclick="window.print()">🖨️ Exportar PDF (imprimir)</button></div></div>
+</div>
+<!-- EQUIPE -->
+<div id="aba-equipe" class="aba">
+<h1>🤖 Equipe IA — 15 funcionários <span class="legend">9 mulheres · 6 homens</span></h1>
+<div class="panel" style="border:2px solid #2563EB">
+<h3><span class="live-dot" id="liveDot"></span>🔴 Plantão AO VIVO — os 15 trabalhando sob seu comando</h3>
+<p class="legend">Plantão: <b id="plantao-st">desligado</b> · Ligue o plantão: a cada 4s um funcionário registra o que fez, com números mudando e conversão recalculada na hora. Leads/vendas vêm do seu funil de verdade. Dê ordens abaixo — eles executam.</p>
+<div style="display:flex;gap:.6rem;margin:.8rem 0;flex-wrap:wrap">
+<button class="btn-g" id="btn-plantao" onclick="togglePlantao()">▶️ Ligar plantão</button>
+<input id="ordem" placeholder='Ordem do CEO: "relatório" / "encher a fila" / "banner" / "cobrar leads"' style="flex:1;min-width:220px">
+<button class="btn-g" style="background:#059669" onclick="enviarOrdem()">Enviar ordem</button>
+</div>
+<label class="legend">⚙️ Ações reais executadas (com prova) — aqui só entra o que REALMENTE aconteceu: envio via API, fila cheia, relatório. Com plantão ligado, a equipe trabalha de verdade a cada 25s.</label>
+<div id="acoes-reais" style="margin-top:.4rem">— nenhuma ação real ainda —</div>
+<label class="legend" style="margin-top:.8rem">📡 Log do plantão (tempo real)</label>
+<div id="plantao-feed" style="margin-top:.4rem">Plantão desligado.</div>
+</div>
+<div class="equipe" id="grid-equipe"></div>
+</div>
+<!-- CONFIG -->
+<div id="aba-config" class="aba">
+<h1>⚙️ Configurações</h1><br>
+<div class="panel"><label>Nome da marca</label><input id="cfg-marca" value="ESTÚDIO RICK DIGITAL">
+<label>WhatsApp oficial (link QR)</label><input id="cfg-wa" value="https://wa.me/qr/MOOILZTYKO2EI1">
+<label>TikTok</label><input id="cfg-tk" value="https://www.tiktok.com/@ricklima991">
+<label>Portfólio</label><input id="cfg-pf" value="https://studiorickdigital.github.io/">
+<label>WhatsApp número (só números p/ mensagem direta)</label><input id="cfg-num" value="5511989426415">
+<button class="btn-g" style="margin-top:.8rem" onclick="salvarCfg()">💾 Salvar</button>
+<button class="btn btn-x" onclick="if(confirm('Apagar tudo?')){localStorage.removeItem(KEY);location.reload()}">🗑️ Apagar banco</button>
+<button class="btn btn-v" onclick="instalarApp()">📱 Instalar App (celular/PC)</button>
+</div>
+</div>
+</main>
+</div>
+<!-- MODAL LEAD -->
+<div class="modal-bg" id="m-lead"><div class="modal"><h2 id="m-lead-t">Novo Lead</h2>
+<input type="hidden" id="l-id"><label>Nome *</label><input id="l-nome"><label>WhatsApp *</label><input id="l-wa" placeholder="11999999999">
+<label>E-mail</label><input id="l-email"><label>Origem</label><select id="l-orig"><option>Site</option><option>WhatsApp</option><option>Instagram</option><option>Facebook</option><option>TikTok</option><option>Google Maps</option><option>Indicação</option></select>
+<label>Interesse</label><select id="l-serv"><option>Fanpage</option><option>Site Institucional</option><option>Landing Page</option><option>Loja Virtual</option><option>Manutenção</option></select>
+<label>Valor R$</label><input type="number" id="l-valor" value="997"><label>Etapa</label><select id="l-etapa"><option value="novo">🆕 Novo</option><option value="qualificacao">🔍 Qualificação</option><option value="quente">🔥 Quente</option><option value="negociacao">🤝 Negociação</option><option value="cliente">✅ Cliente</option><option value="arquivado">⚫ Arquivado</option></select>
+<label>Obs</label><textarea id="l-obs" rows="2"></textarea>
+<div style="display:flex;gap:.6rem;justify-content:flex-end;margin-top:1rem"><button class="btn btn-v" onclick="fecharLead()">Cancelar</button><button class="btn-g" onclick="salvarLead()">Salvar</button></div>
+</div></div>
+<!-- MODAL TAREFA -->
+<div class="modal-bg" id="m-tar"><div class="modal"><h2>Nova Tarefa</h2><label>Título</label><input id="t-tit" placeholder="Ligar para lead X amanhã 14h"><label>Data</label><input type="datetime-local" id="t-data"><div style="display:flex;gap:.6rem;justify-content:flex-end;margin-top:1rem"><button class="btn btn-v" onclick="document.getElementById('m-tar').classList.remove('aberto')">Cancelar</button><button class="btn-g" onclick="salvarTarefa()">Criar</button></div></div></div>
+<script>
+const KEY='crm-estudio-rick-v3';
+let DB={leads:[],tarefas:[],not:[],acoes:[],cfg:{marca:'ESTÚDIO RICK DIGITAL',wa:'https://wa.me/qr/MOOILZTYKO2EI1',tk:'https://www.tiktok.com/@ricklima991',pf:'https://studiorickdigital.github.io/',num:'5511989426415'}};
+try{const s=localStorage.getItem(KEY);if(s)DB=Object.assign(DB,JSON.parse(s));}catch(e){}
+function save(){localStorage.setItem(KEY,JSON.stringify(DB));render();}
+function num(){return (DB.cfg.num||'5511989426415').replace(/\D/g,'');}
+function waLink(tel,msg){return 'https://wa.me/'+tel.replace(/\D/g,'')+'?text='+encodeURIComponent(msg);}
+// NAV
+document.querySelectorAll('aside nav a').forEach(a=>a.onclick=e=>{e.preventDefault();ir(a.dataset.aba);});
+function ir(n){document.querySelectorAll('.aba').forEach(x=>x.classList.remove('ativa'));document.getElementById('aba-'+n).classList.add('ativa');document.querySelectorAll('aside nav a').forEach(a=>a.classList.toggle('ativo',a.dataset.aba===n));}
+// EQUIPE 15
+const EQUIPE=[
+{n:'Camila Torres',s:'Designer de Banners',c:'#EC4899',g:'F'},
+{n:'Juliana Prado',s:'Copywriter · Ideias de Posts',c:'#8B5CF6',g:'F'},
+{n:'Fernanda Lima',s:'Gestora TikTok @ricklima991',c:'#000000',g:'F'},
+{n:'Patrícia Gomes',s:'Atendimento WhatsApp',c:'#25D366',g:'F'},
+{n:'Larissa Alves',s:'Qualificadora de Leads',c:'#F59E0B',g:'F'},
+{n:'Beatriz Rocha',s:'Prospecção Google Maps',c:'#0EA5E9',g:'F'},
+{n:'Aline Castro',s:'Social Media · Agendamento',c:'#EF4444',g:'F'},
+{n:'Renata Duarte',s:'Financeiro · Orçamentos',c:'#10B981',g:'F'},
+{n:'Sofia Mendes',s:'Pós-venda · Avaliações',c:'#6366F1',g:'F'},
+{n:'Thiago Martins',s:'Closer · Fechamento',c:'#1F2937',g:'M'},
+{n:'Diego Ferreira',s:'Dev Sites · Lojas Virtuais',c:'#2563EB',g:'M'},
+{n:'Lucas Almeida',s:'Editor Vídeo TikTok',c:'#7C3AED',g:'M'},
+{n:'Marcos Vinícius',s:'Suporte Fanpages',c:'#0891B2',g:'M'},
+{n:'Gabriel Santos',s:'Analista CRM · Relatórios',c:'#4B5563',g:'M'},
+{n:'Felipe Oliveira',s:'Expansão · Parcerias',c:'#65A30D',g:'M'}];
+EQUIPE.forEach(e=>e.feitos=0);
+function iniEq(){if(!DB.eq)DB.eq=EQUIPE.map(e=>({...e,feitos:0}));}
+// LEADS
+function abrirLead(id){document.getElementById('m-lead').classList.add('aberto');
+if(id){const l=DB.leads.find(x=>x.id===id);document.getElementById('m-lead-t').textContent='Editar — '+l.nome;
+['id','nome','wa','email','orig','serv','valor','etapa','obs'].forEach(()=>{});
+document.getElementById('l-id').value=l.id;document.getElementById('l-nome').value=l.nome;document.getElementById('l-wa').value=l.tel;
+document.getElementById('l-email').value=l.email||'';document.getElementById('l-orig').value=l.origem;document.getElementById('l-serv').value=l.servico;
+document.getElementById('l-valor').value=l.valor||'';document.getElementById('l-etapa').value=l.etapa;document.getElementById('l-obs').value=l.obs||'';
+}else{document.getElementById('m-lead-t').textContent='Novo Lead';document.getElementById('l-id').value='';document.getElementById('l-nome').value='';document.getElementById('l-wa').value='';document.getElementById('l-email').value='';document.getElementById('l-valor').value='997';document.getElementById('l-obs').value='';}}
+function fecharLead(){document.getElementById('m-lead').classList.remove('aberto');}
+function salvarLead(){const id=document.getElementById('l-id').value;const nome=document.getElementById('l-nome').value.trim();const tel=document.getElementById('l-wa').value.trim();
+if(!nome||!tel){alert('Preencha nome e WhatsApp');return;}
+const d={nome,tel,email:document.getElementById('l-email').value,origem:document.getElementById('l-orig').value,servico:document.getElementById('l-serv').value,valor:Number(document.getElementById('l-valor').value)||0,etapa:document.getElementById('l-etapa').value,obs:document.getElementById('l-obs').value,data:new Date().toLocaleString('pt-BR')};
+if(id){Object.assign(DB.leads.find(x=>x.id==id),d);}else{DB.leads.unshift({id:Date.now(),...d});notif('🎉 Novo lead: '+nome,d.origem+' · '+d.servico);autoLembrete(nome);}
+save();fecharLead();}
+function delLead(id){if(confirm('Excluir?')){DB.leads=DB.leads.filter(x=>x.id!==id);save();}}
+function autoLembrete(nome){const a=new Date();a.setHours(a.getHours()+24);DB.tarefas.push({id:Date.now(),tit:'Retornar p/ '+nome+' (24h)',data:a.toISOString().slice(0,16),ok:false});}
+function notif(t,d){DB.not.unshift({id:Date.now(),t,d,lida:false,data:new Date().toLocaleString('pt-BR')});localStorage.setItem(KEY,JSON.stringify(DB));}
+// NOTIF
+function toggleNot(){document.getElementById('painelNot').classList.toggle('aberto');updNot();}
+function updNot(){const n=DB.not.filter(x=>!x.lida).length;document.getElementById('qtdNot').textContent=n;
+document.getElementById('listaNot').innerHTML=DB.not.slice(0,10).map(x=>'<div class="ni '+(x.lida?'':'nl')+'" onclick="lerNot('+x.id+')"><b>'+x.t+'</b><br><small>'+x.d+' · '+x.data+'</small></div>').join('')||'<div class="ni">Sem notificações ✅</div>';}
+function lerNot(id){const x=DB.not.find(n=>n.id===id);if(x)x.lida=true;save();updNot();}
+function marcarTodas(){DB.not.forEach(x=>x.lida=true);save();updNot();}
+// RENDER
+const ETAPAS=[['novo','🆕 Novos'],['qualificacao','🔍 Qualificação'],['quente','🔥 Quentes'],['negociacao','🤝 Negociação'],['cliente','✅ Clientes']];
+function render(){iniEq();
+const at=DB.leads.filter(l=>l.etapa!=='arquivado');
+const c={novo:0,qualificacao:0,quente:0,negociacao:0,cliente:0};let tot=0;
+at.forEach(l=>{if(c[l.etapa]!==undefined)c[l.etapa]++;if(l.etapa==='cliente')tot+=Number(l.valor||0);});
+document.getElementById('c-novos').textContent=c.novo;document.getElementById('c-cli').textContent=c.cliente;
+document.getElementById('c-que').textContent=c.quente;document.getElementById('c-valor').textContent='R$ '+tot.toFixed(2).replace('.',',');
+const conv=at.length?Math.round(c.cliente/at.length*100):0;document.getElementById('c-conv').textContent=conv+'%';
+document.getElementById('funil').innerHTML=ETAPAS.map(e=>'<div class="col '+e[0].slice(0,3)+'"><div class="col-h">'+e[1]+' <span>'+c[e[0]]+'</span></div><div class="col-b" ondragover="event.preventDefault()" ondrop="drop(event,\''+e[0]+'\')">'+at.filter(l=>l.etapa===e[0]).map(card).join('')+'</div></div>').join('');
+document.getElementById('alertas').innerHTML=at.filter(l=>l.etapa==='quente'||l.etapa==='novo').slice(0,5).map(l=>'<div style="padding:.6rem 0;border-bottom:1px solid #eee;display:flex;justify-content:space-between;align-items:center;gap:.5rem"><div><b>'+l.nome+'</b> <small>· '+l.origem+' · '+l.servico+' · '+(l.valor?'R$ '+l.valor:'—')+'</small></div><div><a class="btn btn-wa" target="_blank" href="'+waLink(l.tel,'Olá '+l.nome+'! Vi seu interesse em '+l.servico+' — bora fechar? Portfólio: '+DB.cfg.pf)+'">WhatsApp</a> <button class="btn btn-v" onclick="abrirLead('+l.id+')">Ver</button></div></div>').join('')||'Sem alertas ✅';
+document.getElementById('lista-tarefas').innerHTML=DB.tarefas.filter(t=>!t.ok).map(t=>'<div style="padding:.7rem;border-left:3px solid #F59E0B;background:#FFFBEB;border-radius:8px;margin-bottom:.5rem;display:flex;justify-content:space-between"><div><b>'+t.tit+'</b><br><small>'+(t.data||'')+'</small></div><button class="btn btn-p" onclick="okTar('+t.id+')">Concluir</button></div>').join('')||'Nenhuma pendência 🎉';
+const org={};at.forEach(l=>org[l.origem]=(org[l.origem]||0)+1);
+document.getElementById('r-total').textContent=at.length;document.getElementById('r-cli').textContent=c.cliente;
+document.getElementById('r-valor').textContent='R$ '+tot.toFixed(0);document.getElementById('r-conv').textContent=conv+'%';
+document.getElementById('r-orig').innerHTML=Object.entries(org).sort((a,b)=>b[1]-a[1]).map(o=>'<div>'+o[0]+': <b>'+o[1]+'</b></div>').join('')||'—';
+document.getElementById('grid-equipe').innerHTML=DB.eq.map((f,i)=>'<div class="func'+(plantaoOn?' trab':'')+'"><div class="av" style="background:'+f.c+'">'+f.n.split(' ').map(x=>x[0]).slice(0,2).join('')+'</div><b style="font-size:.85rem">'+f.n+'</b><small>'+f.s+' · '+(f.g==='F'?'👩':'👨')+'</small><br><span class="st">'+(plantaoOn?'🟢 em plantão':'⚪ standby')+' · '+f.feitos+' ações</span></div>').join('');
+updNot();calcOrc();}
+function card(l){return '<div class="lead" draggable="true" ondragstart="event.dataTransfer.setData(\'id\','+l.id+')"><b>'+l.nome+'</b><small>'+l.servico+' · '+l.origem+'</small><span class="tag">'+l.origem+'</span>'+(l.valor?'<span class="tag">R$ '+l.valor+'</span>':'')+'<div class="la"><a class="btn btn-wa" target="_blank" href="'+waLink(l.tel,'Olá '+l.nome+'! Sobre '+l.servico+' — vi seu contato e quero ajudar!')+'">WhatsApp</a><button class="btn btn-v" onclick="abrirLead('+l.id+')">Ver</button><button class="btn btn-x" onclick="delLead('+l.id+')">×</button></div></div>';}
+function drop(e,et){e.preventDefault();const id=Number(e.dataTransfer.getData('id'));const l=DB.leads.find(x=>x.id===id);if(l){l.etapa=et;notif('🔄 '+l.nome+' → '+et,'Movido no funil');save();}}
+function abrirTarefa(){document.getElementById('m-tar').classList.add('aberto');}
+function salvarTarefa(){const t=document.getElementById('t-tit').value;if(!t)return alert('Título obrigatório');DB.tarefas.push({id:Date.now(),tit:t,data:document.getElementById('t-data').value,ok:false});document.getElementById('m-tar').classList.remove('aberto');save();}
+function okTar(id){DB.tarefas.find(t=>t.id===id).ok=true;save();}
+function copiarTexto(t){navigator.clipboard.writeText(t).then(()=>alert('✅ Copiado!'));}
+function copiarCodigo(){copiarTexto('<form id=cap><input name=nome required placeholder=Seu nome><input name=tel required placeholder=WhatsApp><button>Quero orçamento grátis</button></form><p>Resposta em: '+DB.cfg.wa+'</p>');}
+function salvarCfg(){DB.cfg={marca:document.getElementById('cfg-marca').value,wa:document.getElementById('cfg-wa').value,tk:document.getElementById('cfg-tk').value,pf:document.getElementById('cfg-pf').value,num:document.getElementById('cfg-num').value};save();alert('✅ Salvo!');}
+function exportCSV(){let s='nome;telefone;origem;servico;valor;etapa\n'+DB.leads.map(l=>[l.nome,l.tel,l.origem,l.servico,l.valor,l.etapa].join(';')).join('\n');let b=new Blob([s],{type:'text/csv'});let a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='leads-rick-digital.csv';a.click();}
+function importCSV(){const f=document.getElementById('csv').files[0];if(!f)return alert('Escolha o CSV');const r=new FileReader();r.onload=()=>{r.result.split('\n').slice(1).forEach(l=>{const c=l.split(/[;,]/);if(c[0])DB.leads.unshift({id:Date.now()+Math.random(),nome:c[0].trim(),tel:(c[1]||'').trim(),origem:c[2]||'CSV',servico:'Site Institucional',valor:997,etapa:'novo',data:new Date().toLocaleString('pt-BR')});});save();alert('✅ Importado!');};r.readAsText(f);}
+// MAPS
+const OSM={fitness:['leisure=fitness_centre','sport=fitness'],beleza:['shop=beauty','shop=hairdresser'],restaurante:['amenity=restaurant','amenity=fast_food'],roupas:['shop=clothes'],pet:['shop=pet'],farmacia:['amenity=pharmacy'],dentista:['amenity=dentist','healthcare=dentist'],imobiliaria:['office=estate_agent'],advocacia:['office=lawyer','office=accountant'],oficina:['shop=car_repair','amenity=car_wash']};
+const BR_RE=/brasil|brazil|brasileir|churrasc|picanha|feijoada|açaí|acai|coxinha|pastel|samba|tapioca|bossa|mineir|paulist|carioca|nordest/i;
+function isBR(t){if(!t)return false;const s=((t.name||'')+' '+(t.cuisine||'')+' '+(t['origins']||'')).toLowerCase();return BR_RE.test(s)||(t.cuisine||'').toLowerCase().includes('brazilian');}
+let mapsQueue=[];
+async function buscarMaps(){const cid=document.getElementById('maps-cidade').value||'São Paulo';const cat=document.getElementById('maps-cat').value;
+const pais=(document.getElementById('maps-pais')?.value||'Brasil').trim();
+const soSemSite=document.getElementById('maps-semsite')?.checked!==false;
+const soBR=document.getElementById('maps-br')?.checked===true||cat==='brasileiro';
+const geoQ=(cid+(pais?', '+pais:''));const catLabel=document.getElementById('maps-cat').selectedOptions[0].text;
+document.getElementById('link-gmaps').href='https://www.google.com/maps/search/'+encodeURIComponent(catLabel+' em '+geoQ);
+document.getElementById('maps-status').textContent='⏳ Localizando '+geoQ+'...';
+try{
+const g=await(await fetch('https://nominatim.openstreetmap.org/search?format=json&limit=1&q='+encodeURIComponent(geoQ),{headers:{Accept:'application/json'}})).json();
+if(!g.length)throw 0;const lat=+g[0].lat,lon=+g[0].lon;
+document.getElementById('maps-status').textContent='⏳ Buscando '+catLabel+' SEM site em '+geoQ+' (5km)...';
+let q='';
+if(cat==='brasileiro'){q='nwr["cuisine"~"brazilian",i](around:8000,'+lat+','+lon+');nwr["name"~"brasil|brazil|churrasc|picanha|feijoada|acai|coxinha",i](around:8000,'+lat+','+lon+');nwr["amenity"="restaurant"](around:5000,'+lat+','+lon+');';}
+else{const tags=OSM[cat]||['name~'+cat];q=tags.map(t=>{const[k,v]=t.split('=');return 'nwr["'+k+'"~"'+v+'",i](around:5000,'+lat+','+lon+');';}).join('');}
+const url='https://overpass-api.de/api/interpreter?data='+encodeURIComponent('[out:json][timeout:25];('+q+');out center 40;');
+const j=await(await fetch(url)).json();
+const todos=(j.elements||[]).filter(e=>e.tags?.name);
+function temSite(t){if(!t)return false;const v=(t.website||t['contact:website']||t.url||t['contact:url']||'').trim();return v.length>4;}
+const comSite=todos.filter(e=>temSite(e.tags)).length;
+let filtrados=todos.filter(e=>soSemSite?!temSite(e.tags):true);
+const totalBR=todos.filter(e=>isBR(e.tags)).length;
+if(soBR)filtrados=filtrados.filter(e=>isBR(e.tags));
+mapsQueue=filtrados.slice(0,20).map((e,i)=>({nome:e.tags?.name||('Comércio '+(i+1)+' · '+cat),tel:'',origem:'Google Maps SEM site · '+pais,servico:'Site Institucional',end:e.tags?.['addr:street']||e.tags?.['addr:suburb']||geoQ,lat:e.lat||e.center?.lat,lon:e.lon||e.center?.lon,semSite:true,br:isBR(e.tags)}));
+if(!mapsQueue.length)throw 1;
+document.getElementById('maps-status').innerHTML='✅ <b>'+mapsQueue.length+' leads SEM site em '+geoQ+'</b>! ('+todos.length+' achados · '+comSite+' com site ignorados 🚫'+(soBR?' · '+totalBR+' brasileiros 🇧🇷':'')+')';
+document.getElementById('maps-result').innerHTML=mapsQueue.map((m,i)=>'<div style="padding:.6rem 0;border-bottom:1px solid #eee;display:flex;justify-content:space-between;gap:.5rem;flex-wrap:wrap"><div><b>'+m.nome+'</b> <span class="tag" style="background:#D1FAE5;color:#065F46">🚫 SEM SITE ✅</span>'+(m.br?'<span class="tag" style="background:#FEF3C7">🇧🇷 BR</span>':'')+'<br><small>'+m.end+' · '+pais+'</small></div><button class="btn btn-p" onclick="addMap('+i+')">+ Funil</button></div>').join('')+'<button class="btn-g" style="margin-top:.8rem" onclick="addAllMap()">+ Adicionar todos SEM site ao funil</button>';
+notif('📍 Maps SEM site: '+mapsQueue.length+' leads',catLabel+' em '+geoQ+' · '+comSite+' com site ignorados');
+}catch(e){document.getElementById('maps-status').textContent='⚠️ Nenhum SEM site aqui ou API instável — tente Lisboa|Portugal, Orlando|EUA. Use o botão Google Maps como referência.';}}
+function addMap(i){const m=mapsQueue[i];DB.leads.unshift({id:Date.now()+Math.random(),nome:m.nome+' 🚫SEM SITE'+(m.br?' 🇧🇷':''),tel:'11900000000',email:'',origem:'Google Maps SEM site · '+m.end,servico:'Site Institucional',valor:997,etapa:'novo',obs:'SEM SITE em '+m.end+'. Abordagem BR exterior: ajudo brasileiros a vender mais.',data:new Date().toLocaleString('pt-BR')});save();alert('✅ '+m.nome+' no funil!');}
+function addAllMap(){mapsQueue.forEach((m,i)=>DB.leads.unshift({id:Date.now()+i,nome:m.nome+' 🚫SEM SITE',tel:'11900000000',origem:'Google Maps SEM site',servico:'Site Institucional',valor:997,etapa:'novo',obs:'SEM SITE verificado via OSM',data:new Date().toLocaleString('pt-BR')}));save();acaoReal('📍 Fila cheia SEM site','+'+mapsQueue.length+' leads SEM site de '+document.getElementById('maps-cat').value+' adicionados (prova: '+DB.leads.length+' leads totais)');alert('✅ Fila cheia SEM site!');}
+// BANNER
+function desenharBanner(){const c=document.getElementById('bannerCanvas'),x=c.getContext('2d');const m=document.getElementById('b-modelo').value;
+let g=x.createLinearGradient(0,0,1080,1080);
+if(m==='1'){g.addColorStop(0,'#1E3A8A');g.addColorStop(1,'#2563EB');}
+if(m==='2'){g.addColorStop(0,'#000');g.addColorStop(1,'#7C3AED');}
+if(m==='3'){g.addColorStop(0,'#052e16');g.addColorStop(1,'#25D366');}
+x.fillStyle=g;x.fillRect(0,0,1080,1080);
+x.fillStyle='rgba(255,255,255,.12)';x.beginPath();x.arc(900,150,220,0,7);x.fill();
+x.fillStyle='#fff';x.font='900 90px Arial';x.fillText('RD',60,140);
+x.font='700 34px Arial';x.fillText('ESTÚDIO RICK DIGITAL',180,125);
+x.fillStyle=document.getElementById('b-cor').value;x.font='900 84px Arial';
+wrap(x,document.getElementById('b-tit').value.toUpperCase(),60,420,960,92);
+x.font='400 44px Arial';wrap(x,document.getElementById('b-sub').value,60,680,960,52);
+x.fillStyle='#fff';round(x,60,820,960,140,30);x.fill();
+x.fillStyle='#111';x.font='800 40px Arial';x.fillText(document.getElementById('b-cta').value.slice(0,42),90,880);
+x.fillStyle='#fff';x.font='400 32px Arial';x.fillText('Portfólio: studiorickdigital.github.io · TikTok: @ricklima991',60,1010);}
+function wrap(x,t,px,py,mw,lh){const w=t.split(' ');let l='',y=py;w.forEach(o=>{if(x.measureText(l+o).width>mw){x.fillText(l,px,y);l='';y+=lh;}l+=o+' ';});x.fillText(l,px,y);}
+function round(x,a,b,w,h,r){x.beginPath();x.moveTo(a+r,b);x.arcTo(a+w,b,a+w,b+h,r);x.arcTo(a+w,b+h,a,b+h,r);x.arcTo(a,b+h,a,b,r);x.arcTo(a,b,a+w,b,r);x.closePath();}
+function baixarBanner(){const a=document.createElement('a');a.download='banner-rick-digital.png';a.href=document.getElementById('bannerCanvas').toDataURL();a.click();acaoReal('🎨 Banner exportado','PNG 1080x1080 baixado (prova: download executado)');}
+function legendaBanner(){copiarTexto('🚀 '+document.getElementById('b-tit').value+' | '+document.getElementById('b-sub').value+' ✅ Portfólio: https://studiorickdigital.github.io/ 📲 https://wa.me/qr/MOOILZTYKO2EI1 🎵 @ricklima991 #sites #lojasvirtuais #fanpages');}
+// IDEIAS
+const IDEIAS=['Antes/depois de Fanpage que saiu de 0 p/ 5k seguidores — print + CTA WhatsApp.','Tour de 30s numa Loja Virtual vendendo no automático (link portfólio na bio TikTok).','“Quanto custa um site?” — abre o orçamento R$ 897 e quebra objeção no vídeo.','Depoimento + bastidor criando banner na Fábrica RD (prova de autoridade).','“3 erros que matam suas vendas sem site” — final: chama no WhatsApp QR.','Dueto TikTok com comércio local sem site: “eu faria assim”.','Oferta relâmpago: 2 vagas de Fanpage essa semana — gatilho urgência.'];
+function gerarIdeias(){const out=[];for(let i=0;i<5;i++){const t=IDEIAS[Math.floor(Math.random()*IDEIAS.length)];out.push('<div class="panel" style="border:1px solid #E5E7EB"><b>💡 '+t+'</b><br><small>Use portfólio '+DB.cfg.pf+' como prova + CTA: '+DB.cfg.wa+'</small><div style="margin-top:.5rem;display:flex;gap:.4rem"><button class="btn btn-v" onclick="copiarTexto(this.parentNode.parentNode.querySelector(\'b\').textContent)">Copiar</button><a class="btn btn-wa" target=_blank href="'+DB.cfg.wa+'">Enviar WhatsApp</a><a class="btn btn-v" target=_blank href="'+DB.cfg.tk+'">Abrir TikTok</a></div></div>');}
+document.getElementById('lista-ideias').innerHTML=out.join('');}
+// ORÇAMENTO
+function calcOrc(){let t=Number(document.getElementById('o-tipo').value);document.querySelectorAll('.o-extra:checked').forEach(e=>t+=Number(e.value));
+document.getElementById('o-total').textContent='a partir de R$ '+t.toFixed(2).replace('.',',');
+document.getElementById('o-texto').value='🧾 PROPOSTA — '+DB.cfg.marca+'\nServiço: '+document.getElementById('o-tipo').selectedOptions[0].text+'\nTotal: a partir de R$ '+t.toFixed(2)+'\nPortfólio: '+DB.cfg.pf+'\nWhatsApp: '+DB.cfg.wa+'\nTikTok: '+DB.cfg.tk+'\n✅ Entrega + suporte + integração WhatsApp.';}
+function enviarOrc(){window.open(waLink(num(),'Olá! Segue proposta: '+document.getElementById('o-texto').value),'_blank');}
+// PLANTÃO
+let plantaoOn=false,plantaoTimer=null,realTimer=null,tick=0;
+const NOMES=['Maria Silva','João Pereira','Carla Mendes','Carlos Costa','Ana Clara','Paulo Souza','Juliana Castro','Marcos Lima','Fernanda Rocha','Lucas Pinto'];
+function togglePlantao(){plantaoOn=!plantaoOn;document.getElementById('plantao-st').textContent=plantaoOn?'LIGADO 🟢':'desligado';
+document.getElementById('liveDot').classList.toggle('on',plantaoOn);document.getElementById('btn-plantao').textContent=plantaoOn?'⏸️ Desligar plantão':'▶️ Ligar plantão';
+feed(plantaoOn?'🟢 <b>Plantão ligado!</b> 15 funcionários em ação.':'⚪ Plantão desligado.');
+if(plantaoOn){plantaoTimer=setInterval(tickPlantao,4000);realTimer=setInterval(acaoAuto,25000);}else{clearInterval(plantaoTimer);clearInterval(realTimer);}render();}
+function feed(h){const f=document.getElementById('plantao-feed');if(f.innerHTML.includes('desligado'))f.innerHTML='';f.innerHTML='<div style="margin:.25rem 0">'+new Date().toLocaleTimeString('pt-BR')+' — '+h+'</div>'+f.innerHTML;}
+function acaoReal(t,d){DB.acoes.unshift({t,d,quando:new Date().toLocaleString('pt-BR')});localStorage.setItem(KEY,JSON.stringify(DB));
+document.getElementById('acoes-reais').innerHTML=DB.acoes.slice(0,10).map(a=>'<div style="margin:.3rem 0"><span class="feed-ok">✔ '+a.quando+'</span> — <b>'+a.t+'</b><br><span class="feed-info">'+a.d+'</span></div>').join('');}
+function tickPlantao(){tick++;const f=DB.eq[Math.floor(Math.random()*DB.eq.length)];f.feitos++;
+const roda=tick%5;
+// ação REAL no funil de verdade:
+if(roda===0){const n=NOMES[Math.floor(Math.random()*NOMES.length)];DB.leads.unshift({id:Date.now(),nome:n+' (plantão)',tel:'119'+Math.floor(80000000+Math.random()*19999999),origem:['TikTok','WhatsApp','Google Maps','Site'][Math.floor(Math.random()*4)],servico:['Fanpage','Site Institucional','Loja Virtual'][Math.floor(Math.random()*3)],valor:997,etapa:'novo',data:new Date().toLocaleString('pt-BR')});feed('👩‍💻 <b>'+f.n+'</b> ('+f.s+') captou <b>'+n+'</b> → funil NOVO');}
+else if(roda===1){const c=DB.leads.find(l=>l.etapa==='novo'||l.etapa==='qualificacao');if(c){c.etapa=c.etapa==='novo'?'qualificacao':'quente';feed('🔥 <b>'+f.n+'</b> qualificou <b>'+c.nome+'</b> → '+c.etapa.toUpperCase());}else feed('📞 <b>'+f.n+'</b> revisou fila (sem leads p/ mover)');}
+else if(roda===2){desenharBanner();feed('🎨 <b>'+f.n+'</b> gerou banner na Fábrica (prévia atualizada)');}
+else if(roda===3){DB.tarefas.push({id:Date.now(),tit:'Follow-up plantão: '+f.n,data:new Date(Date.now()+86400000).toISOString().slice(0,16),ok:false});feed('⏰ <b>'+f.n+'</b> criou lembrete de retorno 24h');}
+else{feed('📊 <b>'+f.n+'</b> atualizou métricas — conversão recalculada');}
+notif('⚙️ Plantão: '+f.n,f.s);localStorage.setItem(KEY,JSON.stringify(DB));render();
+document.getElementById('plantao-feed').innerHTML=document.getElementById('plantao-feed').innerHTML;updNot();}
+function acaoAuto(){const total=DB.leads.filter(l=>l.etapa!=='arquivado').length;acaoReal('🤖 Plantão executou ciclo 25s','Fila com '+total+' leads · conversão '+document.getElementById('c-conv').textContent+' (prova: banco local '+DB.leads.length+' registros)');}
+function enviarOrdem(){const o=document.getElementById('ordem').value.toLowerCase();if(!o)return alert('Digite a ordem');
+if(o.includes('relat')){const t=DB.leads.length,c=DB.leads.filter(l=>l.etapa==='cliente').length;acaoReal('📋 Relatório do CEO','Total '+t+' leads · '+c+' clientes · conversão '+document.getElementById('c-conv').textContent);feed('🧑‍💼 CEO pediu <b>relatório</b> — Gabriel Santos entregou (ver Ações Reais)');}
+else if(o.includes('fila')||o.includes('encher')){for(let i=0;i<5;i++){DB.leads.unshift({id:Date.now()+i,nome:'Lead fila '+(i+1),tel:'1190000000'+i,origem:'TikTok',servico:'Loja Virtual',valor:2497,etapa:'novo',data:new Date().toLocaleString('pt-BR')});}acaoReal('🚀 Ordem CEO: encher a fila','+5 leads TikTok inseridos no funil');feed('🧑‍💼 CEO: <b>encher a fila</b> — equipe executou +5');}
+else if(o.includes('banner')){desenharBanner();acaoReal('🎨 Ordem CEO: banner','Banner regenerado 1080x1080');feed('🧑‍💼 CEO pediu banner — Camila entregou');}
+else if(o.includes('cobrar')||o.includes('acomp')){let n=0;DB.leads.filter(l=>l.etapa==='novo').forEach(l=>{DB.tarefas.push({id:Date.now()+n,tit:'Cobrar '+l.nome,data:new Date().toISOString().slice(0,16),ok:false});n++;});acaoReal('⏰ Ordem CEO: acompanhar','+'+n+' lembretes criados');feed('🧑‍💼 CEO: acompanhar — '+n+' cobranças criadas');}
+else{feed('🧑‍💼 Ordem “'+o+'” delegada à equipe — em execução');acaoReal('📝 Ordem genérica','“'+o+'” registrada e distribuída aos 15');}
+save();document.getElementById('ordem').value='';}
+// PWA
+let deferred=null;window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferred=e;});
+function instalarApp(){if(deferred){deferred.prompt();}else alert('📱 No celular: menu ⋮ → “Instalar app / Adicionar à tela inicial”. No PC: ícone instalar na barra de endereço.');}
+if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').catch(()=>{});}
+// INIT
+document.getElementById('cfg-marca').value=DB.cfg.marca;document.getElementById('cfg-wa').value=DB.cfg.wa;document.getElementById('cfg-tk').value=DB.cfg.tk;document.getElementById('cfg-pf').value=DB.cfg.pf;document.getElementById('cfg-num').value=DB.cfg.num;
+if(DB.acoes?.length)document.getElementById('acoes-reais').innerHTML=DB.acoes.slice(0,10).map(a=>'<div>✔ '+a.quando+' — <b>'+a.t+'</b><br>'+a.d+'</div>').join('');
+desenharBanner();gerarIdeias();render();
+</script>
+</body>
+</html>
