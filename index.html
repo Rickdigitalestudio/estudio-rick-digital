@@ -258,6 +258,14 @@ canvas#bannerCanvas{width:100%;max-width:420px;border-radius:12px;border:1px sol
 <label>TikTok</label><input id="cfg-tk" value="https://www.tiktok.com/@ricklima991">
 <label>Portfólio</label><input id="cfg-pf" value="https://studiorickdigital.github.io/">
 <label>WhatsApp número (só números p/ mensagem direta)</label><input id="cfg-num" value="5511989426415">
+<label>☁️ Nuvem (mesmo controle PC + celular sem estar conectado) — cole a URL do Firebase Realtime Database</label><input id="cfg-cloud" placeholder="https://seu-projeto-default-rtdb.firebaseio.com">
+<p class="legend">Grátis: console.firebase.google.com → criar projeto → Realtime Database → copiar URL. PC e celular usam a mesma URL = mesmos leads/tarefas.</p>
+<div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.5rem">
+<button class="btn btn-p" onclick="cloudPush()">☁️⬆️ Enviar p/ nuvem</button>
+<button class="btn btn-v" onclick="cloudPull()">☁️⬇️ Puxar da nuvem</button>
+<button class="btn btn-wa" onclick="cloudAuto()">🔄 Auto-sync ON/OFF</button>
+<span class="legend" id="cloud-st">nuvem: off</span>
+</div>
 <button class="btn-g" style="margin-top:.8rem" onclick="salvarCfg()">💾 Salvar</button>
 <button class="btn btn-x" onclick="if(confirm('Apagar tudo?')){localStorage.removeItem(KEY);location.reload()}">🗑️ Apagar banco</button>
 <button class="btn btn-v" onclick="instalarApp()">📱 Instalar App (celular/PC)</button>
@@ -353,7 +361,7 @@ function salvarTarefa(){const t=document.getElementById('t-tit').value;if(!t)ret
 function okTar(id){DB.tarefas.find(t=>t.id===id).ok=true;save();}
 function copiarTexto(t){navigator.clipboard.writeText(t).then(()=>alert('✅ Copiado!'));}
 function copiarCodigo(){copiarTexto('<form id=cap><input name=nome required placeholder=Seu nome><input name=tel required placeholder=WhatsApp><button>Quero orçamento grátis</button></form><p>Resposta em: '+DB.cfg.wa+'</p>');}
-function salvarCfg(){DB.cfg={marca:document.getElementById('cfg-marca').value,wa:document.getElementById('cfg-wa').value,tk:document.getElementById('cfg-tk').value,pf:document.getElementById('cfg-pf').value,num:document.getElementById('cfg-num').value};save();alert('✅ Salvo!');}
+function salvarCfg(){DB.cfg={marca:document.getElementById('cfg-marca').value,wa:document.getElementById('cfg-wa').value,tk:document.getElementById('cfg-tk').value,pf:document.getElementById('cfg-pf').value,num:document.getElementById('cfg-num').value,cloud:document.getElementById('cfg-cloud').value.trim().replace(/\/$/,'')};save();alert('✅ Salvo! Nuvem: '+(DB.cfg.cloud||'não configurada'));}
 function exportCSV(){let s='nome;telefone;origem;servico;valor;etapa\n'+DB.leads.map(l=>[l.nome,l.tel,l.origem,l.servico,l.valor,l.etapa].join(';')).join('\n');let b=new Blob([s],{type:'text/csv'});let a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='leads-rick-digital.csv';a.click();}
 function importCSV(){const f=document.getElementById('csv').files[0];if(!f)return alert('Escolha o CSV');const r=new FileReader();r.onload=()=>{r.result.split('\n').slice(1).forEach(l=>{const c=l.split(/[;,]/);if(c[0])DB.leads.unshift({id:Date.now()+Math.random(),nome:c[0].trim(),tel:(c[1]||'').trim(),origem:c[2]||'CSV',servico:'Site Institucional',valor:997,etapa:'novo',data:new Date().toLocaleString('pt-BR')});});save();alert('✅ Importado!');};r.readAsText(f);}
 // MAPS
@@ -448,12 +456,18 @@ else if(o.includes('banner')){desenharBanner();acaoReal('🎨 Ordem CEO: banner'
 else if(o.includes('cobrar')||o.includes('acomp')){let n=0;DB.leads.filter(l=>l.etapa==='novo').forEach(l=>{DB.tarefas.push({id:Date.now()+n,tit:'Cobrar '+l.nome,data:new Date().toISOString().slice(0,16),ok:false});n++;});acaoReal('⏰ Ordem CEO: acompanhar','+'+n+' lembretes criados');feed('🧑‍💼 CEO: acompanhar — '+n+' cobranças criadas');}
 else{feed('🧑‍💼 Ordem “'+o+'” delegada à equipe — em execução');acaoReal('📝 Ordem genérica','“'+o+'” registrada e distribuída aos 15');}
 save();document.getElementById('ordem').value='';}
+// NUVEM — mesmo controle PC + celular, sem estar conectado ao celular
+let cloudTimer=null;
+function cloudURL(){return (DB.cfg.cloud||'').replace(/\/$/,'');}
+async function cloudPush(silent){const u=cloudURL();if(!u)return alert('Cole a URL do Firebase em Configurações → Nuvem');try{await fetch(u+'/crm.json',{method:'PUT',body:JSON.stringify({leads:DB.leads,tarefas:DB.tarefas,not:DB.not,updated:new Date().toISOString()})});document.getElementById('cloud-st').textContent='nuvem: enviado ✅ '+new Date().toLocaleTimeString('pt-BR');if(!silent)alert('✅ Nuvem atualizada! Abra no celular e puxe.');}catch(e){alert('⚠️ Falha nuvem — confira URL e regras do Firebase');}}
+async function cloudPull(){const u=cloudURL();if(!u)return alert('Cole a URL do Firebase em Configurações → Nuvem');try{const j=await(await fetch(u+'/crm.json')).json();if(j&&(j.leads||j.tarefas)){DB.leads=j.leads||DB.leads;DB.tarefas=j.tarefas||DB.tarefas;DB.not=j.not||DB.not;save();document.getElementById('cloud-st').textContent='nuvem: recebido ✅ '+new Date().toLocaleTimeString('pt-BR');alert('✅ Dados da nuvem carregados!');}else alert('Nuvem vazia ainda — envie primeiro.');}catch(e){alert('⚠️ Falha ao puxar — confira URL');}}
+function cloudAuto(){if(cloudTimer){clearInterval(cloudTimer);cloudTimer=null;document.getElementById('cloud-st').textContent='nuvem: off';return;}const u=cloudURL();if(!u)return alert('Cole a URL do Firebase primeiro');cloudTimer=setInterval(async()=>{try{await fetch(u+'/crm.json',{method:'PUT',body:JSON.stringify({leads:DB.leads,tarefas:DB.tarefas,not:DB.not,updated:new Date().toISOString()})});const j=await(await fetch(u+'/crm.json')).json();if(j&&j.updated){document.getElementById('cloud-st').textContent='nuvem: auto ✅ '+new Date().toLocaleTimeString('pt-BR');}}catch(e){}} ,15000);document.getElementById('cloud-st').textContent='nuvem: auto ON 🔄';alert('🔄 Auto-sync ligado! PC e celular trocam dados a cada 15s.');}
 // PWA
 let deferred=null;window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferred=e;});
 function instalarApp(){if(deferred){deferred.prompt();}else alert('📱 No celular: menu ⋮ → “Instalar app / Adicionar à tela inicial”. No PC: ícone instalar na barra de endereço.');}
 if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').catch(()=>{});}
 // INIT
-document.getElementById('cfg-marca').value=DB.cfg.marca;document.getElementById('cfg-wa').value=DB.cfg.wa;document.getElementById('cfg-tk').value=DB.cfg.tk;document.getElementById('cfg-pf').value=DB.cfg.pf;document.getElementById('cfg-num').value=DB.cfg.num;
+document.getElementById('cfg-marca').value=DB.cfg.marca;document.getElementById('cfg-wa').value=DB.cfg.wa;document.getElementById('cfg-tk').value=DB.cfg.tk;document.getElementById('cfg-pf').value=DB.cfg.pf;document.getElementById('cfg-num').value=DB.cfg.num;if(document.getElementById('cfg-cloud'))document.getElementById('cfg-cloud').value=DB.cfg.cloud||'';
 if(DB.acoes?.length)document.getElementById('acoes-reais').innerHTML=DB.acoes.slice(0,10).map(a=>'<div>✔ '+a.quando+' — <b>'+a.t+'</b><br>'+a.d+'</div>').join('');
 desenharBanner();gerarIdeias();render();
 </script>
