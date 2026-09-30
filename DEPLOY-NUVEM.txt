@@ -1,0 +1,29 @@
+CONTROLE COM O PC DESLIGADO — 2 camadas
+==========================================
+
+1) APP (tela) — precisa de link público (PC off = servidor local morre).
+   Caminho mais rápido SEM login git: Netlify Drop (2 min, grátis, https permanente)
+
+   a) Acesse: https://app.netlify.com/drop
+   b) Arraste o arquivo: estudio-rick-digital.zip (pasta Default Project)
+      - ou arraste a pasta estudio-rick-digital inteira
+   c) Receba o link: https://SEU-SITE.netlify.app
+   d) No celular abra o link > Instalar app (> vira PWA, funciona offline depois)
+   e) Guarde esse link: ele funciona com PC desligado, de qualquer internet.
+
+   Alternativas (quando quiser):
+   - GitHub Pages: gh auth login > gh repo create + push > Settings > Pages
+   - Vercel: https://vercel.com/new > upload da pasta > deploy
+   - Firebase Hosting: firebase init hosting > firebase deploy
+
+2) DADOS (leads/tarefas) — já funciona com PC off via Firebase.
+   a) console.firebase.google.com > Criar projeto > Realtime Database > modo teste
+   b) Copie a URL: https://SEU-PROJETO-default-rtdb.firebaseio.com
+   c) No app (PC e celular): Config > Nuvem > colar URL > Salvar
+   d) PC: [Enviar p/ nuvem] > Celular: [Puxar da nuvem] > ligar [Auto-sync ON] nos 2
+   e) Pronto: mexeu no celular, aparece no PC e vice-versa, PC off não importa.
+
+RESUMO
+- Servidor http://192.168.1.7:8080 = só com PC ligado + mesmo Wi-Fi (provisório).
+- Link Netlify (https) + Firebase = definitivo, PC desligado OK.
+- App instalado via PWA abre offline; dados vêm da nuvem quando há internet.
