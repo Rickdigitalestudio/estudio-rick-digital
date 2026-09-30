@@ -1,8 +1,8 @@
-LINK DO APLICATIVO P/ CELULAR (mesmo Wi-Fi):
+LINK DEFINITIVO DO APLICATIVO (funciona com PC DESLIGADO):
 
-http://192.168.1.7:8080/estudio-rick-digital/index.html
+https://ricklima991.github.io/estudio-rick-digital/
 
-1) No PC o servidor precisa estar ligado (rode Abrir-Servidor-Celular.bat)
-2) No celular, com o MESMO Wi-Fi, abra o link acima
-3) Menu > Adicionar a tela inicial = vira app
-4) Mesmo controle sem estar conectado ao celular: Config > Nuvem > cole URL Firebase > Auto-sync ON (nos 2 aparelhos)
+No celular: abra o link > Menu > Adicionar a tela inicial = vira app.
+Dados sincronizados PC+celular via Config > Nuvem (URL Firebase + Auto-sync ON nos 2).
+
+Link provisório mesma rede (só PC ligado): http://192.168.1.7:8080/estudio-rick-digital/index.html
