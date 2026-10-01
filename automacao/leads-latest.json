@@ -1,14 +1,22 @@
 {
- "varredura": "01/10/2026 20:26 UTC",
- "total": 25,
+ "varredura": "01/10/2026 20:28 UTC",
+ "total": 26,
  "leads": [
+  {
+   "nome": "Bar e Restaurante Perceu",
+   "fone": "",
+   "endereco": "",
+   "cidade": "São Paulo SP/Brasil",
+   "categoria": "restaurante",
+   "varredura": "01/10/2026 20:28 UTC"
+  },
   {
    "nome": "Rancho",
    "fone": "",
    "endereco": "",
    "cidade": "Rio de Janeiro/Brasil",
    "categoria": "restaurante",
-   "varredura": "01/10/2026 20:26 UTC"
+   "varredura": "01/10/2026 20:28 UTC"
   },
   {
    "nome": "Rico's Lanches",
@@ -16,7 +24,7 @@
    "endereco": "",
    "cidade": "Rio de Janeiro/Brasil",
    "categoria": "restaurante",
-   "varredura": "01/10/2026 20:26 UTC"
+   "varredura": "01/10/2026 20:28 UTC"
   },
   {
    "nome": "O Bom Galeto",
@@ -24,7 +32,7 @@
    "endereco": "",
    "cidade": "Rio de Janeiro/Brasil",
    "categoria": "restaurante",
-   "varredura": "01/10/2026 20:26 UTC"
+   "varredura": "01/10/2026 20:28 UTC"
   },
   {
    "nome": "Paraíso do Chopp",
@@ -32,7 +40,7 @@
    "endereco": "Rua Dois de Dezembro, Catete, Rio de Janeiro",
    "cidade": "Rio de Janeiro/Brasil",
    "categoria": "restaurante",
-   "varredura": "01/10/2026 20:26 UTC"
+   "varredura": "01/10/2026 20:28 UTC"
   },
   {
    "nome": "Botequim do Borges",
@@ -40,7 +48,7 @@
    "endereco": "Rua Dois de Dezembro, Catete, Rio de Janeiro",
    "cidade": "Rio de Janeiro/Brasil",
    "categoria": "restaurante",
-   "varredura": "01/10/2026 20:26 UTC"
+   "varredura": "01/10/2026 20:28 UTC"
   },
   {
    "nome": "Glória Gourmet",
@@ -48,7 +56,7 @@
    "endereco": "Rua do Catete",
    "cidade": "Rio de Janeiro/Brasil",
    "categoria": "restaurante",
-   "varredura": "01/10/2026 20:26 UTC"
+   "varredura": "01/10/2026 20:28 UTC"
   },
   {
    "nome": "Berbigão",
@@ -56,7 +64,7 @@
    "endereco": "Rua do Catete, Catete, Rio de Janeiro",
    "cidade": "Rio de Janeiro/Brasil",
    "categoria": "restaurante",
-   "varredura": "01/10/2026 20:26 UTC"
+   "varredura": "01/10/2026 20:28 UTC"
   },
   {
    "nome": "Charlotte",
@@ -64,7 +72,7 @@
    "endereco": "Praia de Botafogo, Rio de Janeiro",
    "cidade": "Rio de Janeiro/Brasil",
    "categoria": "restaurante",
-   "varredura": "01/10/2026 20:26 UTC"
+   "varredura": "01/10/2026 20:28 UTC"
   },
   {
    "nome": "Ben Ali",
@@ -72,7 +80,7 @@
    "endereco": "",
    "cidade": "Rio de Janeiro/Brasil",
    "categoria": "restaurante",
-   "varredura": "01/10/2026 20:26 UTC"
+   "varredura": "01/10/2026 20:28 UTC"
   },
   {
    "nome": "Le Brants",
@@ -80,7 +88,7 @@
    "endereco": "Travessa dos Tamoios",
    "cidade": "Rio de Janeiro/Brasil",
    "categoria": "restaurante",
-   "varredura": "01/10/2026 20:26 UTC"
+   "varredura": "01/10/2026 20:28 UTC"
   },
   {
    "nome": "Pizzaria Bella Capri",
@@ -88,7 +96,7 @@
    "endereco": "",
    "cidade": "Rio de Janeiro/Brasil",
    "categoria": "restaurante",
-   "varredura": "01/10/2026 20:26 UTC"
+   "varredura": "01/10/2026 20:28 UTC"
   },
   {
    "nome": "Vó Alzira",
@@ -96,7 +104,7 @@
    "endereco": "Rua Pedro Américo, Rio de Janeiro",
    "cidade": "Rio de Janeiro/Brasil",
    "categoria": "restaurante",
-   "varredura": "01/10/2026 20:26 UTC"
+   "varredura": "01/10/2026 20:28 UTC"
   },
   {
    "nome": "Louroza",
@@ -104,7 +112,7 @@
    "endereco": "",
    "cidade": "Rio de Janeiro/Brasil",
    "categoria": "restaurante",
-   "varredura": "01/10/2026 20:26 UTC"
+   "varredura": "01/10/2026 20:28 UTC"
   },
   {
    "nome": "Padaria Bakery",
@@ -112,7 +120,7 @@
    "endereco": "Avenida Mem de Sá, Centro, Rio de Janeiro",
    "cidade": "Rio de Janeiro/Brasil",
    "categoria": "restaurante",
-   "varredura": "01/10/2026 20:26 UTC"
+   "varredura": "01/10/2026 20:28 UTC"
   },
   {
    "nome": "Restaurante Bar Brasil",
@@ -120,7 +128,7 @@
    "endereco": "Avenida Mem de Sá",
    "cidade": "Rio de Janeiro/Brasil",
    "categoria": "restaurante",
-   "varredura": "01/10/2026 20:26 UTC"
+   "varredura": "01/10/2026 20:28 UTC"
   },
   {
    "nome": "Bistrô da Lapa",
@@ -128,7 +136,7 @@
    "endereco": "",
    "cidade": "Rio de Janeiro/Brasil",
    "categoria": "restaurante",
-   "varredura": "01/10/2026 20:26 UTC"
+   "varredura": "01/10/2026 20:28 UTC"
   },
   {
    "nome": "Catetelândia",
@@ -136,7 +144,7 @@
    "endereco": "",
    "cidade": "Rio de Janeiro/Brasil",
    "categoria": "restaurante",
-   "varredura": "01/10/2026 20:26 UTC"
+   "varredura": "01/10/2026 20:28 UTC"
   },
   {
    "nome": "Big Bi",
@@ -144,7 +152,7 @@
    "endereco": "",
    "cidade": "Rio de Janeiro/Brasil",
    "categoria": "restaurante",
-   "varredura": "01/10/2026 20:26 UTC"
+   "varredura": "01/10/2026 20:28 UTC"
   },
   {
    "nome": "Mr. Chan",
@@ -152,7 +160,7 @@
    "endereco": "",
    "cidade": "Rio de Janeiro/Brasil",
    "categoria": "restaurante",
-   "varredura": "01/10/2026 20:26 UTC"
+   "varredura": "01/10/2026 20:28 UTC"
   },
   {
    "nome": "WestFalia",
