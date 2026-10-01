@@ -1,16 +1,18 @@
-# 1-CLIQUE — WhatsApp automático (Evolution API)
-# Você não precisa digitar código. Só cliques:
+# 1-CLIQUE — WhatsApp automático (Evolution API v1 — simples, sem banco de dados)
+# Você não precisa digitar código. Só cliques. Versão nova (v2) exige Postgres+Redis,
+# por isso usamos a v1 estável aqui: 1 serviço, 1 senha, pronto.
 
 # OPÇÃO A — Render (mais fácil, grátis, 3 cliques):
-# 1. Abra: https://render.com/deploy?repo=https://github.com/EvolutionAPI/evolution-api
+# 1. Abra https://dashboard.render.com > New > Web Service > Deploy an existing image
+#    Imagem: atendai/evolution-api:latest
 # 2. Em Environment, adicione: AUTHENTICATION_API_KEY = crie-uma-senha-forte-123
-# 3. Deploy > aguarde a URL (ex: https://sua-evo.onrender.com)
+# 3. Create Web Service > aguarde a URL (ex: https://sua-evo.onrender.com)
 #
 # OPÇÃO B — Railway (grátis com trial):
 # 1. Abra: https://railway.app/new
 # 2. Deploy Docker Image > imagem: atendai/evolution-api:latest
 # 3. Variables: AUTHENTICATION_API_KEY = crie-uma-senha-forte-123
-# 4. Pegue a URL pública gerada.
+# 4. Pegue a URL pública gerada (Settings > Networking > Generate Domain).
 #
 # DEPOIS (2 min, no seu celular + app):
 # 1. Abra a URL da Evolution > Create Instance > nome: rick-digital > aparece QR
