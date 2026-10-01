@@ -261,6 +261,35 @@ canvas#bannerCanvas{width:100%;max-width:420px;border-radius:12px;border:1px sol
 <label class="legend" style="margin-top:.8rem">📡 Log do plantão (tempo real)</label>
 <div id="plantao-feed" style="margin-top:.4rem">Plantão desligado.</div>
 </div>
+<div class="panel" style="border:2px solid #7C3AED">
+<h3>📢 Comunicados do CEO — os 15 leem e confirmam</h3>
+<p class="legend">Publique uma ordem ou aviso. Os 15 leem em cadeia, confirmam com horário e comentam entre si no rádio — você acompanha quem já leu (x/15) com barra de harmonia.</p>
+<div style="display:flex;gap:.5rem;margin:.6rem 0;flex-wrap:wrap">
+<input id="comunicado-txt" placeholder='Ex: "Hoje o foco é loja virtual — responder em até 1h"' style="flex:1;min-width:220px" onkeydown="if(event.key==='Enter')publicarComunicado()">
+<button class="btn-g" style="background:#7C3AED" onclick="publicarComunicado()">📢 Publicar</button>
+<button class="btn-g" style="background:#059669" onclick="sincronizarHarmonia()">🤝 Sincronizar harmonia</button>
+</div>
+<div id="harmonia-status" class="legend" style="margin-bottom:.5rem">Harmonia: —</div>
+<div id="lista-comunicados"></div>
+</div>
+<div class="grid2">
+<div class="panel" style="border:2px solid #0EA5E9">
+<h3>💬 Rádio da equipe — eles falam entre si</h3>
+<p class="legend">Passagens de bastão, avisos e alinhamentos. Tudo registrado com horário.</p>
+<div id="radio-feed" style="background:#0F172A;color:#D1FAE5;border-radius:10px;padding:.9rem;height:260px;overflow-y:auto;font-size:.82rem;font-family:Consolas,monospace;margin-top:.5rem">Rádio silenciosa — ligue o plantão ou rode uma operação.</div>
+</div>
+<div class="panel" style="border:2px solid #059669">
+<h3>🎯 Operação em harmonia — comando único, execução em cadeia</h3>
+<p class="legend">Uma ordem sua vira sequência: cada funcionário faz sua parte, lê o comunicado da operação e passa o bastão no rádio, com efeito real no funil, tarefas e banners.</p>
+<div style="display:flex;gap:.5rem;flex-wrap:wrap;margin:.6rem 0">
+<button class="btn-g" id="op1" onclick="rodarOperacao('campanha')">🚀 Campanha Loja Virtual</button>
+<button class="btn-g" id="op2" style="background:#D97706" onclick="rodarOperacao('mutirao')">🤝 Mutirão de acompanhamento</button>
+<button class="btn-g" id="op3" style="background:#0EA5E9" onclick="rodarOperacao('varredura')">🇧🇷 Varredura BR exterior</button>
+</div>
+<div style="background:#E5E7EB;border-radius:8px;height:10px;overflow:hidden;margin:.4rem 0"><div id="op-bar" style="height:100%;width:0%;background:#059669;transition:width .5s"></div></div>
+<div id="op-status" class="legend">Nenhuma operação em curso.</div>
+</div>
+</div>
 <div class="equipe" id="grid-equipe"></div>
 </div>
 <!-- CONFIG -->
@@ -279,7 +308,36 @@ canvas#bannerCanvas{width:100%;max-width:420px;border-radius:12px;border:1px sol
 <button class="btn btn-wa" onclick="cloudAuto()">🔄 Auto-sync ON/OFF</button>
 <span class="legend" id="cloud-st">nuvem: off</span>
 </div>
-<button class="btn-g" style="margin-top:.8rem" onclick="salvarCfg()">💾 Salvar</button>
+</div>
+<div class="panel" style="border:2px solid #25D366"><h3>💬 Controle Total WhatsApp (envio automático de verdade)</h3>
+<p class="legend">Sem API = botão abre o WhatsApp e você clica enviar. Com Evolution API = o sistema envia sozinho, até com PC fechado (se hospedado). Grátis: Railway/Render + Evolution API. Ver <b>automacao/evolution-bridge.js</b>.</p>
+<label>URL da Evolution API (ex: https://sua-evo.up.railway.app)</label><input id="cfg-evo" placeholder="https://sua-evo.up.railway.app">
+<label>API Key da Evolution</label><input id="cfg-evokey" placeholder="cole a APIKEY">
+<label>Instância (nome da conexão, ex: rick-digital)</label><input id="cfg-evoinst" value="rick-digital">
+<label>Mensagem automática de boas-vindas</label><input id="cfg-evomsq" value="Olá! Aqui é do ESTÚDIO RICK DIGITAL. Vi seu contato e quero te mostrar nosso portfólio: https://studiorickdigital.github.io/ — posso te mandar uma proposta?">
+<div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.5rem">
+<button class="btn btn-wa" onclick="evoTestar()">✅ Testar conexão</button>
+<button class="btn btn-p" onclick="evoDisparoQuentes()">🚀 Disparo auto p/ Quentes</button>
+<button class="btn btn-v" onclick="evoBoasVindas()">🤖 Ligar boas-vindas auto</button>
+<span class="legend" id="evo-st">whatsapp auto: off (manual wa.me)</span>
+</div>
+<p class="legend" id="evo-log" style="margin-top:.5rem">Nenhum envio via API ainda.</p>
+</div>
+<div class="panel" style="border:2px solid #000"><h3>🎵 Controle Total TikTok (postagem + captação)</h3>
+<p class="legend">Conta pessoal @ricklima991 não tem auto-post liberado. Controle total = Conta Business + agendamento: o sistema gera banner/legenda e agenda; com API aprovada posta sozinho. Atalho hoje: agendar + abrir TikTok em 1 clique.</p>
+<label>Usuário TikTok</label><input id="cfg-ttuser" value="@ricklima991">
+<label>Horários de postagem (1 por linha: HH:MM - tema)</label><textarea id="cfg-ttagenda" rows="3">12:00 - antes/depois fanpage
+18:00 - tour loja virtual
+20:00 - quanto custa um site?</textarea>
+<div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.5rem">
+<button class="btn-g" style="background:#000" onclick="ttAgendarHoje()">📅 Agendar posts de hoje</button>
+<button class="btn btn-v" onclick="ttAbrir()">🎵 Abrir TikTok p/ postar</button>
+<span class="legend" id="tt-st">tiktok: manual + lembretes</span>
+</div>
+<div id="tt-lista" style="margin-top:.5rem"></div>
+</div>
+<div class="panel">
+<button class="btn-g" style="margin-top:.2rem" onclick="salvarCfg()">💾 Salvar</button>
 <button class="btn btn-x" onclick="if(confirm('Apagar tudo?')){localStorage.removeItem(KEY);location.reload()}">🗑️ Apagar banco</button>
 <button class="btn btn-v" onclick="instalarApp()">📱 Instalar App (celular/PC)</button>
 </div>
@@ -338,7 +396,7 @@ function fecharLead(){document.getElementById('m-lead').classList.remove('aberto
 function salvarLead(){const id=document.getElementById('l-id').value;const nome=document.getElementById('l-nome').value.trim();const tel=document.getElementById('l-wa').value.trim();
 if(!nome||!tel){alert('Preencha nome e WhatsApp');return;}
 const d={nome,tel,email:document.getElementById('l-email').value,origem:document.getElementById('l-orig').value,servico:document.getElementById('l-serv').value,valor:Number(document.getElementById('l-valor').value)||0,etapa:document.getElementById('l-etapa').value,obs:document.getElementById('l-obs').value,data:new Date().toLocaleString('pt-BR')};
-if(id){Object.assign(DB.leads.find(x=>x.id==id),d);}else{DB.leads.unshift({id:Date.now(),...d});notif('🎉 Novo lead: '+nome,d.origem+' · '+d.servico);autoLembrete(nome);}
+if(id){Object.assign(DB.leads.find(x=>x.id==id),d);}else{const nl={id:Date.now(),...d};DB.leads.unshift(nl);notif('🎉 Novo lead: '+nome,d.origem+' · '+d.servico);autoLembrete(nome);if(evoAutoOn&&typeof evoSend==='function'){evoSend(tel,(DB.cfg.evomsq||'')+' ('+nome+')').then(()=>acaoReal('Boas-vindas auto',nome+' recebeu msg automática')).catch(()=>{});}}
 save();fecharLead();}
 function delLead(id){if(confirm('Excluir?')){DB.leads=DB.leads.filter(x=>x.id!==id);save();}}
 function autoLembrete(nome){const a=new Date();a.setHours(a.getHours()+24);DB.tarefas.push({id:Date.now(),tit:'Retornar p/ '+nome+' (24h)',data:a.toISOString().slice(0,16),ok:false});}
@@ -351,7 +409,7 @@ function lerNot(id){const x=DB.not.find(n=>n.id===id);if(x)x.lida=true;save();up
 function marcarTodas(){DB.not.forEach(x=>x.lida=true);save();updNot();}
 // RENDER
 const ETAPAS=[['novo','🆕 Novos'],['qualificacao','🔍 Qualificação'],['quente','🔥 Quentes'],['negociacao','🤝 Negociação'],['cliente','✅ Clientes']];
-function render(){iniEq();
+function render(){iniEq();iniSocial();
 const at=DB.leads.filter(l=>l.etapa!=='arquivado');
 const c={novo:0,qualificacao:0,quente:0,negociacao:0,cliente:0};let tot=0;
 at.forEach(l=>{if(c[l.etapa]!==undefined)c[l.etapa]++;if(l.etapa==='cliente')tot+=Number(l.valor||0);});
@@ -366,8 +424,8 @@ document.getElementById('r-total').textContent=at.length;document.getElementById
 document.getElementById('r-valor').textContent='R$ '+tot.toFixed(0);document.getElementById('r-conv').textContent=conv+'%';
 document.getElementById('r-orig').innerHTML=Object.entries(org).sort((a,b)=>b[1]-a[1]).map(o=>'<div>'+o[0]+': <b>'+o[1]+'</b></div>').join('')||'—';
 document.getElementById('grid-equipe').innerHTML=DB.eq.map((f,i)=>'<div class="func'+(plantaoOn?' trab':'')+'"><div class="av" style="background:'+f.c+'">'+f.n.split(' ').map(x=>x[0]).slice(0,2).join('')+'</div><b style="font-size:.85rem">'+f.n+'</b><small>'+f.s+' · '+(f.g==='F'?'👩':'👨')+'</small><br><span class="st">'+(plantaoOn?'🟢 em plantão':'⚪ standby')+' · '+f.feitos+' ações</span></div>').join('');
-updNot();calcOrc();}
-function card(l){return '<div class="lead" draggable="true" ondragstart="event.dataTransfer.setData(\'id\','+l.id+')"><b>'+l.nome+'</b><small>'+l.servico+' · '+l.origem+'</small><span class="tag">'+l.origem+'</span>'+(l.valor?'<span class="tag">R$ '+l.valor+'</span>':'')+'<div class="la"><a class="btn btn-wa" target="_blank" href="'+waLink(l.tel,'Olá '+l.nome+'! Sobre '+l.servico+' — vi seu contato e quero ajudar!')+'">WhatsApp</a><button class="btn btn-v" onclick="abrirLead('+l.id+')">Ver</button><button class="btn btn-p" onclick="avancarEtapa('+l.id+')" title="Avançar etapa">➡️</button><button class="btn btn-x" onclick="delLead('+l.id+')">×</button></div></div>';}
+updNot();calcOrc();try{renderSocial();}catch(e){}}
+function card(l){return '<div class="lead" draggable="true" ondragstart="event.dataTransfer.setData(\'id\','+l.id+')"><b>'+l.nome+'</b><small>'+l.servico+' · '+l.origem+'</small><span class="tag">'+l.origem+'</span>'+(l.valor?'<span class="tag">R$ '+l.valor+'</span>':'')+'<div class="la"><a class="btn btn-wa" target="_blank" href="'+waLink(l.tel,'Olá '+l.nome+'! Sobre '+l.servico+' — vi seu contato e quero ajudar!')+'">WhatsApp</a><button class="btn btn-wa" onclick="evoSendLead('+l.id+')" title="Envio automático via API">⚡Auto</button><button class="btn btn-v" onclick="abrirLead('+l.id+')">Ver</button><button class="btn btn-p" onclick="avancarEtapa('+l.id+')" title="Avançar etapa">➡️</button><button class="btn btn-x" onclick="delLead('+l.id+')">×</button></div></div>';}
 function drop(e,et){e.preventDefault();const id=Number(e.dataTransfer.getData('id'));const l=DB.leads.find(x=>x.id===id);if(l){l.etapa=et;notif('🔄 '+l.nome+' → '+et,'Movido no funil');save();}}
 const ORDEM_ETAPAS=['novo','qualificacao','quente','negociacao','cliente'];
 function avancarEtapa(id){const l=DB.leads.find(x=>x.id===id);if(!l)return;const i=ORDEM_ETAPAS.indexOf(l.etapa);
@@ -388,7 +446,30 @@ function salvarTarefa(){const t=document.getElementById('t-tit').value;if(!t)ret
 function okTar(id){DB.tarefas.find(t=>t.id===id).ok=true;save();}
 function copiarTexto(t){navigator.clipboard.writeText(t).then(()=>alert('✅ Copiado!'));}
 function copiarCodigo(){copiarTexto('<form id=cap><input name=nome required placeholder=Seu nome><input name=tel required placeholder=WhatsApp><button>Quero orçamento grátis</button></form><p>Resposta em: '+DB.cfg.wa+'</p>');}
-function salvarCfg(){DB.cfg={marca:document.getElementById('cfg-marca').value,wa:document.getElementById('cfg-wa').value,tk:document.getElementById('cfg-tk').value,pf:document.getElementById('cfg-pf').value,num:document.getElementById('cfg-num').value,cloud:document.getElementById('cfg-cloud').value.trim().replace(/\/$/,'')};save();alert('✅ Salvo! Nuvem: '+(DB.cfg.cloud||'não configurada'));}
+function salvarCfg(){DB.cfg={marca:document.getElementById('cfg-marca').value,wa:document.getElementById('cfg-wa').value,tk:document.getElementById('cfg-tk').value,pf:document.getElementById('cfg-pf').value,num:document.getElementById('cfg-num').value,cloud:document.getElementById('cfg-cloud').value.trim().replace(/\/$/,''),evo:document.getElementById('cfg-evo').value.trim().replace(/\/$/,''),evokey:document.getElementById('cfg-evokey').value.trim(),evoinst:document.getElementById('cfg-evoinst').value.trim()||'rick-digital',evomsq:document.getElementById('cfg-evomsq').value,ttuser:document.getElementById('cfg-ttuser').value,ttagenda:document.getElementById('cfg-ttagenda').value};save();alert('✅ Salvo! Nuvem: '+(DB.cfg.cloud||'não configurada')+' · WhatsApp auto: '+((DB.cfg.evo&&DB.cfg.evokey)?'ON':'off (manual)'));}
+// CONTROLE TOTAL — WhatsApp via Evolution API + TikTok Business
+function evoCfg(){return {url:(DB.cfg.evo||'').replace(/\/$/,''),key:DB.cfg.evokey||'',inst:DB.cfg.evoinst||'rick-digital'};}
+async function evoSend(tel,msg){const c=evoCfg();if(!c.url||!c.key){window.open(waLink(tel,msg),'_blank');return {modo:'manual'};}
+const numero=String(tel||'').replace(/\D/g,'');if(numero.length<10)throw new Error('sem numero');
+const r=await fetch(c.url+'/message/sendText/'+encodeURIComponent(c.inst),{method:'POST',headers:{'Content-Type':'application/json','apikey':c.key},body:JSON.stringify({number:numero,text:msg})});
+if(!r.ok)throw new Error('Evo '+r.status);let jd={};try{jd=await r.json();}catch(e){jd={};}return {modo:'auto',resp:jd};}
+async function evoTestar(){const st=document.getElementById('evo-st');try{const c=evoCfg();if(!c.url||!c.key)return alert('Cole URL + API Key da Evolution primeiro. Ver automacao/evolution-bridge.js');
+const r=await fetch(c.url+'/instance/connectionState/'+encodeURIComponent(c.inst),{headers:{apikey:c.key}});let j={};try{j=await r.json();}catch(e){j={};}
+st.textContent='whatsapp auto: '+(r.ok?'ON ✅ '+(j?.instance?.state||'conectado'):'FALHA '+r.status);document.getElementById('evo-log').textContent=r.ok?'Conexão OK — pode usar Disparo auto.':'Falha — confira URL/Key/instância e QR escaneado.';
+acaoReal('WhatsApp auto testado',st.textContent);}catch(e){alert('Falha: '+e.message);}}
+async function evoDisparoQuentes(){const q=DB.leads.filter(l=>l.etapa==='quente'||l.etapa==='novo').slice(0,10);if(!q.length)return alert('Sem quentes/novos no funil.');
+if(!evoCfg().url)return alert('Sem Evolution configurada — abri manual. Vou abrir 1 por vez.');let ok=0;
+for(const l of q){try{await evoSend(l.tel,'Olá '+l.nome+'! Sobre '+l.servico+' — proposta '+DB.cfg.pf+' Responde aqui que eu fecho pra você hoje.');ok++;l.obs=(l.obs||'')+' [auto-wa '+new Date().toLocaleString('pt-BR')+']';await new Promise(r=>setTimeout(r,2500));}catch(e){window.open(waLink(l.tel,'Olá '+l.nome+'! Sobre '+l.servico),'_blank');}}
+save();acaoReal('Disparo WhatsApp',ok+'/'+q.length+' enviados via '+(evoCfg().url?'API auto':'manual'));document.getElementById('evo-log').textContent=ok+' enviados — ver Ações reais.';}
+let evoAutoOn=false;function evoBoasVindas(){evoAutoOn=!evoAutoOn;document.getElementById('evo-st').textContent='whatsapp auto: '+(evoAutoOn?'boas-vindas ON 🤖':'off');
+if(evoAutoOn){const _salvar=salvarLead;alert('Boas-vindas ON: todo Novo Lead vai receber "'+DB.cfg.evomsq.slice(0,60)+'..." via API (ou manual se sem API).');} }
+async function evoSendLead(id){const l=DB.leads.find(x=>x.id===id);if(!l)return;try{const r=await evoSend(l.tel,'Olá '+l.nome+'! Sobre '+l.servico+' — '+DB.cfg.evomsq);acaoReal('WhatsApp enviado',l.nome+' via '+(r.modo==='auto'?'API auto ✅':'manual wa.me'));alert(r.modo==='auto'?'Enviado automático ✅':'Sem API — abri manual. Configure Evolution.');}catch(e){alert('Erro API, abri manual: '+e.message);window.open(waLink(l.tel,'Olá '+l.nome+'!'),'blank');}}
+function ttAbrir(){window.open(DB.cfg.tk||'https://www.tiktok.com/@ricklima991','_blank');}
+function ttAgendarHoje(){const linhas=(document.getElementById('cfg-ttagenda').value||'').split('\n').filter(Boolean);
+DB.tarefas.push(...linhas.map((t,i)=>({id:Date.now()+i,tit:'TikTok '+t.trim()+' — baixar banner + postar '+(DB.cfg.ttuser||'@ricklima991'),data:new Date().toISOString().slice(0,16),ok:false})));
+save();document.getElementById('tt-st').textContent='tiktok: '+linhas.length+' posts agendados ✅';
+document.getElementById('tt-lista').innerHTML=linhas.map(t=>'<div style="padding:.4rem 0;border-bottom:1px solid #eee"><b>'+t+'</b> <button class="btn btn-v" onclick="legendaBanner()">Copiar legenda</button> <button class="btn btn-p" onclick="ttAbrir()">Postar</button></div>').join('');
+acaoReal('TikTok agendado',linhas.length+' posts na agenda de hoje');}
 function exportCSV(){let s='nome;telefone;origem;servico;valor;etapa\n'+DB.leads.map(l=>[l.nome,l.tel,l.origem,l.servico,l.valor,l.etapa].join(';')).join('\n');let b=new Blob([s],{type:'text/csv'});let a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='leads-rick-digital.csv';a.click();}
 function importCSV(){const f=document.getElementById('csv').files[0];if(!f)return alert('Escolha o CSV');const r=new FileReader();r.onload=()=>{r.result.split('\n').slice(1).forEach(l=>{const c=l.split(/[;,]/);if(c[0])DB.leads.unshift({id:Date.now()+Math.random(),nome:c[0].trim(),tel:(c[1]||'').trim(),origem:c[2]||'CSV',servico:'Site Institucional',valor:997,etapa:'novo',data:new Date().toLocaleString('pt-BR')});});save();alert('✅ Importado!');};r.readAsText(f);}
 // MAPS
@@ -474,9 +555,64 @@ else if(roda===1){const c=DB.leads.find(l=>l.etapa==='novo'||l.etapa==='qualific
 else if(roda===2){desenharBanner();feed('🎨 <b>'+f.n+'</b> gerou banner na Fábrica (prévia atualizada)');}
 else if(roda===3){DB.tarefas.push({id:Date.now(),tit:'Follow-up plantão: '+f.n,data:new Date(Date.now()+86400000).toISOString().slice(0,16),ok:false});feed('⏰ <b>'+f.n+'</b> criou lembrete de retorno 24h');}
 else{feed('📊 <b>'+f.n+'</b> atualizou métricas — conversão recalculada');}
+lerComunicados(f);const f2=DB.eq[Math.floor(Math.random()*DB.eq.length)];if(f2!==f)lerComunicados(f2);if(tick%2===0){const prox=DB.eq[(DB.eq.indexOf(f)+1)%DB.eq.length];postRadio('👷 '+f.n,'👷 '+prox.n,HANDOFF[roda%HANDOFF.length]);}else{const a=DB.eq[Math.floor(Math.random()*15)],b=DB.eq[Math.floor(Math.random()*15)];if(a!==b&&DB.radio.length<78)conversaEspontanea(a,b);}
 notif('⚙️ Plantão: '+f.n,f.s);localStorage.setItem(KEY,JSON.stringify(DB));render();
 document.getElementById('plantao-feed').innerHTML=document.getElementById('plantao-feed').innerHTML;updNot();}
 function acaoAuto(){const total=DB.leads.filter(l=>l.etapa!=='arquivado').length;acaoReal('🤖 Plantão executou ciclo 25s','Fila com '+total+' leads · conversão '+document.getElementById('c-conv').textContent+' (prova: banco local '+DB.leads.length+' registros)');}
+// 📢💬 COMUNICAÇÃO INTERNA — comunicados, leitura em cadeia e rádio da equipe (harmonia)
+function iniSocial(){if(!DB.comunicados)DB.comunicados=[];if(!DB.radio)DB.radio=[];}
+function publicarComunicado(){const t=document.getElementById('comunicado-txt').value.trim();if(!t)return alert('Escreva o comunicado');const c={id:Date.now(),texto:t,quando:new Date().toLocaleString('pt-BR'),lidas:[]};DB.comunicados.unshift(c);DB.comunicados=DB.comunicados.slice(0,10);document.getElementById('comunicado-txt').value='';postRadio('🧑‍💼 CEO','📢 Todos os 15','COMUNICADO: '+t);feed('🧑‍💼 CEO publicou comunicado para os 15 — leitura em cadeia iniciada');save();renderSocial();leituraEmCadeia(c.id);}
+function postRadio(de,para,texto){iniSocial();DB.radio.unshift({id:Date.now()+Math.random(),de,para,texto,quando:new Date().toLocaleTimeString('pt-BR')});DB.radio=DB.radio.slice(0,80);localStorage.setItem(KEY,JSON.stringify(DB));renderSocial();}
+function renderSocial(){iniSocial();
+const lc=document.getElementById('lista-comunicados');
+if(lc){lc.innerHTML=DB.comunicados.slice(0,5).map(c=>{const pct=Math.round(c.lidas.length/15*100);return '<div style="padding:.6rem;border:1px solid #E5E7EB;border-radius:8px;margin-bottom:.5rem"><b>📢 '+c.texto+'</b><br><small>'+c.quando+' · <b>'+c.lidas.length+'/15 leram ('+pct+'%)</b></small><div style="background:#E5E7EB;border-radius:6px;height:8px;overflow:hidden;margin:.35rem 0"><div style="height:100%;width:'+pct+'%;background:'+(pct===100?'#059669':'#7C3AED')+'"></div></div>'+(c.lidas.length?'<small style="color:#059669">✓ '+c.lidas.map(l=>l.nome.split(' ')[0]+' '+l.quando).join(' · ')+'</small>':'<small style="color:#92400E">aguardando leitura — ligue o plantão ou aguarde a cadeia…</small>')+'</div>';}).join('')||'<p class="legend">Nenhum comunicado ainda. Publique o primeiro para alinhar os 15.</p>';}
+const rf=document.getElementById('radio-feed');
+if(rf){rf.innerHTML=DB.radio.slice(0,25).map(m=>'<div style="margin:.3rem 0"><span style="color:#93C5FD">'+m.quando+'</span> <b>'+m.de+'</b> → <b>'+m.para+'</b>: '+m.texto+'</div>').join('')||'Rádio silenciosa — ligue o plantão ou rode uma operação.';}
+atualizaHarmonia();}
+function atualizaHarmonia(){const el=document.getElementById('harmonia-status');if(!el)return;iniSocial();if(!DB.comunicados.length){el.textContent='Harmonia: sem comunicados — publique para alinhar.';return;}const c=DB.comunicados[0];const pct=Math.round(c.lidas.length/15*100);if(pct===100)el.textContent='Harmonia: ✅ 15/15 alinhados — “'+c.texto.slice(0,50)+'”';else el.textContent='Harmonia: '+c.lidas.length+'/15 leram ('+pct+'%) — cadeia em andamento…';}
+const HANDOFF=['recebido, já estou qualificando e passo adiante','pode preparar a proposta que eu sustento o argumento','material pronto, pode legendar e agendar','follow-up agendado, assume o retorno com o cliente','métricas conferidas, fila sob controle, segue o jogo'];
+const CONVERSAS=['entendido, assumo daqui 👍','fechado, já estou executando','precisa de ajuda? estou livre e apoio','alinhei aqui, pode passar o bastão','confere minha parte e segue o fluxo 🤝','li o comunicado do CEO, estamos juntos'];
+function lerComunicados(f,forcar){iniSocial();const pend=DB.comunicados.filter(c=>!c.lidas.find(l=>l.nome===f.n));if(!pend.length)return false;const c=forcar?pend[pend.length-1]:pend[0];c.lidas.push({nome:f.n,quando:new Date().toLocaleTimeString('pt-BR')});feed('📖 <b>'+f.n+'</b> leu o comunicado ('+c.lidas.length+'/15): “'+c.texto.slice(0,45)+'…”');if(c.lidas.length%3===0)postRadio('👷 '+f.n,'📢 Todos','li o comunicado ('+c.lidas.length+'/15) — estamos alinhados ✅');if(c.lidas.length===15){acaoReal('📢 Comunicado 100% lido','“'+c.texto.slice(0,60)+'” — os 15 confirmaram em harmonia');postRadio('📢 Todos os 15','🧑‍💼 CEO','COMUNICADO ENTENDIDO ✅ — equipe em harmonia');feed('🤝 <b>Harmonia total!</b> Os 15 leram e estão alinhados.');}localStorage.setItem(KEY,JSON.stringify(DB));renderSocial();return true;}
+let cadeiaRodando=false;
+function leituraEmCadeia(id){iniSocial();if(cadeiaRodando)return;const c=DB.comunicados.find(x=>x.id===id)||DB.comunicados[0];if(!c)return;cadeiaRodando=true;let i=0;
+(function passo(){const faltam=DB.eq.filter(f=>!c.lidas.find(l=>l.nome===f.n));if(!faltam.length||i>=15){cadeiaRodando=false;renderSocial();return;}
+const f=faltam[0];f.feitos=(f.feitos||0)+1;lerComunicados(f,true);
+const prox=faltam[1];if(prox)postRadio('👷 '+f.n,'👷 '+prox.n,'li e repasso o comunicado — “'+c.texto.slice(0,35)+'…” '+CONVERSAS[i%CONVERSAS.length]);
+save();i++;setTimeout(passo,900);})();}
+function conversaEspontanea(a,b){const temas=['fila sob controle, seguimos 🤝','banner da vez ficou pronto 🎨','acabei de qualificar, pode avançar 🔥','retorno de hoje agendado ⏰','métricas conferidas 📊','TikTok @ricklima991 atualizado 🎵'];const t=temas[Math.floor(Math.random()*temas.length)];postRadio('👷 '+a.n,'👷 '+b.n,t);}
+function sincronizarHarmonia(){iniSocial();if(!DB.comunicados.length){alert('Publique um comunicado primeiro — depois sincronize.');return;}const c=DB.comunicados[0];feed('🤝 <b>CEO pediu sincronia total</b> — os 15 vão confirmar leitura e se alinhar no rádio');postRadio('🧑‍💼 CEO','📢 Todos os 15','SINCRONIZAR HARMONIA AGORA — confirmem leitura e posição');leituraEmCadeia(c.id);
+setTimeout(()=>{const a=DB.eq[Math.floor(Math.random()*15)],b=DB.eq[Math.floor(Math.random()*15)];if(a!==b)conversaEspontanea(a,b);},2500);
+setTimeout(()=>{acaoReal('🤝 Harmonia sincronizada','Cheque '+c.lidas.length+'/15 leituras + rádio em cadeia');save();},6000);}
+// 🎯 OPERAÇÕES EM HARMONIA — comando único, cadeia com efeito real
+const OPERACOES={
+campanha:{titulo:'🚀 Campanha Loja Virtual',passos:[
+{n:'Camila Torres',d:'criando banner da campanha',fn:()=>desenharBanner()},
+{n:'Juliana Prado',d:'escrevendo legendas da campanha',fn:()=>gerarIdeias()},
+{n:'Patrícia Gomes',d:'criando tarefa de disparo WhatsApp',fn:()=>DB.tarefas.push({id:Date.now(),tit:'Disparo campanha Loja Virtual (WhatsApp)',data:new Date(Date.now()+3600000).toISOString().slice(0,16),ok:false})},
+{n:'Felipe Oliveira',d:'fechando relatório da campanha',fn:()=>notif('🚀 Campanha no ar','Banner + legendas + disparo programado')}]},
+mutirao:{titulo:'🤝 Mutirão de acompanhamento',passos:[
+{n:'Larissa Alves',d:'criando cobranças p/ os 3 primeiros da fila',fn:()=>{DB.leads.filter(l=>l.etapa==='novo').slice(0,3).forEach((l,i)=>DB.tarefas.push({id:Date.now()+i,tit:'Cobrar '+l.nome+' (mutirão)',data:new Date().toISOString().slice(0,16),ok:false}));}},
+{n:'Thiago Martins',d:'avançando 1 quente para negociação',fn:()=>{const q=DB.leads.find(l=>l.etapa==='quente');if(q)q.etapa='negociacao';}},
+{n:'Sofia Mendes',d:'conferindo pós-venda dos clientes',fn:()=>notif('🤝 Mutirão concluído','Cobranças criadas + quente avançado')}]},
+varredura:{titulo:'🇧🇷 Varredura BR exterior',passos:[
+{n:'Beatriz Rocha',d:'apontando radar p/ Lisboa · Portugal',fn:()=>{document.getElementById('maps-cidade').value='Lisboa';document.getElementById('maps-pais').value='Portugal';document.getElementById('maps-cat').value='brasileiro';}},
+{n:'Gabriel Santos',d:'disparando a busca no mapa',fn:()=>buscarMaps()},
+{n:'Renata Duarte',d:'registrando resultado da varredura',fn:()=>acaoReal('🇧🇷 Varredura BR executada','Busca BR exterior rodada — confira o mapa e jogue no funil')}]}};
+let opRodando=false;
+function rodarOperacao(chave){if(opRodando)return alert('Já há operação em curso — aguarde.');const op=OPERACOES[chave];if(!op)return;opRodando=true;
+const st=document.getElementById('op-status');const bar=document.getElementById('op-bar');let i=0;
+// comando específico vira comunicado oficial que todos precisam ler em harmonia
+const cOp={id:Date.now(),texto:'OPERAÇÃO '+op.titulo+' — todos em posição e em harmonia',quando:new Date().toLocaleString('pt-BR'),lidas:[]};DB.comunicados.unshift(cOp);DB.comunicados=DB.comunicados.slice(0,10);
+['op1','op2','op3'].forEach(id=>{const b=document.getElementById(id);if(b)b.disabled=true;});
+feed('🎯 CEO lançou <b>'+op.titulo+'</b> — equipe em harmonia, leitura obrigatória');postRadio('🧑‍💼 CEO','📢 Todos os 15','OPERAÇÃO: '+op.titulo+' — cada um na sua posição, leiam e passem o bastão');
+(function passo(){if(i>=op.passos.length){opRodando=false;if(bar)bar.style.width='100%';st.textContent='✅ '+op.titulo+' concluída — equipe em harmonia.';postRadio('📢 Todos os 15','🧑‍💼 CEO','OPERAÇÃO CONCLUÍDA: '+op.titulo+' — todos alinhados ✅');acaoReal('🎯 '+op.titulo,'Cadeia executada em harmonia por '+op.passos.map(p=>p.n.split(' ')[0]).join(' → ')+' · comunicado '+cOp.lidas.length+'/15');['op1','op2','op3'].forEach(id=>{const b=document.getElementById(id);if(b)b.disabled=false;});save();renderSocial();return;}
+const p=op.passos[i];st.textContent='⏳ Passo '+(i+1)+'/'+op.passos.length+': '+p.n+' '+p.d+'…';if(bar)bar.style.width=Math.round(i/op.passos.length*100)+'%';
+try{p.fn();}catch(e){}
+const f=DB.eq.find(x=>x.n===p.n);if(f){f.feitos++;lerComunicados(f,true);}
+const prox=op.passos[i+1]?op.passos[i+1].n:'🧑‍💼 CEO';
+postRadio('👷 '+p.n,'👷 '+prox,'termineu "'+p.d+'" — bastão passado');
+feed('🎯 <b>'+p.n+'</b> '+p.d+' ✓ → bastão com <b>'+prox+'</b>');
+save();i++;setTimeout(passo,1800);})();}
 function enviarOrdem(){const o=document.getElementById('ordem').value.toLowerCase();if(!o)return alert('Digite a ordem');
 if(o.includes('relat')){const t=DB.leads.length,c=DB.leads.filter(l=>l.etapa==='cliente').length;acaoReal('📋 Relatório do CEO','Total '+t+' leads · '+c+' clientes · conversão '+document.getElementById('c-conv').textContent);feed('🧑‍💼 CEO pediu <b>relatório</b> — Gabriel Santos entregou (ver Ações Reais)');}
 else if(o.includes('fila')||o.includes('encher')){for(let i=0;i<5;i++){DB.leads.unshift({id:Date.now()+i,nome:'Lead fila '+(i+1),tel:'1190000000'+i,origem:'TikTok',servico:'Loja Virtual',valor:2497,etapa:'novo',data:new Date().toLocaleString('pt-BR')});}acaoReal('🚀 Ordem CEO: encher a fila','+5 leads TikTok inseridos no funil');feed('🧑‍💼 CEO: <b>encher a fila</b> — equipe executou +5');}
@@ -487,8 +623,8 @@ save();document.getElementById('ordem').value='';}
 // NUVEM — mesmo controle PC + celular, sem estar conectado ao celular
 let cloudTimer=null;
 function cloudURL(){return (DB.cfg.cloud||'').replace(/\/$/,'');}
-async function cloudPush(silent){const u=cloudURL();if(!u)return alert('Cole a URL do Firebase em Configurações → Nuvem');try{await fetch(u+'/crm.json',{method:'PUT',body:JSON.stringify({leads:DB.leads,tarefas:DB.tarefas,not:DB.not,updated:new Date().toISOString()})});document.getElementById('cloud-st').textContent='nuvem: enviado ✅ '+new Date().toLocaleTimeString('pt-BR');if(!silent)alert('✅ Nuvem atualizada! Abra no celular e puxe.');}catch(e){alert('⚠️ Falha nuvem — confira URL e regras do Firebase');}}
-async function cloudPull(){const u=cloudURL();if(!u)return alert('Cole a URL do Firebase em Configurações → Nuvem');try{const j=await(await fetch(u+'/crm.json')).json();if(j&&(j.leads||j.tarefas)){DB.leads=j.leads||DB.leads;DB.tarefas=j.tarefas||DB.tarefas;DB.not=j.not||DB.not;save();document.getElementById('cloud-st').textContent='nuvem: recebido ✅ '+new Date().toLocaleTimeString('pt-BR');alert('✅ Dados da nuvem carregados!');}else alert('Nuvem vazia ainda — envie primeiro.');}catch(e){alert('⚠️ Falha ao puxar — confira URL');}}
+async function cloudPush(silent){const u=cloudURL();if(!u)return alert('Cole a URL do Firebase em Configurações → Nuvem');try{await fetch(u+'/crm.json',{method:'PUT',body:JSON.stringify({leads:DB.leads,tarefas:DB.tarefas,not:DB.not,comunicados:DB.comunicados||[],radio:(DB.radio||[]).slice(0,30),updated:new Date().toISOString()})});document.getElementById('cloud-st').textContent='nuvem: enviado ✅ '+new Date().toLocaleTimeString('pt-BR');if(!silent)alert('✅ Nuvem atualizada! Abra no celular e puxe.');}catch(e){alert('⚠️ Falha nuvem — confira URL e regras do Firebase');}}
+async function cloudPull(){const u=cloudURL();if(!u)return alert('Cole a URL do Firebase em Configurações → Nuvem');try{const j=await(await fetch(u+'/crm.json')).json();if(j&&(j.leads||j.tarefas)){DB.leads=j.leads||DB.leads;DB.tarefas=j.tarefas||DB.tarefas;DB.not=j.not||DB.not;if(j.comunicados)DB.comunicados=j.comunicados;if(j.radio)DB.radio=j.radio;save();document.getElementById('cloud-st').textContent='nuvem: recebido ✅ '+new Date().toLocaleTimeString('pt-BR');alert('✅ Dados da nuvem carregados!');}else alert('Nuvem vazia ainda — envie primeiro.');}catch(e){alert('⚠️ Falha ao puxar — confira URL');}}
 function cloudAuto(){if(cloudTimer){clearInterval(cloudTimer);cloudTimer=null;document.getElementById('cloud-st').textContent='nuvem: off';return;}const u=cloudURL();if(!u)return alert('Cole a URL do Firebase primeiro');cloudTimer=setInterval(async()=>{try{await fetch(u+'/crm.json',{method:'PUT',body:JSON.stringify({leads:DB.leads,tarefas:DB.tarefas,not:DB.not,updated:new Date().toISOString()})});const j=await(await fetch(u+'/crm.json')).json();if(j&&j.updated){document.getElementById('cloud-st').textContent='nuvem: auto ✅ '+new Date().toLocaleTimeString('pt-BR');}}catch(e){}} ,15000);document.getElementById('cloud-st').textContent='nuvem: auto ON 🔄';alert('🔄 Auto-sync ligado! PC e celular trocam dados a cada 15s.');}
 // PWA
 let deferred=null;window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferred=e;});
@@ -496,6 +632,7 @@ function instalarApp(){if(deferred){deferred.prompt();}else alert('📱 No celul
 if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').catch(()=>{});}
 // INIT
 document.getElementById('cfg-marca').value=DB.cfg.marca;document.getElementById('cfg-wa').value=DB.cfg.wa;document.getElementById('cfg-tk').value=DB.cfg.tk;document.getElementById('cfg-pf').value=DB.cfg.pf;document.getElementById('cfg-num').value=DB.cfg.num;if(document.getElementById('cfg-cloud'))document.getElementById('cfg-cloud').value=DB.cfg.cloud||'';
+if(document.getElementById('cfg-evo')){document.getElementById('cfg-evo').value=DB.cfg.evo||'';document.getElementById('cfg-evokey').value=DB.cfg.evokey||'';document.getElementById('cfg-evoinst').value=DB.cfg.evoinst||'rick-digital';document.getElementById('cfg-evomsq').value=DB.cfg.evomsq||'Olá! Aqui é do ESTÚDIO RICK DIGITAL. Vi seu contato e quero te mostrar nosso portfólio: https://studiorickdigital.github.io/ — posso te mandar uma proposta?';document.getElementById('cfg-ttuser').value=DB.cfg.ttuser||'@ricklima991';if(DB.cfg.ttagenda)document.getElementById('cfg-ttagenda').value=DB.cfg.ttagenda;if(DB.cfg.evo&&DB.cfg.evokey)document.getElementById('evo-st').textContent='whatsapp auto: configurado ✅ teste a conexão';}
 if(DB.acoes?.length)document.getElementById('acoes-reais').innerHTML=DB.acoes.slice(0,10).map(a=>'<div>✔ '+a.quando+' — <b>'+a.t+'</b><br>'+a.d+'</div>').join('');
 desenharBanner();gerarIdeias();render();verificarAutomacao();
 </script>

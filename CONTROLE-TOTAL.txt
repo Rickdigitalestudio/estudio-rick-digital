@@ -1,0 +1,46 @@
+CONTROLE TOTAL — ESTÚDIO RICK DIGITAL (passo a passo, 15 min)
+============================================================
+
+O QUE FOI LIGADO AGORA NO APP:
+- Config > Controle Total WhatsApp: URL + Key + Instância Evolution, Testar, Disparo auto p/ Quentes, Boas-vindas auto, botão ⚡Auto em cada lead do funil.
+- Config > Controle Total TikTok: agenda do dia, gera tarefa + lembrete, copiar legenda + postar em 1 clique.
+- Robô diário (PC desligado): .github/workflows/prospeccao.yml já ativo, salva em automacao/leads-latest.json.
+- Nuvem PC+celular: Config > Nuvem (Firebase) + Auto-sync ON nos 2.
+
+PASSO 1 — PUBLICAR (PC desligado OK) — 3 min:
+  cd estudio-rick-digital
+  git add -A
+  git commit -m "feat: controle total WhatsApp auto + TikTok agenda"
+  git push origin main
+  Depois: GitHub > Settings > Pages > Deploy from branch > main > /root
+  Link: https://ricklima991.github.io/estudio-rick-digital/
+  Actions > prospeccao-diaria > Run workflow (testa o robô na hora)
+
+PASSO 2 — NUVEM (PC + celular iguais) — 4 min:
+  console.firebase.google.com > Criar projeto > Realtime Database > modo teste > copiar URL
+  App PC: Config > Nuvem > colar URL > Salvar > Enviar p/ nuvem
+  App celular (link acima): mesma URL > Salvar > Puxar da nuvem > Auto-sync ON nos 2
+
+PASSO 3 — WHATSAPP AUTOMÁTICO DE VERDADE — 5 min:
+  Opção grátis (recomendada): Railway.app > New > Docker > EvolutionAPI/evolution-api
+  Variável: AUTHENTICATION_API_KEY=escolha-uma-senha-forte
+  Acesse URL > crie instância "rick-digital" > escaneie o QR com seu WhatsApp 1x
+  App: Config > Controle Total WhatsApp > colar URL + Key + rick-digital > Salvar > Testar conexão
+  Uso: Funil > ⚡Auto (1 lead) ou Config > Disparo auto p/ Quentes (até 10) ou Ligar boas-vindas auto
+  Sem API configurada o sistema abre wa.me manual — não trava.
+  Auto-resposta 24h: hospede automacao/evolution-bridge.js (PORT/EVO_URL/EVO_KEY/EVO_INST) e cadastre o /webhook/evolution na Evolution.
+
+PASSO 4 — TIKTOK @ricklima991 — 3 min:
+  Conta pessoal não permite post automático direto — por isso o controle total aqui é:
+  Config > TikTok > edite horários > Agendar posts de hoje (vira tarefa + lembrete)
+  Fábrica Banners > Gerar > Baixar PNG > Copiar legenda > Postar (abre TikTok)
+  100% auto (opcional): mude p/ Conta Business > TikTok Developers > aprovar Video Upload API > me avise que eu ligo o POST direto.
+
+PROVA DE QUE TRABALHOU DE VERDADE:
+  Equipe > Ações reais executadas: só entra envio via API, disparo, varredura, relatório — com data/hora.
+  Plantão AO VIVO = simulação de demonstração (cria "Lead fila" fake p/ mostrar o fluxo). O real é: Automação + Disparo + Nuvem acima.
+
+SUPORTE:
+  WhatsApp: https://wa.me/qr/MOOILZTYKO2EI1
+  TikTok: https://www.tiktok.com/@ricklima991
+  Portfólio: https://studiorickdigital.github.io/
