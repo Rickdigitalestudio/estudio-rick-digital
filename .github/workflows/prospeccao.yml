@@ -1,0 +1,29 @@
+name: prospeccao-diaria
+
+# Turno automático da equipe: varre comércios sem site registrado,
+# com PC desligado e app fechado. Resultado em automacao/leads-latest.json.
+on:
+  schedule:
+    - cron: "0 11 * * *" # todo dia 08:00 BRT
+  workflow_dispatch: # botão "Run workflow" para rodar na hora
+
+permissions:
+  contents: write
+
+jobs:
+  prospectar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Varrer comércios sem site
+        run: python automacao/prospectar.py
+      - name: Salvar resultado no repositório
+        run: |
+          git config user.name "Equipe Rick Digital (auto)"
+          git config user.email "acao@github.com"
+          git add automacao/leads-latest.json automacao/historico/
+          git diff --staged --quiet || git commit -m "auto: varredura $(date -u +%F) — candidatos sem site"
+          git push

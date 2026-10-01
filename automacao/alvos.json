@@ -1,0 +1,11 @@
+{
+  "alvos": [
+    { "cidade": "São Paulo SP", "pais": "Brasil", "categoria": "restaurante" },
+    { "cidade": "São Paulo SP", "pais": "Brasil", "categoria": "beleza" },
+    { "cidade": "Rio de Janeiro", "pais": "Brasil", "categoria": "restaurante" },
+    { "cidade": "Lisboa", "pais": "Portugal", "categoria": "brasileiro" },
+    { "cidade": "Orlando", "pais": "Estados Unidos", "categoria": "brasileiro" }
+  ],
+  "max_por_alvo": 25,
+  "raio_m": 5000
+}

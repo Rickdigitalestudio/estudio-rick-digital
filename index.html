@@ -121,6 +121,15 @@ canvas#bannerCanvas{width:100%;max-width:420px;border-radius:12px;border:1px sol
 <!-- LEADS -->
 <div id="aba-leads" class="aba">
 <h1>🎣 Gerador de Leads</h1><p class="legend">Capture por site, WhatsApp, TikTok, CSV e Google Maps por categoria.</p><br>
+<div class="panel" style="border:2px solid #059669"><h3>🤖 Automação — trabalha com PC desligado e app fechado</h3>
+<p class="legend">Todo dia, sozinho, o robô do GitHub varre comércios <b>sem site registrado</b> nas suas praças e salva aqui. Abra no celular fora de casa e puxe os leads.</p>
+<div id="auto-status" class="legend" style="margin:.5rem 0">Verificando última varredura…</div>
+<div style="display:flex;gap:.5rem;flex-wrap:wrap">
+<button class="btn-g" style="background:#059669" onclick="carregarAutomacao()">📥 Puxar leads da automação</button>
+<button class="btn btn-v" onclick="window.open('https://github.com/Ricklima991/estudio-rick-digital/actions','_blank')">Ver robô trabalhando ↗</button>
+</div>
+<div id="auto-result"></div>
+</div>
 <div class="panel"><h3>📍 Prospecção Google Maps por categoria <span class="legend">(referência Maps + OSM)</span></h3>
 <div class="grid2">
 <div><label>Cidade / Bairro</label><input id="maps-cidade" value="São Paulo SP" placeholder="Ex: Vila Ema, Lisboa, Orlando"></div>
@@ -157,7 +166,11 @@ canvas#bannerCanvas{width:100%;max-width:420px;border-radius:12px;border:1px sol
 <button class="btn-g" style="background:#059669" onclick="buscarMaps()">🔄 Atualizar</button>
 <a class="btn btn-v" id="link-gmaps" target="_blank" href="#">Abrir referência no Google Maps ↗</a>
 </div>
-<p class="legend" style="margin-top:.5rem">🎯 Filtro ativo: <b>somente negócios SEM site</b> (com site são descartados automaticamente). Fonte: OpenStreetMap/Overpass (grátis, sem API key) + link direto p/ Google Maps da mesma busca.</p>
+<div style="margin-top:.8rem">
+<iframe id="maps-frame" title="mapa da busca" style="width:100%;height:280px;border:1px solid #ddd;border-radius:10px" loading="lazy" src="https://www.google.com/maps?q=S%C3%A3o%20Paulo%20SP%2C%20Brasil&output=embed"></iframe>
+<p class="legend">Mapa da região pesquisada — confira visualmente os comércios antes de abordar.</p>
+</div>
+<p class="legend" style="margin-top:.5rem">🎯 Filtro: remove quem tem site <b>registrado</b> no cadastro aberto (OSM). O cadastro nem sempre sabe o site real — por isso cada resultado vem com <b>“checar no Google”</b>: confirme em 10 segundos antes de abordar.</p>
 <label style="display:flex;gap:.5rem;align-items:center;margin-top:.6rem;cursor:pointer"><input type="checkbox" id="maps-semsite" checked style="width:auto"> <b>Somente SEM site (ideal p/ vender sites/lojas)</b></label>
 <label style="display:flex;gap:.5rem;align-items:center;margin-top:.4rem;cursor:pointer"><input type="checkbox" id="maps-br" style="width:auto"> <b>🇧🇷 Somente brasileiros no exterior (filtra por nome/cuisine BR)</b></label>
 <div id="maps-status" style="margin:.7rem 0"></div>
@@ -354,8 +367,22 @@ document.getElementById('r-valor').textContent='R$ '+tot.toFixed(0);document.get
 document.getElementById('r-orig').innerHTML=Object.entries(org).sort((a,b)=>b[1]-a[1]).map(o=>'<div>'+o[0]+': <b>'+o[1]+'</b></div>').join('')||'—';
 document.getElementById('grid-equipe').innerHTML=DB.eq.map((f,i)=>'<div class="func'+(plantaoOn?' trab':'')+'"><div class="av" style="background:'+f.c+'">'+f.n.split(' ').map(x=>x[0]).slice(0,2).join('')+'</div><b style="font-size:.85rem">'+f.n+'</b><small>'+f.s+' · '+(f.g==='F'?'👩':'👨')+'</small><br><span class="st">'+(plantaoOn?'🟢 em plantão':'⚪ standby')+' · '+f.feitos+' ações</span></div>').join('');
 updNot();calcOrc();}
-function card(l){return '<div class="lead" draggable="true" ondragstart="event.dataTransfer.setData(\'id\','+l.id+')"><b>'+l.nome+'</b><small>'+l.servico+' · '+l.origem+'</small><span class="tag">'+l.origem+'</span>'+(l.valor?'<span class="tag">R$ '+l.valor+'</span>':'')+'<div class="la"><a class="btn btn-wa" target="_blank" href="'+waLink(l.tel,'Olá '+l.nome+'! Sobre '+l.servico+' — vi seu contato e quero ajudar!')+'">WhatsApp</a><button class="btn btn-v" onclick="abrirLead('+l.id+')">Ver</button><button class="btn btn-x" onclick="delLead('+l.id+')">×</button></div></div>';}
+function card(l){return '<div class="lead" draggable="true" ondragstart="event.dataTransfer.setData(\'id\','+l.id+')"><b>'+l.nome+'</b><small>'+l.servico+' · '+l.origem+'</small><span class="tag">'+l.origem+'</span>'+(l.valor?'<span class="tag">R$ '+l.valor+'</span>':'')+'<div class="la"><a class="btn btn-wa" target="_blank" href="'+waLink(l.tel,'Olá '+l.nome+'! Sobre '+l.servico+' — vi seu contato e quero ajudar!')+'">WhatsApp</a><button class="btn btn-v" onclick="abrirLead('+l.id+')">Ver</button><button class="btn btn-p" onclick="avancarEtapa('+l.id+')" title="Avançar etapa">➡️</button><button class="btn btn-x" onclick="delLead('+l.id+')">×</button></div></div>';}
 function drop(e,et){e.preventDefault();const id=Number(e.dataTransfer.getData('id'));const l=DB.leads.find(x=>x.id===id);if(l){l.etapa=et;notif('🔄 '+l.nome+' → '+et,'Movido no funil');save();}}
+const ORDEM_ETAPAS=['novo','qualificacao','quente','negociacao','cliente'];
+function avancarEtapa(id){const l=DB.leads.find(x=>x.id===id);if(!l)return;const i=ORDEM_ETAPAS.indexOf(l.etapa);
+if(i<0||i>=ORDEM_ETAPAS.length-1){alert('Já está na última etapa (Cliente).');return;}
+l.etapa=ORDEM_ETAPAS[i+1];notif('➡️ '+l.nome+' avançou → '+l.etapa,'Comando do funil');
+if(l.etapa==='quente'||l.etapa==='negociacao'){DB.tarefas.push({id:Date.now(),tit:'Acompanhar '+l.nome+' ('+l.etapa+')',data:new Date(Date.now()+86400000).toISOString().slice(0,16),ok:false});}
+save();}
+// 🤖 AUTOMAÇÃO (robô do GitHub — funciona com tudo fechado)
+let autoLeads=[];
+async function verificarAutomacao(){const el=document.getElementById('auto-status');try{const r=await fetch('automacao/leads-latest.json',{cache:'no-store'});if(!r.ok)throw 0;const j=await r.json();el.innerHTML='✅ Última varredura: <b>'+(j.varredura||'—')+'</b> · <b>'+(j.leads||[]).length+' candidatos</b> sem site no cadastro.';}catch(e){el.textContent='Nenhuma varredura ainda (o robô roda 1x/dia) ou offline — use a Busca manual abaixo.';}}
+async function carregarAutomacao(){try{const j=await(await fetch('automacao/leads-latest.json',{cache:'no-store'})).json();autoLeads=j.leads||[];
+if(!autoLeads.length){alert('Automação sem leads desta vez.');return;}
+document.getElementById('auto-result').innerHTML=autoLeads.slice(0,20).map(a=>'<div style="padding:.5rem 0;border-bottom:1px solid #eee"><b>'+a.nome+'</b> <span class="tag">⚠️ verificar site</span><br><small>'+(a.endereco||'')+' · '+(a.cidade||'')+' · <a target=_blank href="https://www.google.com/search?q='+encodeURIComponent(a.nome+' '+(a.cidade||''))+'">checar 🔍</a></small></div>').join('')+'<button class="btn-g" style="margin-top:.6rem;background:#059669" onclick="addAllAuto()">+ Jogar todos no funil</button>';
+notif('🤖 Automação: '+autoLeads.length+' candidatos','Varredura '+(j.varredura||''));}catch(e){alert('Não achei o arquivo da automação. Abra pelo link público (GitHub Pages) ou rode a busca manual.');}}
+function addAllAuto(){if(!autoLeads.length)return;autoLeads.forEach((a,i)=>DB.leads.unshift({id:Date.now()+i,nome:a.nome,tel:a.fone||'11900000000',origem:'Automação 🤖 '+(a.cidade||''),servico:'Site Institucional',valor:997,etapa:'novo',obs:'Da varredura '+(a.varredura||'')+' — verificar site no Google antes de abordar',data:new Date().toLocaleString('pt-BR')}));save();acaoReal('🤖 Automação puxada','+'+autoLeads.length+' candidatos no funil (PC desligado OK)');alert('✅ '+autoLeads.length+' candidatos no funil!');}
 function abrirTarefa(){document.getElementById('m-tar').classList.add('aberto');}
 function salvarTarefa(){const t=document.getElementById('t-tit').value;if(!t)return alert('Título obrigatório');DB.tarefas.push({id:Date.now(),tit:t,data:document.getElementById('t-data').value,ok:false});document.getElementById('m-tar').classList.remove('aberto');save();}
 function okTar(id){DB.tarefas.find(t=>t.id===id).ok=true;save();}
@@ -375,6 +402,7 @@ const soSemSite=document.getElementById('maps-semsite')?.checked!==false;
 const soBR=document.getElementById('maps-br')?.checked===true||cat==='brasileiro';
 const geoQ=(cid+(pais?', '+pais:''));const catLabel=document.getElementById('maps-cat').selectedOptions[0].text;
 document.getElementById('link-gmaps').href='https://www.google.com/maps/search/'+encodeURIComponent(catLabel+' em '+geoQ);
+document.getElementById('maps-frame').src='https://www.google.com/maps?q='+encodeURIComponent(catLabel+' em '+geoQ)+'&output=embed';
 document.getElementById('maps-status').textContent='⏳ Localizando '+geoQ+'...';
 try{
 const g=await(await fetch('https://nominatim.openstreetmap.org/search?format=json&limit=1&q='+encodeURIComponent(geoQ),{headers:{Accept:'application/json'}})).json();
@@ -391,14 +419,14 @@ const comSite=todos.filter(e=>temSite(e.tags)).length;
 let filtrados=todos.filter(e=>soSemSite?!temSite(e.tags):true);
 const totalBR=todos.filter(e=>isBR(e.tags)).length;
 if(soBR)filtrados=filtrados.filter(e=>isBR(e.tags));
-mapsQueue=filtrados.slice(0,20).map((e,i)=>({nome:e.tags?.name||('Comércio '+(i+1)+' · '+cat),tel:'',origem:'Google Maps SEM site · '+pais,servico:'Site Institucional',end:e.tags?.['addr:street']||e.tags?.['addr:suburb']||geoQ,lat:e.lat||e.center?.lat,lon:e.lon||e.center?.lon,semSite:true,br:isBR(e.tags)}));
+mapsQueue=filtrados.slice(0,20).map((e,i)=>({nome:e.tags?.name||('Comércio '+(i+1)+' · '+cat),tel:(e.tags?.['contact:phone']||e.tags?.phone||'').replace(/^\+/,'')||'',origem:'Google Maps (sem site no cadastro) · '+pais,servico:'Site Institucional',end:e.tags?.['addr:street']||e.tags?.['addr:suburb']||geoQ,lat:e.lat||e.center?.lat,lon:e.lon||e.center?.lon,semSite:true,br:isBR(e.tags)}));
 if(!mapsQueue.length)throw 1;
-document.getElementById('maps-status').innerHTML='✅ <b>'+mapsQueue.length+' leads SEM site em '+geoQ+'</b>! ('+todos.length+' achados · '+comSite+' com site ignorados 🚫'+(soBR?' · '+totalBR+' brasileiros 🇧🇷':'')+')';
-document.getElementById('maps-result').innerHTML=mapsQueue.map((m,i)=>'<div style="padding:.6rem 0;border-bottom:1px solid #eee;display:flex;justify-content:space-between;gap:.5rem;flex-wrap:wrap"><div><b>'+m.nome+'</b> <span class="tag" style="background:#D1FAE5;color:#065F46">🚫 SEM SITE ✅</span>'+(m.br?'<span class="tag" style="background:#FEF3C7">🇧🇷 BR</span>':'')+'<br><small>'+m.end+' · '+pais+'</small></div><button class="btn btn-p" onclick="addMap('+i+')">+ Funil</button></div>').join('')+'<button class="btn-g" style="margin-top:.8rem" onclick="addAllMap()">+ Adicionar todos SEM site ao funil</button>';
-notif('📍 Maps SEM site: '+mapsQueue.length+' leads',catLabel+' em '+geoQ+' · '+comSite+' com site ignorados');
+document.getElementById('maps-status').innerHTML='✅ <b>'+mapsQueue.length+' candidatos sem site no cadastro em '+geoQ+'</b> ('+todos.length+' achados · '+comSite+' com site descartados'+(soBR?' · '+totalBR+' brasileiros 🇧🇷':'')+') — <b>confira no Google antes de abordar</b>';
+document.getElementById('maps-result').innerHTML=mapsQueue.map((m,i)=>'<div style="padding:.6rem 0;border-bottom:1px solid #eee;display:flex;justify-content:space-between;gap:.5rem;flex-wrap:wrap"><div><b>'+m.nome+'</b> <span class="tag" style="background:#FEF3C7;color:#92400E">⚠️ sem site no cadastro — verificar</span>'+(m.br?'<span class="tag" style="background:#FEF3C7">🇧🇷 BR</span>':'')+(m.tel?'<span class="tag" style="background:#D1FAE5">📞 tem fone</span>':'')+'<br><small>'+m.end+' · '+pais+' · <a target=_blank href="https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(m.nome+' '+geoQ)+'">ver no Maps ↗</a> · <a target=_blank href="https://www.google.com/search?q='+encodeURIComponent(m.nome+' '+geoQ)+'">checar site 🔍</a></small></div><button class="btn btn-p" onclick="addMap('+i+')">+ Funil</button></div>').join('')+'<button class="btn-g" style="margin-top:.8rem" onclick="addAllMap()">+ Adicionar todos ao funil</button>';
+notif('📍 Maps: '+mapsQueue.length+' candidatos',catLabel+' em '+geoQ+' · '+comSite+' com site descartados');
 }catch(e){document.getElementById('maps-status').textContent='⚠️ Nenhum SEM site aqui ou API instável — tente Lisboa|Portugal, Orlando|EUA. Use o botão Google Maps como referência.';}}
-function addMap(i){const m=mapsQueue[i];DB.leads.unshift({id:Date.now()+Math.random(),nome:m.nome+' 🚫SEM SITE'+(m.br?' 🇧🇷':''),tel:'11900000000',email:'',origem:'Google Maps SEM site · '+m.end,servico:'Site Institucional',valor:997,etapa:'novo',obs:'SEM SITE em '+m.end+'. Abordagem BR exterior: ajudo brasileiros a vender mais.',data:new Date().toLocaleString('pt-BR')});save();alert('✅ '+m.nome+' no funil!');}
-function addAllMap(){mapsQueue.forEach((m,i)=>DB.leads.unshift({id:Date.now()+i,nome:m.nome+' 🚫SEM SITE',tel:'11900000000',origem:'Google Maps SEM site',servico:'Site Institucional',valor:997,etapa:'novo',obs:'SEM SITE verificado via OSM',data:new Date().toLocaleString('pt-BR')}));save();acaoReal('📍 Fila cheia SEM site','+'+mapsQueue.length+' leads SEM site de '+document.getElementById('maps-cat').value+' adicionados (prova: '+DB.leads.length+' leads totais)');alert('✅ Fila cheia SEM site!');}
+function addMap(i){const m=mapsQueue[i];DB.leads.unshift({id:Date.now()+Math.random(),nome:m.nome+(m.br?' 🇧🇷':''),tel:m.tel||'11900000000',email:'',origem:'Google Maps (verificar site) · '+m.end,servico:'Site Institucional',valor:997,etapa:'novo',obs:'Sem site NO CADASTRO — confirmar no Google. Fone OSM: '+(m.tel||'não listado'),data:new Date().toLocaleString('pt-BR')});save();alert('✅ '+m.nome+' no funil! Cheque o site no Google e complete o WhatsApp.');}
+function addAllMap(){mapsQueue.forEach((m,i)=>DB.leads.unshift({id:Date.now()+i,nome:m.nome,tel:m.tel||'11900000000',origem:'Google Maps (verificar site)',servico:'Site Institucional',valor:997,etapa:'novo',obs:'Sem site no cadastro — verificar no Google',data:new Date().toLocaleString('pt-BR')}));save();acaoReal('📍 Fila cheia via Maps','+'+mapsQueue.length+' candidatos adicionados (prova: '+DB.leads.length+' leads totais)');alert('✅ Fila cheia! Verifique o site de cada um no Google antes de abordar.');}
 // BANNER
 function desenharBanner(){const c=document.getElementById('bannerCanvas'),x=c.getContext('2d');const m=document.getElementById('b-modelo').value;
 let g=x.createLinearGradient(0,0,1080,1080);
@@ -469,7 +497,7 @@ if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').catch
 // INIT
 document.getElementById('cfg-marca').value=DB.cfg.marca;document.getElementById('cfg-wa').value=DB.cfg.wa;document.getElementById('cfg-tk').value=DB.cfg.tk;document.getElementById('cfg-pf').value=DB.cfg.pf;document.getElementById('cfg-num').value=DB.cfg.num;if(document.getElementById('cfg-cloud'))document.getElementById('cfg-cloud').value=DB.cfg.cloud||'';
 if(DB.acoes?.length)document.getElementById('acoes-reais').innerHTML=DB.acoes.slice(0,10).map(a=>'<div>✔ '+a.quando+' — <b>'+a.t+'</b><br>'+a.d+'</div>').join('');
-desenharBanner();gerarIdeias();render();
+desenharBanner();gerarIdeias();render();verificarAutomacao();
 </script>
 </body>
 </html>

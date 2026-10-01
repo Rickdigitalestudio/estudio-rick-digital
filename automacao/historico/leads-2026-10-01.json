@@ -1,0 +1,206 @@
+{
+ "varredura": "01/10/2026 20:26 UTC",
+ "total": 25,
+ "leads": [
+  {
+   "nome": "Rancho",
+   "fone": "",
+   "endereco": "",
+   "cidade": "Rio de Janeiro/Brasil",
+   "categoria": "restaurante",
+   "varredura": "01/10/2026 20:26 UTC"
+  },
+  {
+   "nome": "Rico's Lanches",
+   "fone": "",
+   "endereco": "",
+   "cidade": "Rio de Janeiro/Brasil",
+   "categoria": "restaurante",
+   "varredura": "01/10/2026 20:26 UTC"
+  },
+  {
+   "nome": "O Bom Galeto",
+   "fone": "",
+   "endereco": "",
+   "cidade": "Rio de Janeiro/Brasil",
+   "categoria": "restaurante",
+   "varredura": "01/10/2026 20:26 UTC"
+  },
+  {
+   "nome": "Paraíso do Chopp",
+   "fone": "",
+   "endereco": "Rua Dois de Dezembro, Catete, Rio de Janeiro",
+   "cidade": "Rio de Janeiro/Brasil",
+   "categoria": "restaurante",
+   "varredura": "01/10/2026 20:26 UTC"
+  },
+  {
+   "nome": "Botequim do Borges",
+   "fone": "",
+   "endereco": "Rua Dois de Dezembro, Catete, Rio de Janeiro",
+   "cidade": "Rio de Janeiro/Brasil",
+   "categoria": "restaurante",
+   "varredura": "01/10/2026 20:26 UTC"
+  },
+  {
+   "nome": "Glória Gourmet",
+   "fone": "",
+   "endereco": "Rua do Catete",
+   "cidade": "Rio de Janeiro/Brasil",
+   "categoria": "restaurante",
+   "varredura": "01/10/2026 20:26 UTC"
+  },
+  {
+   "nome": "Berbigão",
+   "fone": "",
+   "endereco": "Rua do Catete, Catete, Rio de Janeiro",
+   "cidade": "Rio de Janeiro/Brasil",
+   "categoria": "restaurante",
+   "varredura": "01/10/2026 20:26 UTC"
+  },
+  {
+   "nome": "Charlotte",
+   "fone": "",
+   "endereco": "Praia de Botafogo, Rio de Janeiro",
+   "cidade": "Rio de Janeiro/Brasil",
+   "categoria": "restaurante",
+   "varredura": "01/10/2026 20:26 UTC"
+  },
+  {
+   "nome": "Ben Ali",
+   "fone": "",
+   "endereco": "",
+   "cidade": "Rio de Janeiro/Brasil",
+   "categoria": "restaurante",
+   "varredura": "01/10/2026 20:26 UTC"
+  },
+  {
+   "nome": "Le Brants",
+   "fone": "552125582570",
+   "endereco": "Travessa dos Tamoios",
+   "cidade": "Rio de Janeiro/Brasil",
+   "categoria": "restaurante",
+   "varredura": "01/10/2026 20:26 UTC"
+  },
+  {
+   "nome": "Pizzaria Bella Capri",
+   "fone": "",
+   "endereco": "",
+   "cidade": "Rio de Janeiro/Brasil",
+   "categoria": "restaurante",
+   "varredura": "01/10/2026 20:26 UTC"
+  },
+  {
+   "nome": "Vó Alzira",
+   "fone": "55 21 2205 6585",
+   "endereco": "Rua Pedro Américo, Rio de Janeiro",
+   "cidade": "Rio de Janeiro/Brasil",
+   "categoria": "restaurante",
+   "varredura": "01/10/2026 20:26 UTC"
+  },
+  {
+   "nome": "Louroza",
+   "fone": "",
+   "endereco": "",
+   "cidade": "Rio de Janeiro/Brasil",
+   "categoria": "restaurante",
+   "varredura": "01/10/2026 20:26 UTC"
+  },
+  {
+   "nome": "Padaria Bakery",
+   "fone": "",
+   "endereco": "Avenida Mem de Sá, Centro, Rio de Janeiro",
+   "cidade": "Rio de Janeiro/Brasil",
+   "categoria": "restaurante",
+   "varredura": "01/10/2026 20:26 UTC"
+  },
+  {
+   "nome": "Restaurante Bar Brasil",
+   "fone": "",
+   "endereco": "Avenida Mem de Sá",
+   "cidade": "Rio de Janeiro/Brasil",
+   "categoria": "restaurante",
+   "varredura": "01/10/2026 20:26 UTC"
+  },
+  {
+   "nome": "Bistrô da Lapa",
+   "fone": "",
+   "endereco": "",
+   "cidade": "Rio de Janeiro/Brasil",
+   "categoria": "restaurante",
+   "varredura": "01/10/2026 20:26 UTC"
+  },
+  {
+   "nome": "Catetelândia",
+   "fone": "",
+   "endereco": "",
+   "cidade": "Rio de Janeiro/Brasil",
+   "categoria": "restaurante",
+   "varredura": "01/10/2026 20:26 UTC"
+  },
+  {
+   "nome": "Big Bi",
+   "fone": "",
+   "endereco": "",
+   "cidade": "Rio de Janeiro/Brasil",
+   "categoria": "restaurante",
+   "varredura": "01/10/2026 20:26 UTC"
+  },
+  {
+   "nome": "Mr. Chan",
+   "fone": "",
+   "endereco": "",
+   "cidade": "Rio de Janeiro/Brasil",
+   "categoria": "restaurante",
+   "varredura": "01/10/2026 20:26 UTC"
+  },
+  {
+   "nome": "WestFalia",
+   "fone": "",
+   "endereco": "",
+   "cidade": "Rio de Janeiro/Brasil",
+   "categoria": "restaurante",
+   "varredura": "01/10/2026 20:26 UTC"
+  },
+  {
+   "nome": "Hobby Lanches",
+   "fone": "55 21 2222-0947",
+   "endereco": "Rua da Glória, Rio de Janeiro",
+   "cidade": "Rio de Janeiro/Brasil",
+   "categoria": "restaurante",
+   "varredura": "01/10/2026 20:26 UTC"
+  },
+  {
+   "nome": "Megamatte",
+   "fone": "",
+   "endereco": "",
+   "cidade": "Rio de Janeiro/Brasil",
+   "categoria": "restaurante",
+   "varredura": "01/10/2026 20:26 UTC"
+  },
+  {
+   "nome": "Tratto",
+   "fone": "55 21 3190 0600;+55 21 99726 7312",
+   "endereco": "Avenida Almirante Barroso",
+   "cidade": "Rio de Janeiro/Brasil",
+   "categoria": "restaurante",
+   "varredura": "01/10/2026 20:26 UTC"
+  },
+  {
+   "nome": "Boca de Forno",
+   "fone": "",
+   "endereco": "Avenida Almirante Barroso",
+   "cidade": "Rio de Janeiro/Brasil",
+   "categoria": "restaurante",
+   "varredura": "01/10/2026 20:26 UTC"
+  },
+  {
+   "nome": "Restaurante Cosmopolitan",
+   "fone": "",
+   "endereco": "Rua da Assembléia",
+   "cidade": "Rio de Janeiro/Brasil",
+   "categoria": "restaurante",
+   "varredura": "01/10/2026 20:26 UTC"
+  }
+ ]
+}
