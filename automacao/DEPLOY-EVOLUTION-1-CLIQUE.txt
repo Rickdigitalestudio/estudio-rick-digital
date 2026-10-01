@@ -1,0 +1,29 @@
+# 1-CLIQUE — WhatsApp automático (Evolution API)
+# Você não precisa digitar código. Só cliques:
+
+# OPÇÃO A — Render (mais fácil, grátis, 3 cliques):
+# 1. Abra: https://render.com/deploy?repo=https://github.com/EvolutionAPI/evolution-api
+# 2. Em Environment, adicione: AUTHENTICATION_API_KEY = crie-uma-senha-forte-123
+# 3. Deploy > aguarde a URL (ex: https://sua-evo.onrender.com)
+#
+# OPÇÃO B — Railway (grátis com trial):
+# 1. Abra: https://railway.app/new
+# 2. Deploy Docker Image > imagem: atendai/evolution-api:latest
+# 3. Variables: AUTHENTICATION_API_KEY = crie-uma-senha-forte-123
+# 4. Pegue a URL pública gerada.
+#
+# DEPOIS (2 min, no seu celular + app):
+# 1. Abra a URL da Evolution > Create Instance > nome: rick-digital > aparece QR
+# 2. No seu WhatsApp: Aparelhos conectados > Conectar aparelho > escaneie o QR 1x
+# 3. No app ESTÚDIO RICK DIGITAL > Config > Controle Total WhatsApp:
+#    cole URL + senha + rick-digital > Salvar > Testar conexão
+# 4. Pronto: Funil > botão Auto envia sozinho. Sem isso, abre manual (não trava).
+#
+# O QR só você pode escanear — é o SEU WhatsApp. Ninguém consegue fazer isso por você.
+services:
+  evolution:
+    image: atendai/evolution-api:latest
+    ports: ["8080:8080"]
+    environment:
+      - AUTHENTICATION_API_KEY=${AUTHENTICATION_API_KEY:-troque-esta-senha}
+      - DATABASE_ENABLED=false
