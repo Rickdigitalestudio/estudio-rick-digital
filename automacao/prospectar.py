@@ -16,15 +16,26 @@ UA = {"User-Agent": "EstudioRickDigital-Prospeccao/1.0 (contato: portfolio studi
 
 OSM = {
     "fitness": ["leisure=fitness_centre", "sport=fitness"],
-    "beleza": ["shop=beauty", "shop=hairdresser"],
+    "academia_luta": ["leisure=sports_centre", "sport=martial_arts"],
+    "beleza": ["shop=beauty", "shop=hairdresser", "shop=nail"],
+    "barbearia": ["shop=hairdresser", "craft=barber"],
     "restaurante": ["amenity=restaurant", "amenity=fast_food"],
-    "roupas": ["shop=clothes"],
-    "pet": ["shop=pet"],
+    "lanchonete": ["amenity=fast_food", "amenity=cafe"],
+    "padaria": ["shop=bakery", "shop=pastry"],
+    "mercado": ["shop=convenience", "shop=supermarket"],
+    "roupas": ["shop=clothes", "shop=shoes"],
+    "pet": ["shop=pet", "amenity=veterinary"],
     "farmacia": ["amenity=pharmacy"],
     "dentista": ["amenity=dentist", "healthcare=dentist"],
+    "clinica": ["amenity=clinic", "amenity=doctors"],
+    "advocacia": ["office=lawyer"],
+    "contabil": ["office=accountant"],
     "imobiliaria": ["office=estate_agent"],
-    "advocacia": ["office=lawyer", "office=accountant"],
     "oficina": ["shop=car_repair", "amenity=car_wash"],
+    "salao_festa": ["leisure=hall", "amenity=events_venue"],
+    "papelaria": ["shop=stationery", "shop=books"],
+    "informatica": ["shop=computer", "office=it"],
+    "eletro": ["shop=electronics", "shop=mobile_phone"],
 }
 
 
@@ -52,7 +63,16 @@ def tem_site(tags):
 
 
 def fone(tags):
-    return (tags.get("contact:phone") or tags.get("phone") or "").strip()
+    for k in ("contact:phone", "phone", "contact:mobile", "mobile",
+              "contact:whatsapp", "whatsapp"):
+        v = (tags.get(k) or "").strip()
+        if v:
+            return v
+    return ""
+
+
+def tem_fone(tags):
+    return len("".join(c for c in fone(tags) if c.isdigit())) >= 8
 
 
 def endereco(tags):
@@ -61,12 +81,6 @@ def endereco(tags):
 
 
 def clausulas(categoria, lat, lon, raio):
-    if categoria == "brasileiro":
-        return [
-            'nwr["cuisine"~"brazilian",i](around:8000,%s,%s);' % (lat, lon),
-            'nwr["name"~"brasil|brazil|churrasc|picanha|feijoada|acai|coxinha",i](around:8000,%s,%s);' % (lat, lon),
-            'nwr["amenity"="restaurant"](around:%s,%s,%s);' % (raio, lat, lon),
-        ]
     tags = OSM.get(categoria, ["name~" + categoria])
     out = []
     for t in tags:
@@ -89,6 +103,7 @@ def varrer(alvo, raio, limite):
     j = get_retry(url)
     achados = [e for e in (j.get("elements") or []) if (e.get("tags") or {}).get("name")]
     com_site = sum(1 for e in achados if tem_site(e["tags"]))
+    com_fone = sum(1 for e in achados if tem_fone(e["tags"]))
     filtrados = [e for e in achados if not tem_site(e["tags"])][:limite]
     leads = []
     for e in filtrados:
@@ -96,12 +111,14 @@ def varrer(alvo, raio, limite):
         leads.append({
             "nome": t.get("name"),
             "fone": fone(t).lstrip("+"),
+            "fone_real": tem_fone(t),
             "endereco": endereco(t),
             "cidade": "%s/%s" % (alvo["cidade"], alvo["pais"]),
             "categoria": alvo["categoria"],
+            "fonte": "GitHub-robo OSM/Overpass (sem site no cadastro)",
         })
-    return leads, "%s: %d achados, %d com site descartados, %d candidatos" % (
-        geo_q, len(achados), com_site, len(leads))
+    return leads, "%s: %d achados, %d com site descartados, %d com fone, %d candidatos" % (
+        geo_q, len(achados), com_site, com_fone, len(leads))
 
 
 def main():
