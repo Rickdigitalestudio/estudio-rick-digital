@@ -10,7 +10,7 @@
 //    Este arquivo é exemplo Node para receber e jogar no Firebase/CRM.
 
 const http = require('http');
-const BOAS_VINDAS = process.env.BOAS_VINDAS || 'Olá! Aqui é do ESTÚDIO RICK DIGITAL. Portfólio: https://studiorickdigital.github.io/ — quer proposta?';
+const BOAS_VINDAS = process.env.BOAS_VINDAS || 'Olá! Aqui é do ESTÚDIO RICK DIGITAL. Portfólio: https://rickdigitalestudio.github.io/profissional-rickdutra/ — quer proposta?';
 
 async function enviarTexto(evoUrl, apiKey, instancia, numero, texto) {
   const r = await fetch(`${evoUrl}/message/sendText/${instancia}`, {

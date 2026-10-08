@@ -12,7 +12,7 @@ import urllib.request
 from datetime import datetime, timezone
 
 BASE = os.path.dirname(os.path.abspath(__file__))
-UA = {"User-Agent": "EstudioRickDigital-Prospeccao/1.0 (contato: portfolio studiorickdigital.github.io)"}
+UA = {"User-Agent": "EstudioRickDigital-Prospeccao/1.0 (contato: portfolio rickdigitalestudio.github.io/profissional-rickdutra)"}
 
 OSM = {
     "fitness": ["leisure=fitness_centre", "sport=fitness"],

@@ -75,7 +75,7 @@ canvas#bannerCanvas{width:100%;max-width:420px;border-radius:12px;border:1px sol
 <div class="hbtns">
 <a class="hbtn wa" href="https://wa.me/qr/MOOILZTYKO2EI1" target="_blank">💬 WhatsApp</a>
 <a class="hbtn tk" href="https://www.tiktok.com/@ricklima991" target="_blank">🎵 TikTok</a>
-<a class="hbtn pf" href="https://studiorickdigital.github.io/" target="_blank">🌐 Portfólio</a>
+<a class="hbtn pf" href="https://rickdigitalestudio.github.io/profissional-rickdutra/" target="_blank">🌐 Portfólio</a>
 <div class="sino" onclick="toggleNot()">🔔<span id="qtdNot">0</span></div>
 </div>
 </header>
@@ -110,7 +110,7 @@ canvas#bannerCanvas{width:100%;max-width:420px;border-radius:12px;border:1px sol
 <div style="display:flex;gap:.6rem;flex-wrap:wrap">
 <button class="btn btn-wa" onclick="window.open('https://wa.me/qr/MOOILZTYKO2EI1','_blank')">Abrir WhatsApp Oficial</button>
 <button class="btn btn-v" onclick="window.open('https://www.tiktok.com/@ricklima991','_blank')">Abrir TikTok @ricklima991</button>
-<button class="btn btn-v" onclick="window.open('https://studiorickdigital.github.io/','_blank')">Ver Portfólio</button>
+<button class="btn btn-v" onclick="window.open('https://rickdigitalestudio.github.io/profissional-rickdutra/','_blank')">Ver Portfólio</button>
 <button class="btn btn-p" onclick="ir('leads')">🔄 Atualizar Leads Maps</button>
 <button class="btn btn-p" onclick="ir('banners')">🎨 Criar Banner</button>
 </div></div>
@@ -192,8 +192,8 @@ canvas#bannerCanvas{width:100%;max-width:420px;border-radius:12px;border:1px sol
 <div class="grid2">
 <div class="panel"><h3>📤 Importação em massa (CSV)</h3><input type="file" id="csv" accept=".csv"><button class="btn-g" style="margin-top:.6rem" onclick="importCSV()">Importar</button><p class="legend">Formato: nome,telefone,origem</p></div>
 <div class="panel"><h3>🔗 Links de captura p/ redes</h3>
-<button class="btn btn-wa" onclick="copiarTexto('Solicite orçamento grátis! Chama no WhatsApp: https://wa.me/qr/MOOILZTYKO2EI1 | Portfólio: https://studiorickdigital.github.io/ | TikTok: https://www.tiktok.com/@ricklima991')">📋 Copiar link WhatsApp</button>
-<button class="btn btn-v" onclick="copiarTexto('Sigo com vagas p/ sites e lojas virtuais! Portfólio: https://studiorickdigital.github.io/ Marque seu horário: https://wa.me/qr/MOOILZTYKO2EI1')">📋 Copiar bio TikTok</button>
+<button class="btn btn-wa" onclick="copiarTexto('Solicite orçamento grátis! Chama no WhatsApp: https://wa.me/qr/MOOILZTYKO2EI1 | Portfólio: https://rickdigitalestudio.github.io/profissional-rickdutra/ | TikTok: https://www.tiktok.com/@ricklima991')">📋 Copiar link WhatsApp</button>
+<button class="btn btn-v" onclick="copiarTexto('Sigo com vagas p/ sites e lojas virtuais! Portfólio: https://rickdigitalestudio.github.io/profissional-rickdutra/ Marque seu horário: https://wa.me/qr/MOOILZTYKO2EI1')">📋 Copiar bio TikTok</button>
 <button class="btn btn-p" onclick="copiarCodigo()">📋 Copiar formulário p/ site</button>
 </div>
 </div>
@@ -224,7 +224,7 @@ canvas#bannerCanvas{width:100%;max-width:420px;border-radius:12px;border:1px sol
 </div>
 <!-- ORÇAMENTO -->
 <div id="aba-orc" class="aba">
-<h1>💰 Orçamento do Portfólio</h1><p class="legend">Base: https://studiorickdigital.github.io/</p><br>
+<h1>💰 Orçamento do Portfólio</h1><p class="legend">Base: https://rickdigitalestudio.github.io/profissional-rickdutra/</p><br>
 <div class="grid2">
 <div class="panel"><h3>🧮 Calcular</h3>
 <label>Serviço</label><select id="o-tipo" onchange="calcOrc()">
@@ -314,7 +314,7 @@ canvas#bannerCanvas{width:100%;max-width:420px;border-radius:12px;border:1px sol
 <div class="panel"><label>Nome da marca</label><input id="cfg-marca" value="ESTÚDIO RICK DIGITAL">
 <label>WhatsApp oficial (link QR)</label><input id="cfg-wa" value="https://wa.me/qr/MOOILZTYKO2EI1">
 <label>TikTok</label><input id="cfg-tk" value="https://www.tiktok.com/@ricklima991">
-<label>Portfólio</label><input id="cfg-pf" value="https://studiorickdigital.github.io/">
+<label>Portfólio</label><input id="cfg-pf" value="https://rickdigitalestudio.github.io/profissional-rickdutra/">
 <label>WhatsApp número (só números p/ mensagem direta)</label><input id="cfg-num" value="5511989426415">
 <label>☁️ Nuvem (mesmo controle PC + celular sem estar conectado) — cole a URL do Firebase Realtime Database</label><input id="cfg-cloud" placeholder="https://seu-projeto-default-rtdb.firebaseio.com">
 <p class="legend">Grátis: console.firebase.google.com → criar projeto → Realtime Database → copiar URL. PC e celular usam a mesma URL = mesmos leads/tarefas.</p>
@@ -330,7 +330,7 @@ canvas#bannerCanvas{width:100%;max-width:420px;border-radius:12px;border:1px sol
 <label>URL da Evolution API (ex: https://sua-evo.up.railway.app)</label><input id="cfg-evo" placeholder="https://sua-evo.up.railway.app">
 <label>API Key da Evolution</label><input id="cfg-evokey" placeholder="cole a APIKEY">
 <label>Instância (nome da conexão, ex: rick-digital)</label><input id="cfg-evoinst" value="rick-digital">
-<label>Mensagem automática de boas-vindas</label><input id="cfg-evomsq" value="Olá! Aqui é do ESTÚDIO RICK DIGITAL. Vi seu contato e quero te mostrar nosso portfólio: https://studiorickdigital.github.io/ — posso te mandar uma proposta?">
+<label>Mensagem automática de boas-vindas</label><input id="cfg-evomsq" value="Olá! Aqui é do ESTÚDIO RICK DIGITAL. Vi seu contato e quero te mostrar nosso portfólio: https://rickdigitalestudio.github.io/profissional-rickdutra/ — posso te mandar uma proposta?">
 <div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.5rem">
 <button class="btn btn-wa" onclick="evoTestar()">✅ Testar conexão</button>
 <button class="btn btn-p" onclick="evoDisparoQuentes()">🚀 Disparo auto p/ Quentes</button>
@@ -373,7 +373,7 @@ canvas#bannerCanvas{width:100%;max-width:420px;border-radius:12px;border:1px sol
 <div class="modal-bg" id="m-tar"><div class="modal"><h2>Nova Tarefa</h2><label>Título</label><input id="t-tit" placeholder="Ligar para lead X amanhã 14h"><label>Data</label><input type="datetime-local" id="t-data"><div style="display:flex;gap:.6rem;justify-content:flex-end;margin-top:1rem"><button class="btn btn-v" onclick="document.getElementById('m-tar').classList.remove('aberto')">Cancelar</button><button class="btn-g" onclick="salvarTarefa()">Criar</button></div></div></div>
 <script>
 const KEY='crm-estudio-rick-v3';
-let DB={leads:[],tarefas:[],not:[],acoes:[],cfg:{marca:'ESTÚDIO RICK DIGITAL',wa:'https://wa.me/qr/MOOILZTYKO2EI1',tk:'https://www.tiktok.com/@ricklima991',pf:'https://studiorickdigital.github.io/',num:'5511989426415'}};
+let DB={leads:[],tarefas:[],not:[],acoes:[],cfg:{marca:'ESTÚDIO RICK DIGITAL',wa:'https://wa.me/qr/MOOILZTYKO2EI1',tk:'https://www.tiktok.com/@ricklima991',pf:'https://rickdigitalestudio.github.io/profissional-rickdutra/',num:'5511989426415'}};
 try{const s=localStorage.getItem(KEY);if(s)DB=Object.assign(DB,JSON.parse(s));}catch(e){}
 function hojeKey(d){d=d||new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
 function snapshotDia(){try{if(!DB.hist)DB.hist={};const at=DB.leads.filter(l=>l.etapa!=='arquivado');
@@ -458,7 +458,7 @@ function card(l){const wa=foneReal(l)?'<a class="btn btn-wa" target="_blank" hre
 // Análise LOCAL do perfil (heurística a partir dos dados da ficha — estimativa, não é IA externa)
 function analisarLead(id){const l=DB.leads.find(x=>x.id===id);if(!l)return;
 const reais=DB.leads.filter(x=>x.servico===l.servico&&x.etapa==='cliente').length;
-const refs=[['Fanpage','https://studiorickdigital.github.io/#fanpages'],['Site Institucional','https://studiorickdigital.github.io/#sites'],['Landing Page','https://studiorickdigital.github.io/#landing'],['Loja Virtual','https://studiorickdigital.github.io/#loja'],['Manutenção','https://studiorickdigital.github.io/#planos']];
+const refs=[['Fanpage','https://rickdigitalestudio.github.io/profissional-rickdutra/#fanpages'],['Site Institucional','https://rickdigitalestudio.github.io/profissional-rickdutra/#sites'],['Landing Page','https://rickdigitalestudio.github.io/profissional-rickdutra/#landing'],['Loja Virtual','https://rickdigitalestudio.github.io/profissional-rickdutra/#loja'],['Manutenção','https://rickdigitalestudio.github.io/profissional-rickdutra/#planos']];
 const ref=(refs.find(r=>r[0]===l.servico)||refs[1])[1];
 const txt='🔍 ANÁLISE LOCAL (estimativa, sem IA externa)\nLead: '+l.nome+'\nOrigem: '+l.origem+'\nInteresse: '+l.servico+(l.valor?' (R$ '+l.valor+')':'')+'\nFone: '+(foneReal(l)?'verificado na ficha ✅':'AUSENTE ⚠️ — complete antes de abordar')+'\nEtapa: '+l.etapa+'\nSinais: '+(String(l.origem).includes('Maps')?'veio de prospecção fria — valide site/redes antes do pitch. ':'veio de canal quente ('+l.origem+') — responda em até 1h. ')+(reais?reais+' cliente(s) fecharam '+l.servico+' antes — use como prova. ':'Ainda sem cliente de '+l.servico+' registrado — registre o 1º como case.')+'\nReferência p/ mostrar: '+ref+'\nPróximo passo: '+(foneReal(l)?'chamar no WhatsApp com a proposta do Orçamento.':'pesquisar nome no Google/Instagram, completar o fone e mover p/ Qualificação.');
 alert(txt);copiarTexto(txt);}
@@ -578,7 +578,7 @@ if(x.measureText(cta).width<=880){x.fillText(cta,540,905);}
 else{const meio=Math.ceil(cta.length/2);let cut=cta.lastIndexOf(' ',meio);if(cut<10)cut=meio;
 x.fillText(cta.slice(0,cut),540,880);x.fillText(cta.slice(cut+1),540,925);}
 x.textAlign='left';
-x.fillStyle='#fff';x.font='400 32px Arial';x.fillText('Portfólio: studiorickdigital.github.io · TikTok: @ricklima991',60,1010);
+x.fillStyle='#fff';x.font='400 32px Arial';x.fillText('Portfólio: rickdigitalestudio.github.io/profissional-rickdutra · TikTok: @ricklima991',60,1010);
 atualizarPrevias();}
 function atualizarPrevias(){try{const c=document.getElementById('bannerCanvas');
 const w=document.getElementById('prevWa');if(w){w.getContext('2d').drawImage(c,0,0,300,300);}
@@ -587,7 +587,7 @@ const pt=document.getElementById('prevWaTxt');if(pt)pt.textContent=document.getE
 function wrap(x,t,px,py,mw,lh){const w=t.split(' ');let l='',y=py;w.forEach(o=>{if(x.measureText(l+o).width>mw){x.fillText(l,px,y);l='';y+=lh;}l+=o+' ';});x.fillText(l,px,y);}
 function round(x,a,b,w,h,r){x.beginPath();x.moveTo(a+r,b);x.arcTo(a+w,b,a+w,b+h,r);x.arcTo(a+w,b+h,a,b+h,r);x.arcTo(a,b+h,a,b,r);x.arcTo(a,b,a+w,b,r);x.closePath();}
 function baixarBanner(){const a=document.createElement('a');a.download='banner-rick-digital.png';a.href=document.getElementById('bannerCanvas').toDataURL();a.click();acaoReal('🎨 Banner exportado','PNG 1080x1080 baixado (prova: download executado)');}
-function legendaBanner(){copiarTexto('🚀 '+document.getElementById('b-tit').value+' | '+document.getElementById('b-sub').value+' ✅ Portfólio: https://studiorickdigital.github.io/ 📲 https://wa.me/qr/MOOILZTYKO2EI1 🎵 @ricklima991 #sites #lojasvirtuais #fanpages');}
+function legendaBanner(){copiarTexto('🚀 '+document.getElementById('b-tit').value+' | '+document.getElementById('b-sub').value+' ✅ Portfólio: https://rickdigitalestudio.github.io/profissional-rickdutra/ 📲 https://wa.me/qr/MOOILZTYKO2EI1 🎵 @ricklima991 #sites #lojasvirtuais #fanpages');}
 // IDEIAS — 15 ideias; postagem exige 1 clique (nenhum app posta sozinho sem conta Business + API aprovada)
 const IDEIAS=['Antes/depois de Fanpage que saiu de 0 p/ 5k seguidores — print + CTA WhatsApp.','Tour de 30s numa Loja Virtual vendendo no automático (link portfólio na bio TikTok).','“Quanto custa um site?” — abre o orçamento R$ 997 e quebra objeção no vídeo.','Depoimento + bastidor criando banner na Fábrica RD (prova de autoridade).','“3 erros que matam suas vendas sem site” — final: chama no WhatsApp QR.','Dueto TikTok com comércio local sem site: “eu faria assim”.','Oferta relâmpago: 2 vagas de Fanpage essa semana — gatilho urgência.','“Site em 7 dias”: mostre o cronograma dia a dia e o antes/depois.','Bastidor: como um orçamento de R$ 997 vira proposta no WhatsApp em 1 minuto.','“Sua loja fechada às 18h, seu site vendendo às 2h” — tese da loja virtual.','Responda caixinha: “preciso mesmo de site tendo Instagram?”','Mostre o Maps: “achei 10 comércios sem site no seu bairro — um pode ser você”.','“Quanto custa NÃO ter site?” — conta de clientes perdidos por mês.','Transformação: print de conversa fechando Fanpage de R$ 497 (com permissão).','Desafio 7 dias: 1 dica de vendas por dia + CTA do portfólio.'];
 function gerarIdeias(){if(!DB.filaPosts)DB.filaPosts=[];const out=[];const pool=[...IDEIAS].sort(()=>Math.random()-.5).slice(0,15);
@@ -597,7 +597,7 @@ function enfileirarPost(t){if(!DB.filaPosts)DB.filaPosts=[];DB.filaPosts.unshift
 function renderFilaPosts(){const f=(DB.filaPosts||[]).slice(0,15);if(!f.length)return '<div class="panel"><b>📅 Fila de postagem</b><br><small class="legend">Nada agendado. Clique “P/ fila” nas ideias.</small></div>';
 return '<div class="panel" style="border:2px solid #059669"><b>📅 Fila de postagem ('+f.length+')</b> <small class="legend">— o robô PREPARA tudo; a postagem final pede 1 clique seu (limite do TikTok/WhatsApp sem conta Business).</small>'+f.map(p=>'<div style="padding:.4rem 0;border-bottom:1px solid #eee;display:flex;justify-content:space-between;gap:.4rem;flex-wrap:wrap"><div><b>'+(p.status==='postado'?'✅ ':'⏳ ')+p.texto.slice(0,70)+'...</b><br><small>'+p.quando+' · '+p.status+'</small></div><div><button class="btn btn-wa" onclick="postarIdeiaId('+p.id+')">📤 Postar</button></div></div>').join('')+'</div>';}
 // Prepara pacote + abre destino (Web Share quando disponível). Marca como postado SÓ após o clique.
-function postarIdeia(t){const texto=t+' ✅ Portfólio: https://studiorickdigital.github.io/ 📲 https://wa.me/qr/MOOILZTYKO2EI1 🎵 @ricklima991 #sites #lojasvirtuais #fanpages';copiarTextoSilent(texto);
+function postarIdeia(t){const texto=t+' ✅ Portfólio: https://rickdigitalestudio.github.io/profissional-rickdutra/ 📲 https://wa.me/qr/MOOILZTYKO2EI1 🎵 @ricklima991 #sites #lojasvirtuais #fanpages';copiarTextoSilent(texto);
 if(navigator.share){navigator.share({title:'ESTÚDIO RICK DIGITAL',text:texto}).then(()=>marcarPostado(t)).catch(()=>{});}
 window.open('https://www.tiktok.com/upload','_blank');marcarPostado(t);}
 function postarIdeiaId(id){const p=(DB.filaPosts||[]).find(x=>x.id===id);if(p)postarIdeia(p.texto);}
@@ -704,7 +704,7 @@ function instalarApp(){if(deferred){deferred.prompt();}else alert('📱 No celul
 if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').catch(()=>{});}
 // INIT
 document.getElementById('cfg-marca').value=DB.cfg.marca;document.getElementById('cfg-wa').value=DB.cfg.wa;document.getElementById('cfg-tk').value=DB.cfg.tk;document.getElementById('cfg-pf').value=DB.cfg.pf;document.getElementById('cfg-num').value=DB.cfg.num;if(document.getElementById('cfg-cloud'))document.getElementById('cfg-cloud').value=DB.cfg.cloud||'';
-if(document.getElementById('cfg-evo')){document.getElementById('cfg-evo').value=DB.cfg.evo||'';document.getElementById('cfg-evokey').value=DB.cfg.evokey||'';document.getElementById('cfg-evoinst').value=DB.cfg.evoinst||'rick-digital';document.getElementById('cfg-evomsq').value=DB.cfg.evomsq||'Olá! Aqui é do ESTÚDIO RICK DIGITAL. Vi seu contato e quero te mostrar nosso portfólio: https://studiorickdigital.github.io/ — posso te mandar uma proposta?';document.getElementById('cfg-ttuser').value=DB.cfg.ttuser||'@ricklima991';if(DB.cfg.ttagenda)document.getElementById('cfg-ttagenda').value=DB.cfg.ttagenda;if(DB.cfg.evo&&DB.cfg.evokey)document.getElementById('evo-st').textContent='whatsapp auto: configurado ✅ teste a conexão';}
+if(document.getElementById('cfg-evo')){document.getElementById('cfg-evo').value=DB.cfg.evo||'';document.getElementById('cfg-evokey').value=DB.cfg.evokey||'';document.getElementById('cfg-evoinst').value=DB.cfg.evoinst||'rick-digital';document.getElementById('cfg-evomsq').value=DB.cfg.evomsq||'Olá! Aqui é do ESTÚDIO RICK DIGITAL. Vi seu contato e quero te mostrar nosso portfólio: https://rickdigitalestudio.github.io/profissional-rickdutra/ — posso te mandar uma proposta?';document.getElementById('cfg-ttuser').value=DB.cfg.ttuser||'@ricklima991';if(DB.cfg.ttagenda)document.getElementById('cfg-ttagenda').value=DB.cfg.ttagenda;if(DB.cfg.evo&&DB.cfg.evokey)document.getElementById('evo-st').textContent='whatsapp auto: configurado ✅ teste a conexão';}
 if(DB.acoes?.length)document.getElementById('acoes-reais').innerHTML=DB.acoes.slice(0,10).map(a=>'<div>✔ '+a.quando+' — <b>'+a.t+'</b><br>'+a.d+'</div>').join('');
 desenharBanner();gerarIdeias();render();verificarAutomacao();
 </script>

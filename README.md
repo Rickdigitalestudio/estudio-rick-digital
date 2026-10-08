@@ -5,7 +5,7 @@
 [![PWA](https://img.shields.io/badge/PWA-Instalável-2563EB?logo=pwa)](./index.html)
 [![WhatsApp](https://img.shields.io/badge/WhatsApp-Oficial-25D366?logo=whatsapp)](https://wa.me/qr/MOOILZTYKO2EI1)
 [![TikTok](https://img.shields.io/badge/TikTok-@ricklima991-000?logo=tiktok)](https://www.tiktok.com/@ricklima991)
-[![Portfólio](https://img.shields.io/badge/Portfólio-Ao_vivo-7C3AED)](https://studiorickdigital.github.io/)
+[![Portfólio](https://img.shields.io/badge/Portfólio-Ao_vivo-7C3AED)](https://rickdigitalestudio.github.io/profissional-rickdutra/)
 [![Licença](https://img.shields.io/badge/Licença-Proprietária-orange)]()
 
 ## ✨ Demonstração
@@ -115,7 +115,7 @@ gh repo create SEU-REPO --public --source=. --push
 
 - 💬 WhatsApp: https://wa.me/qr/MOOILZTYKO2EI1
 - 🎵 TikTok: https://www.tiktok.com/@ricklima991
-- 🌐 Portfólio: https://studiorickdigital.github.io/
+- 🌐 Portfólio: https://rickdigitalestudio.github.io/profissional-rickdutra/
 
 Mensagens diretas usam `wa.me/55+DDD+numero` com texto pré-preenchido por lead/serviço.
 
