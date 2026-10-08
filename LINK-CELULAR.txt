@@ -1,6 +1,6 @@
 LINK DEFINITIVO DO APLICATIVO (funciona com PC DESLIGADO):
 
-https://ricklima991.github.io/estudio-rick-digital/
+https://rickdigitalestudio.github.io/estudio-rick-digital/
 
 No celular: abra o link > Menu > Adicionar a tela inicial = vira app.
 Dados sincronizados PC+celular via Config > Nuvem (URL Firebase + Auto-sync ON nos 2).

@@ -13,7 +13,7 @@ PASSO 1 — PUBLICAR (PC desligado OK) — 3 min:
   git commit -m "feat: controle total WhatsApp auto + TikTok agenda"
   git push origin main
   Depois: GitHub > Settings > Pages > Deploy from branch > main > /root
-  Link: https://ricklima991.github.io/estudio-rick-digital/
+  Link: https://rickdigitalestudio.github.io/estudio-rick-digital/
   Actions > prospeccao-diaria > Run workflow (testa o robô na hora)
 
 PASSO 2 — NUVEM (PC + celular iguais) — 4 min:
