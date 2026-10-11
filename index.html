@@ -563,9 +563,10 @@ function salvarTarefa(){const t=document.getElementById('t-tit').value;if(!t)ret
 function okTar(id){DB.tarefas.find(t=>t.id===id).ok=true;save();}
 // FINANCEIRO + PROJETOS (50% entrada / 100% conclusão)
 function iniFin(){if(!DB.contas)DB.contas=[];if(!DB.projetos)DB.projetos=[];
-if(!DB.finSeed){DB.finSeed=true;const S=[['Fanpage — cliente 1','Fanpage',497],['Site Institucional — cliente 2','Site Institucional',997],['Landing Page — cliente 3','Landing Page',697],['Loja Virtual — cliente 4','Loja Virtual',2497],['Site Institucional — cliente 5','Site Institucional',997],['Fanpage — cliente 6 (em andamento)','Fanpage',497]];
-S.forEach((s,i)=>{const fim=i<5;DB.projetos.push({id:Date.now()+i,nome:s[0],cliente:'',servico:s[1],valor:s[2],status:fim?'concluido':'andamento',pago50:true,pago100:fim,data:new Date().toLocaleString('pt-BR')});});}}
-function finTotais(){iniFin();let rec=0,arec=0;DB.projetos.forEach(p=>{const v=Number(p.valor||0);if(p.pago50)rec+=v/2;else arec+=v/2;if(p.pago100)rec+=v/2;else if(p.status==='concluido')arec+=v/2;});
+if(!DB.finSeed){DB.finSeed=true;const S=[['Fanpage — cliente 1','Fanpage',497],['Site Institucional — cliente 2','Site Institucional',997],['Landing Page — cliente 3','Landing Page',697],['Loja Virtual — cliente 4','Loja Virtual',2497],['Site Institucional — cliente 5','Site Institucional',997],['Fanpage — cliente 6 (em andamento)','Fanpage',496]];
+S.forEach((s,i)=>{const fim=i<5;DB.projetos.push({id:Date.now()+i,nome:s[0],cliente:'',servico:s[1],valor:s[2],status:fim?'concluido':'andamento',pago50:true,pago100:fim,data:new Date().toLocaleString('pt-BR')});});}
+if(!DB.finAjuste248){DB.finAjuste248=true;const p6=DB.projetos.find(p=>p.nome==='Fanpage — cliente 6 (em andamento)'&&Number(p.valor)===497);if(p6)p6.valor=496;}}
+function finTotais(){iniFin();let rec=0,arec=0;DB.projetos.forEach(p=>{const v=Number(p.valor||0);if(p.pago50)rec+=v/2;else arec+=v/2;if(p.pago100)rec+=v/2;else arec+=v/2;});
 const pagar=DB.contas.filter(c=>!c.paga).reduce((s,c)=>s+Number(c.valor||0),0);return {rec,arec,pagar};}
 function brl(v){return 'R$ '+Number(v||0).toFixed(0);}
 function renderFin(){iniFin();const t=finTotais();
