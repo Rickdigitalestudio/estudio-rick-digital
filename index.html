@@ -310,8 +310,8 @@ canvas#bannerCanvas{width:100%;max-width:420px;border-radius:16px;border:1px sol
 <div id="aba-rel" class="aba">
 <h1>📋 Relatórios</h1><br>
 <div class="cards"><div class="card"><div>Total</div><div class="v" id="r-total">0</div></div>
-<div class="card"><div>Clientes</div><div class="v" id="r-cli">0</div></div>
-<div class="card"><div>Valor</div><div class="v" id="r-valor">R$ 0</div></div>
+<div class="card"><div>Clientes (projetos)</div><div class="v" id="r-cli">0</div></div>
+<div class="card"><div>Valor recebido</div><div class="v" id="r-valor">R$ 0</div></div>
 <div class="card"><div>Conversão</div><div class="v" id="r-conv">0%</div></div></div>
 <div class="panel"><h3>Leads por origem</h3><div id="r-orig"></div>
 <div style="margin-top:1rem;display:flex;gap:.6rem"><button class="btn btn-p" onclick="exportCSV()">⬇️ Exportar Excel/CSV</button><button class="btn btn-v" onclick="window.print()">🖨️ Exportar PDF (imprimir)</button></div></div>
@@ -538,8 +538,8 @@ document.getElementById('alertas').innerHTML=(function(){const reais=at.filter(l
 return (reais.slice(0,5).map(l=>'<div style="padding:.6rem 0;border-bottom:1px solid #eee;display:flex;justify-content:space-between;align-items:center;gap:.5rem"><div><b>'+l.nome+'</b> <small>· '+l.origem+' · '+l.servico+' · '+(l.valor?'R$ '+l.valor:'—')+'</small></div><div><a class="btn btn-wa" target="_blank" href="'+waLink(l.tel,'Olá '+l.nome+'! Vi seu interesse em '+l.servico+' — bora fechar? Portfólio: '+DB.cfg.pf)+'">WhatsApp</a> <button class="btn btn-v" onclick="analisarLead('+l.id+')">🔍 Análise</button> <button class="btn btn-v" onclick="abrirLead('+l.id+')">Ver</button></div></div>').join('')||'Sem leads com fone real p/ contatar ✅')+(pend?'<div class="legend" style="margin-top:.4rem">⚠️ '+pend+' candidato(s) sem fone aguardando completar (não entram no disparo).</div>':'');})();
 document.getElementById('lista-tarefas').innerHTML=DB.tarefas.filter(t=>!t.ok).map(t=>{const ll=t.leadId?leadPorId(t.leadId):null;const pp=t.projId?projPorId(t.projId):null;const cc=t.contaId?(DB.contas||[]).find(c=>c.id===t.contaId):null;const vinc=ll?'🔗 '+ll.nome:(pp?'🔗 '+pp.nome:(cc?'🔗 '+cc.desc:''));return '<div style="padding:.7rem;border-left:3px solid #F59E0B;background:#FFFBEB;border-radius:8px;margin-bottom:.5rem;display:flex;justify-content:space-between"><div><b>'+t.tit+'</b><br><small>'+(t.data||'')+(vinc?' · '+vinc:'')+'</small></div><button class="btn btn-p" onclick="okTar('+t.id+')">Concluir</button></div>';}).join('')||'Nenhuma pendência 🎉';
 const org={};at.forEach(l=>org[l.origem]=(org[l.origem]||0)+1);
-document.getElementById('r-total').textContent=at.length;document.getElementById('r-cli').textContent=c.cliente;
-document.getElementById('r-valor').textContent='R$ '+tot.toFixed(0);document.getElementById('r-conv').textContent=conv+'%';
+document.getElementById('r-total').textContent=at.length;document.getElementById('r-cli').textContent=DB.projetos.length;
+document.getElementById('r-valor').textContent=brl(finTotais().rec);document.getElementById('r-conv').textContent=conv+'%';
 document.getElementById('r-orig').innerHTML=Object.entries(org).sort((a,b)=>b[1]-a[1]).map(o=>'<div>'+o[0]+': <b>'+o[1]+'</b></div>').join('')||'—';
 document.getElementById('grid-equipe').innerHTML=DB.eq.map((f,i)=>{const ini=f.n.split(' ').map(x=>x[0]).slice(0,2).join('');const src=f.fotoLocal||f.foto;const av=src?'<span>'+ini+'</span><img loading="lazy" src="'+src+'" alt="'+f.n+'" data-fb="'+(f.foto||'')+'" onload="this.previousElementSibling.style.display=\'none\'" onerror="if(this.dataset.fb&&this.src!==this.dataset.fb){this.src=this.dataset.fb;}else{this.remove();}">':ini;return '<div class="func'+(plantaoOn?' trab':'')+'"><div class="av" style="background:'+f.c+'">'+av+'</div><b style="font-size:.85rem">'+f.n+'</b><small>'+f.s+' · '+(f.robo?'🤖':(f.g==='F'?'👩':'👨'))+'</small><br><span class="st">'+(plantaoOn?'🟢 em plantão':'⚪ standby')+' · '+f.feitos+' ações</span></div>';}).join('');
 updNot();calcOrc();try{renderSocial();}catch(e){}try{renderMetricas(7);}catch(e){}try{renderHist();}catch(e){}try{renderFin();}catch(e){}try{renderProj();}catch(e){}try{renderHier();}catch(e){}}
