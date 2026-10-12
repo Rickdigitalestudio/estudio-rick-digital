@@ -1,0 +1,41 @@
+FIREBASE — LIGAR PC + CELULAR (5 min, grátis, 1 vez só)
+=====================================================
+Feito isso, tudo que você fizer no PC aparece no celular e vice-versa.
+
+PASSO 1 — criar o projeto (no PC):
+  1. Abra console.firebase.google.com e entre com seu Google
+  2. Clique "Adicionar projeto" → nome: rick-digital → Continuar
+  3. Desligue o Google Analytics (não precisa) → Criar projeto → Continuar
+
+PASSO 2 — criar o banco:
+  1. No menu esquerdo: Compilação → Realtime Database → Criar banco de dados
+  2. Local: escolha "Estados Unidos (us-central1)" → Avançar
+  3. Regras: "Iniciar no modo de teste" → Ativar
+
+PASSO 3 — liberar o acesso (IMPORTANTE, senão dá "acesso negado"):
+  1. Na aba "Regras" do Realtime Database, apague tudo e cole isto:
+     {
+       "rules": {
+         ".read": true,
+         ".write": true
+       }
+     }
+  2. Clique Publicar
+
+PASSO 4 — copiar a URL:
+  1. Na aba "Dados", copie a URL que aparece no topo, tipo:
+     https://rick-digital-default-rtdb.firebaseio.com
+
+PASSO 5 — colar no app (NOS DOIS aparelhos):
+  1. PC: ESTÚDIO RICK DIGITAL → Configurações → Nuvem → cole a URL → Salvar
+  2. PC: clique "🔗 Testar" — tem que dar "conectada"
+  3. PC: clique "☁️ Enviar p/ nuvem" → ligue "🔄 Auto-sync"
+  4. Celular: abra o link do app → mesma URL → Salvar → "☁️ Puxar da nuvem" → ligue "🔄 Auto-sync"
+
+PRONTO: mexeu num, aparece no outro em até 15 segundos, sem perder nada
+(mescla por ID: o que criar no celular soma com o do PC, nunca apaga).
+
+SE DER ERRO:
+  - "acesso negado" → refaça o PASSO 3 (regras)
+  - "sem acesso / confira URL" → a URL tem que terminar com .firebaseio.com, sem / no fim
+  - "vazia" → clique "Enviar p/ nuvem" no aparelho que tem os dados

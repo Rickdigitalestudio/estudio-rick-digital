@@ -393,11 +393,12 @@ canvas#bannerCanvas{width:100%;max-width:420px;border-radius:16px;border:1px sol
 <label>Portfólio</label><input id="cfg-pf" value="https://rickdigitalestudio.github.io/profissional-rickdutra/">
 <label>WhatsApp número (só números p/ mensagem direta)</label><input id="cfg-num" value="5511989426415">
 <label>☁️ Nuvem (mesmo controle PC + celular sem estar conectado) — cole a URL do Firebase Realtime Database</label><input id="cfg-cloud" placeholder="https://seu-projeto-default-rtdb.firebaseio.com">
-<p class="legend">Grátis: console.firebase.google.com → criar projeto → Realtime Database → copiar URL. PC e celular usam a mesma URL = mesmos leads/tarefas.</p>
+<p class="legend">Grátis: console.firebase.google.com → criar projeto → Realtime Database → copiar URL. <b>PC e celular com a mesma URL + Auto-sync ON nos dois = tudo igual nos dois.</b> Veja o passo a passo em <b>firebase-passo-a-passo.txt</b>.</p>
 <div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.5rem">
 <button class="btn btn-p" onclick="cloudPush()">☁️⬆️ Enviar p/ nuvem</button>
 <button class="btn btn-v" onclick="cloudPull()">☁️⬇️ Puxar da nuvem</button>
 <button class="btn btn-wa" onclick="cloudAuto()">🔄 Auto-sync ON/OFF</button>
+<button class="btn btn-v" onclick="cloudTestar()">🔗 Testar</button>
 <span class="legend" id="cloud-st">nuvem: off</span>
 </div>
 </div>
@@ -477,25 +478,25 @@ document.querySelectorAll('aside nav a').forEach(a=>a.onclick=e=>{e.preventDefau
 function ir(n){document.querySelectorAll('.aba').forEach(x=>x.classList.remove('ativa'));document.getElementById('aba-'+n).classList.add('ativa');document.querySelectorAll('aside nav a').forEach(a=>a.classList.toggle('ativo',a.dataset.aba===n));}
 // EQUIPE 15
 const EQUIPE=[
-{n:'Camila Torres',s:'Designer de Banners',c:'#EC4899',g:'F'},
-{n:'Juliana Prado',s:'Copywriter · Ideias de Posts',c:'#8B5CF6',g:'F'},
-{n:'Fernanda Lima',s:'Gestora TikTok @ricklima991',c:'#000000',g:'F'},
-{n:'Patrícia Gomes',s:'Atendimento WhatsApp',c:'#25D366',g:'F'},
-{n:'Larissa Alves',s:'Qualificadora de Leads',c:'#F59E0B',g:'F'},
-{n:'Beatriz Rocha',s:'Prospecção Google Maps',c:'#0EA5E9',g:'F'},
-{n:'Aline Castro',s:'Social Media · Agendamento',c:'#EF4444',g:'F'},
-{n:'Renata Duarte',s:'Financeiro · Orçamentos',c:'#10B981',g:'F'},
-{n:'Sofia Mendes',s:'Pós-venda · Avaliações',c:'#6366F1',g:'F'},
+{n:'Camila Torres',s:'Designer de Banners',c:'#EC4899',g:'F',fotoLocal:'fotos/camila.jpg'},
+{n:'Juliana Prado',s:'Copywriter · Ideias de Posts',c:'#8B5CF6',g:'F',fotoLocal:'fotos/juliana.jpg'},
+{n:'Fernanda Lima',s:'Gestora TikTok @ricklima991',c:'#000000',g:'F',fotoLocal:'fotos/fernanda.jpg'},
+{n:'Patrícia Gomes',s:'Atendimento WhatsApp',c:'#25D366',g:'F',fotoLocal:'fotos/patricia.jpg'},
+{n:'Larissa Alves',s:'Qualificadora de Leads',c:'#F59E0B',g:'F',fotoLocal:'fotos/larissa.jpg'},
+{n:'Beatriz Rocha',s:'Prospecção Google Maps',c:'#0EA5E9',g:'F',fotoLocal:'fotos/beatriz.jpg'},
+{n:'Aline Castro',s:'Social Media · Agendamento',c:'#EF4444',g:'F',fotoLocal:'fotos/aline.jpg'},
+{n:'Renata Duarte',s:'Financeiro · Orçamentos',c:'#10B981',g:'F',fotoLocal:'fotos/renata.jpg'},
+{n:'Sofia Mendes',s:'Pós-venda · Avaliações',c:'#6366F1',g:'F',fotoLocal:'fotos/sofia.jpg'},
 {n:'Helena Vasques',s:'🤖 Robô Financeira · Cobranças e Contas',c:'#DB2777',g:'F',robo:true,fotoLocal:'fotos/helena.jpg',foto:'https://randomuser.me/api/portraits/women/65.jpg'},
 {n:'Vitória Lemos',s:'🤖 Guardiã do Plantão · Vigia 24h',c:'#F472B6',g:'F',robo:true,fotoLocal:'fotos/vitoria.jpg',foto:'https://randomuser.me/api/portraits/women/44.jpg'},
 {n:'Lívia Andrade',s:'🤖 COO · Operação e Números',c:'#0EA5E9',g:'F',robo:true,fotoLocal:'fotos/livia.jpg',foto:'https://randomuser.me/api/portraits/women/68.jpg'},
 {n:'Nina Cardoso',s:'🤖 CHRO · Pessoas e Harmonia',c:'#A855F7',g:'F',robo:true,fotoLocal:'fotos/nina.jpg',foto:'https://randomuser.me/api/portraits/women/26.jpg'},
-{n:'Thiago Martins',s:'Closer · Fechamento',c:'#1F2937',g:'M'},
-{n:'Diego Ferreira',s:'Dev Sites · Lojas Virtuais',c:'#2563EB',g:'M'},
-{n:'Lucas Almeida',s:'Editor Vídeo TikTok',c:'#7C3AED',g:'M'},
-{n:'Marcos Vinícius',s:'Suporte Fanpages',c:'#0891B2',g:'M'},
-{n:'Gabriel Santos',s:'Analista CRM · Relatórios',c:'#4B5563',g:'M'},
-{n:'Felipe Oliveira',s:'Expansão · Parcerias',c:'#65A30D',g:'M'}];
+{n:'Thiago Martins',s:'Closer · Fechamento',c:'#1F2937',g:'M',fotoLocal:'fotos/thiago.jpg'},
+{n:'Diego Ferreira',s:'Dev Sites · Lojas Virtuais',c:'#2563EB',g:'M',fotoLocal:'fotos/diego.jpg'},
+{n:'Lucas Almeida',s:'Editor Vídeo TikTok',c:'#7C3AED',g:'M',fotoLocal:'fotos/lucas.jpg'},
+{n:'Marcos Vinícius',s:'Suporte Fanpages',c:'#0891B2',g:'M',fotoLocal:'fotos/marcos.jpg'},
+{n:'Gabriel Santos',s:'Analista CRM · Relatórios',c:'#4B5563',g:'M',fotoLocal:'fotos/gabriel.jpg'},
+{n:'Felipe Oliveira',s:'Expansão · Parcerias',c:'#65A30D',g:'M',fotoLocal:'fotos/felipe.jpg'}];
 EQUIPE.forEach(e=>e.feitos=0);
 function slug(s){return String(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().split(' ')[0];}
 function iniEq(){EQUIPE.forEach(e=>{if(!e.id)e.id=slug(e.n);});if(!DB.eq)DB.eq=EQUIPE.map(e=>({...e,feitos:0}));else EQUIPE.forEach(e=>{const x=DB.eq.find(y=>y.n===e.n);if(!x)DB.eq.push({...e,feitos:0});else{if(e.foto)x.foto=e.foto;if(e.fotoLocal)x.fotoLocal=e.fotoLocal;if(e.robo!==undefined)x.robo=e.robo;x.s=e.s;if(!x.id)x.id=e.id;}});}
@@ -909,9 +910,25 @@ save();document.getElementById('ordem').value='';}
 // NUVEM — mesmo controle PC + celular, sem estar conectado ao celular
 let cloudTimer=null;
 function cloudURL(){return (DB.cfg.cloud||'').replace(/\/$/,'');}
-async function cloudPush(silent){const u=cloudURL();if(!u)return alert('Cole a URL do Firebase em Configurações → Nuvem');try{await fetch(u+'/crm.json',{method:'PUT',body:JSON.stringify({leads:DB.leads,tarefas:DB.tarefas,not:DB.not,comunicados:DB.comunicados||[],radio:(DB.radio||[]).slice(0,30),contas:DB.contas||[],projetos:DB.projetos||[],finSeed:DB.finSeed||false,plantao:DB.plantao||{on:false},diretoria:(DB.diretoria||[]).slice(0,40),eq:DB.eq||[],updated:new Date().toISOString()})});document.getElementById('cloud-st').textContent='nuvem: enviado ✅ '+new Date().toLocaleTimeString('pt-BR');if(!silent)alert('✅ Nuvem atualizada! Abra no celular e puxe.');}catch(e){alert('⚠️ Falha nuvem — confira URL e regras do Firebase');}}
-async function cloudPull(){const u=cloudURL();if(!u)return alert('Cole a URL do Firebase em Configurações → Nuvem');try{const j=await(await fetch(u+'/crm.json')).json();if(j&&(j.leads||j.tarefas)){DB.leads=j.leads||DB.leads;DB.tarefas=j.tarefas||DB.tarefas;DB.not=j.not||DB.not;if(j.comunicados)DB.comunicados=j.comunicados;if(j.radio)DB.radio=j.radio;if(j.contas)DB.contas=j.contas;if(j.projetos)DB.projetos=j.projetos;if(j.finSeed!==undefined)DB.finSeed=j.finSeed;if(j.plantao)DB.plantao=j.plantao;if(j.diretoria)DB.diretoria=j.diretoria;if(j.eq&&j.eq.length>=(DB.eq||[]).length)DB.eq=j.eq;if(DB.plantao&&DB.plantao.on&&!plantaoOn){try{retomarPlantao();}catch(e){}}save();document.getElementById('cloud-st').textContent='nuvem: recebido ✅ '+new Date().toLocaleTimeString('pt-BR');alert('✅ Dados da nuvem carregados!');}else alert('Nuvem vazia ainda — envie primeiro.');}catch(e){alert('⚠️ Falha ao puxar — confira URL');}}
-function cloudAuto(){if(cloudTimer){clearInterval(cloudTimer);cloudTimer=null;document.getElementById('cloud-st').textContent='nuvem: off';return;}const u=cloudURL();if(!u)return alert('Cole a URL do Firebase primeiro');cloudTimer=setInterval(async()=>{try{await fetch(u+'/crm.json',{method:'PUT',body:JSON.stringify({leads:DB.leads,tarefas:DB.tarefas,not:DB.not,contas:DB.contas||[],projetos:DB.projetos||[],plantao:DB.plantao||{on:false},eq:DB.eq||[],updated:new Date().toISOString()})});const j=await(await fetch(u+'/crm.json')).json();if(j&&j.updated){document.getElementById('cloud-st').textContent='nuvem: auto ✅ '+new Date().toLocaleTimeString('pt-BR');}}catch(e){}} ,15000);document.getElementById('cloud-st').textContent='nuvem: auto ON 🔄';alert('🔄 Auto-sync ligado! PC e celular trocam dados a cada 15s.');}
+function cloudPayload(){return {leads:DB.leads,tarefas:DB.tarefas,not:DB.not,comunicados:DB.comunicados||[],radio:(DB.radio||[]).slice(0,30),contas:DB.contas||[],projetos:DB.projetos||[],finSeed:DB.finSeed||false,plantao:DB.plantao||{on:false},diretoria:(DB.diretoria||[]).slice(0,40),eq:DB.eq||[],updated:new Date().toISOString()};}
+// Junta duas listas pelo ID sem perder nada: conflito fica com o lado mais novo.
+function unirListas(local,remota,remotaNova){const m={};(local||[]).forEach(x=>{m[x.id]=x;});(remota||[]).forEach(x=>{if(!m[x.id])m[x.id]=x;else if(remotaNova)m[x.id]=x;});return Object.values(m);}
+function cloudMerge(j){if(!j)return false;const remotaNova=!DB.ultSync||!j.updated||(new Date(j.updated).getTime()>DB.ultSync);
+DB.leads=unirListas(DB.leads,j.leads,remotaNova);DB.tarefas=unirListas(DB.tarefas,j.tarefas,remotaNova);DB.not=unirListas(DB.not,j.not,remotaNova);
+DB.contas=unirListas(DB.contas||[],j.contas,remotaNova);DB.projetos=unirListas(DB.projetos||[],j.projetos,remotaNova);
+DB.comunicados=unirListas(DB.comunicados||[],j.comunicados,remotaNova);DB.radio=unirListas(DB.radio||[],j.radio,remotaNova).slice(0,80);DB.diretoria=unirListas(DB.diretoria||[],j.diretoria,remotaNova).slice(0,40);
+if(j.finSeed!==undefined&&(!DB.finSeed||remotaNova))DB.finSeed=j.finSeed;
+if(j.plantao&&(remotaNova||!(DB.plantao&&DB.plantao.on)))DB.plantao=j.plantao;
+if(j.eq&&j.eq.length>=(DB.eq||[]).length)DB.eq=j.eq;
+DB.ultSync=Date.now();return true;}
+async function cloudPush(silent){const u=cloudURL();if(!u)return alert('Cole a URL do Firebase em Configurações → Nuvem');try{await fetch(u+'/crm.json',{method:'PUT',body:JSON.stringify(cloudPayload())});DB.ultSync=Date.now();localStorage.setItem(KEY,JSON.stringify(DB));document.getElementById('cloud-st').textContent='nuvem: enviado ✅ '+new Date().toLocaleTimeString('pt-BR');if(!silent)alert('✅ Nuvem atualizada! Abra no celular e puxe.');}catch(e){alert('⚠️ Falha nuvem — confira URL e regras do Firebase');}}
+async function cloudPull(){const u=cloudURL();if(!u)return alert('Cole a URL do Firebase em Configurações → Nuvem');try{const j=await(await fetch(u+'/crm.json')).json();if(j&&(j.leads||j.tarefas)){cloudMerge(j);if(DB.plantao&&DB.plantao.on&&!plantaoOn){try{retomarPlantao();}catch(e){}}save();document.getElementById('cloud-st').textContent='nuvem: recebido ✅ '+new Date().toLocaleTimeString('pt-BR');alert('✅ Dados da nuvem carregados e mesclados sem perder nada!');}else alert('Nuvem vazia ainda — envie primeiro.');}catch(e){alert('⚠️ Falha ao puxar — confira URL');}}
+async function cloudTestar(){const u=cloudURL();const st=document.getElementById('cloud-st');if(!u){st.textContent='nuvem: sem URL — cole a URL do Firebase';return alert('Cole a URL do Firebase primeiro');}
+st.textContent='nuvem: testando…';try{const r=await fetch(u+'/crm.json');const j=await r.json().catch(()=>null);
+if(j&&j.error){st.textContent='nuvem: ⛔ acesso negado — libere as regras (ver firebase-passo-a-passo.txt passo 3)';return alert('Acesso negado pelo Firebase. Libere as regras: passo 3 do firebase-passo-a-passo.txt');}
+if(j&&(j.leads||j.tarefas)){st.textContent='nuvem: ✅ conectada com dados ('+(j.leads||[]).length+' leads)';return alert('✅ Conectada! Achei '+(j.leads||[]).length+' leads na nuvem. Pode ligar o Auto-sync.');}
+st.textContent='nuvem: ✅ conectada (vazia — clique Enviar p/ nuvem)';alert('✅ Conectada, mas vazia. Clique “Enviar p/ nuvem”.');}catch(e){st.textContent='nuvem: ❌ sem acesso — confira a URL';alert('Não alcancei essa URL. Confira se copiou certo (termina com .firebaseio.com).');}}
+function cloudAuto(){if(cloudTimer){clearInterval(cloudTimer);cloudTimer=null;localStorage.setItem(KEY,JSON.stringify(DB));document.getElementById('cloud-st').textContent='nuvem: off';return;}const u=cloudURL();if(!u)return alert('Cole a URL do Firebase primeiro');cloudTimer=setInterval(async()=>{try{const j=await(await fetch(u+'/crm.json')).json();if(j&&(j.leads||j.tarefas)){cloudMerge(j);if(DB.plantao&&DB.plantao.on&&!plantaoOn){try{retomarPlantao();}catch(e){}}}await fetch(u+'/crm.json',{method:'PUT',body:JSON.stringify(cloudPayload())});DB.ultSync=Date.now();save();document.getElementById('cloud-st').textContent='nuvem: auto ✅ '+new Date().toLocaleTimeString('pt-BR');}catch(e){document.getElementById('cloud-st').textContent='nuvem: auto ⚠️ falha — ver URL/regras';}} ,15000);document.getElementById('cloud-st').textContent='nuvem: auto ON 🔄';alert('🔄 Auto-sync ligado! Puxa + envia a cada 15s, mesclando sem perder nada. Ligue também no outro aparelho.');}
 // PWA
 let deferred=null;window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferred=e;});
 // 3D INTERATIVO — cards e banner inclinam seguindo o mouse (só PC com mouse)
