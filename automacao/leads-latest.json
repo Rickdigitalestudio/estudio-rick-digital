@@ -1,7 +1,17 @@
 {
- "varredura": "11/10/2026 16:36 UTC",
+ "varredura": "12/10/2026 20:11 UTC",
  "total": 59,
  "leads": [
+  {
+   "nome": "Bar e Restaurante Perceu",
+   "fone": "",
+   "fone_real": false,
+   "endereco": "",
+   "cidade": "São Paulo SP/Brasil",
+   "categoria": "restaurante",
+   "fonte": "GitHub-robo OSM/Overpass (sem site no cadastro)",
+   "varredura": "12/10/2026 20:11 UTC"
+  },
   {
    "nome": "Studio Surya de Yoga",
    "fone": "",
@@ -10,7 +20,7 @@
    "cidade": "Rio de Janeiro/Brasil",
    "categoria": "fitness",
    "fonte": "GitHub-robo OSM/Overpass (sem site no cadastro)",
-   "varredura": "11/10/2026 16:36 UTC"
+   "varredura": "12/10/2026 20:11 UTC"
   },
   {
    "nome": "Academia Rio Gym",
@@ -20,7 +30,7 @@
    "cidade": "Rio de Janeiro/Brasil",
    "categoria": "fitness",
    "fonte": "GitHub-robo OSM/Overpass (sem site no cadastro)",
-   "varredura": "11/10/2026 16:36 UTC"
+   "varredura": "12/10/2026 20:11 UTC"
   },
   {
    "nome": "Citrus",
@@ -30,7 +40,7 @@
    "cidade": "Rio de Janeiro/Brasil",
    "categoria": "fitness",
    "fonte": "GitHub-robo OSM/Overpass (sem site no cadastro)",
-   "varredura": "11/10/2026 16:36 UTC"
+   "varredura": "12/10/2026 20:11 UTC"
   },
   {
    "nome": "Contours Express",
@@ -40,7 +50,7 @@
    "cidade": "Rio de Janeiro/Brasil",
    "categoria": "fitness",
    "fonte": "GitHub-robo OSM/Overpass (sem site no cadastro)",
-   "varredura": "11/10/2026 16:36 UTC"
+   "varredura": "12/10/2026 20:11 UTC"
   },
   {
    "nome": "Academia Personal Physical Center",
@@ -50,7 +60,7 @@
    "cidade": "Rio de Janeiro/Brasil",
    "categoria": "fitness",
    "fonte": "GitHub-robo OSM/Overpass (sem site no cadastro)",
-   "varredura": "11/10/2026 16:36 UTC"
+   "varredura": "12/10/2026 20:11 UTC"
   },
   {
    "nome": "ATP",
@@ -60,7 +70,7 @@
    "cidade": "Rio de Janeiro/Brasil",
    "categoria": "fitness",
    "fonte": "GitHub-robo OSM/Overpass (sem site no cadastro)",
-   "varredura": "11/10/2026 16:36 UTC"
+   "varredura": "12/10/2026 20:11 UTC"
   },
   {
    "nome": "Curves",
@@ -70,7 +80,7 @@
    "cidade": "Rio de Janeiro/Brasil",
    "categoria": "fitness",
    "fonte": "GitHub-robo OSM/Overpass (sem site no cadastro)",
-   "varredura": "11/10/2026 16:36 UTC"
+   "varredura": "12/10/2026 20:11 UTC"
   },
   {
    "nome": "Qualivida",
@@ -80,7 +90,7 @@
    "cidade": "Rio de Janeiro/Brasil",
    "categoria": "fitness",
    "fonte": "GitHub-robo OSM/Overpass (sem site no cadastro)",
-   "varredura": "11/10/2026 16:36 UTC"
+   "varredura": "12/10/2026 20:11 UTC"
   },
   {
    "nome": "Academia LifeFit",
@@ -90,7 +100,7 @@
    "cidade": "Rio de Janeiro/Brasil",
    "categoria": "fitness",
    "fonte": "GitHub-robo OSM/Overpass (sem site no cadastro)",
-   "varredura": "11/10/2026 16:36 UTC"
+   "varredura": "12/10/2026 20:11 UTC"
   },
   {
    "nome": "Academia da Terceira Idade",
@@ -100,7 +110,7 @@
    "cidade": "Rio de Janeiro/Brasil",
    "categoria": "fitness",
    "fonte": "GitHub-robo OSM/Overpass (sem site no cadastro)",
-   "varredura": "11/10/2026 16:36 UTC"
+   "varredura": "12/10/2026 20:11 UTC"
   },
   {
    "nome": "Body Move",
@@ -110,7 +120,7 @@
    "cidade": "Rio de Janeiro/Brasil",
    "categoria": "fitness",
    "fonte": "GitHub-robo OSM/Overpass (sem site no cadastro)",
-   "varredura": "11/10/2026 16:36 UTC"
+   "varredura": "12/10/2026 20:11 UTC"
   },
   {
    "nome": "Smart Fit",
@@ -120,7 +130,7 @@
    "cidade": "Rio de Janeiro/Brasil",
    "categoria": "fitness",
    "fonte": "GitHub-robo OSM/Overpass (sem site no cadastro)",
-   "varredura": "11/10/2026 16:36 UTC"
+   "varredura": "12/10/2026 20:11 UTC"
   },
   {
    "nome": "Academia Pro Health Fitness Studio",
@@ -130,7 +140,7 @@
    "cidade": "Rio de Janeiro/Brasil",
    "categoria": "fitness",
    "fonte": "GitHub-robo OSM/Overpass (sem site no cadastro)",
-   "varredura": "11/10/2026 16:36 UTC"
+   "varredura": "12/10/2026 20:11 UTC"
   },
   {
    "nome": "Body Line",
@@ -140,7 +150,87 @@
    "cidade": "Rio de Janeiro/Brasil",
    "categoria": "fitness",
    "fonte": "GitHub-robo OSM/Overpass (sem site no cadastro)",
-   "varredura": "11/10/2026 16:36 UTC"
+   "varredura": "12/10/2026 20:11 UTC"
+  },
+  {
+   "nome": "PLC Advogados – Portela, Lima & Colen",
+   "fone": "",
+   "fone_real": false,
+   "endereco": "Avenida Raja Gabaglia, Gutierrez, Belo Horizonte",
+   "cidade": "Belo Horizonte/Brasil",
+   "categoria": "advocacia",
+   "fonte": "GitHub-robo OSM/Overpass (sem site no cadastro)",
+   "varredura": "12/10/2026 20:11 UTC"
+  },
+  {
+   "nome": "Barcelos",
+   "fone": "",
+   "fone_real": false,
+   "endereco": "",
+   "cidade": "Belo Horizonte/Brasil",
+   "categoria": "advocacia",
+   "fonte": "GitHub-robo OSM/Overpass (sem site no cadastro)",
+   "varredura": "12/10/2026 20:11 UTC"
+  },
+  {
+   "nome": "Renato Parma Cantarino Escritório de Advocacia",
+   "fone": "55 31 9839 95342",
+   "fone_real": true,
+   "endereco": "Rua dos Guajajaras, Centro, Belo Horizonte",
+   "cidade": "Belo Horizonte/Brasil",
+   "categoria": "advocacia",
+   "fonte": "GitHub-robo OSM/Overpass (sem site no cadastro)",
+   "varredura": "12/10/2026 20:11 UTC"
+  },
+  {
+   "nome": "Safe e Lima Advogados",
+   "fone": "",
+   "fone_real": false,
+   "endereco": "Avenida Raja Gabaglia",
+   "cidade": "Belo Horizonte/Brasil",
+   "categoria": "advocacia",
+   "fonte": "GitHub-robo OSM/Overpass (sem site no cadastro)",
+   "varredura": "12/10/2026 20:11 UTC"
+  },
+  {
+   "nome": "SANTOS & CASAGRANDE ADVOCACIA E CONSUTORIA JURÍDICA",
+   "fone": "",
+   "fone_real": false,
+   "endereco": "",
+   "cidade": "Belo Horizonte/Brasil",
+   "categoria": "advocacia",
+   "fonte": "GitHub-robo OSM/Overpass (sem site no cadastro)",
+   "varredura": "12/10/2026 20:11 UTC"
+  },
+  {
+   "nome": "Imobiliária Apolar Jardim das Américas",
+   "fone": "",
+   "fone_real": false,
+   "endereco": "",
+   "cidade": "Curitiba/Brasil",
+   "categoria": "imobiliaria",
+   "fonte": "GitHub-robo OSM/Overpass (sem site no cadastro)",
+   "varredura": "12/10/2026 20:11 UTC"
+  },
+  {
+   "nome": "Imobiliária M2",
+   "fone": "",
+   "fone_real": false,
+   "endereco": "",
+   "cidade": "Curitiba/Brasil",
+   "categoria": "imobiliaria",
+   "fonte": "GitHub-robo OSM/Overpass (sem site no cadastro)",
+   "varredura": "12/10/2026 20:11 UTC"
+  },
+  {
+   "nome": "J8 Imóveis",
+   "fone": "",
+   "fone_real": false,
+   "endereco": "Avenida Vicente Machado, Batel, Curitiba",
+   "cidade": "Curitiba/Brasil",
+   "categoria": "imobiliaria",
+   "fonte": "GitHub-robo OSM/Overpass (sem site no cadastro)",
+   "varredura": "12/10/2026 20:11 UTC"
   },
   {
    "nome": "CJI Dentistas",
@@ -251,96 +341,6 @@
    "categoria": "dentista",
    "fonte": "GitHub-robo OSM/Overpass (sem site no cadastro)",
    "varredura": "11/10/2026 16:36 UTC"
-  },
-  {
-   "nome": "PLC Advogados – Portela, Lima & Colen",
-   "fone": "",
-   "fone_real": false,
-   "endereco": "Avenida Raja Gabaglia, Gutierrez, Belo Horizonte",
-   "cidade": "Belo Horizonte/Brasil",
-   "categoria": "advocacia",
-   "fonte": "GitHub-robo OSM/Overpass (sem site no cadastro)",
-   "varredura": "11/10/2026 16:36 UTC"
-  },
-  {
-   "nome": "Barcelos",
-   "fone": "",
-   "fone_real": false,
-   "endereco": "",
-   "cidade": "Belo Horizonte/Brasil",
-   "categoria": "advocacia",
-   "fonte": "GitHub-robo OSM/Overpass (sem site no cadastro)",
-   "varredura": "11/10/2026 16:36 UTC"
-  },
-  {
-   "nome": "Renato Parma Cantarino Escritório de Advocacia",
-   "fone": "55 31 9839 95342",
-   "fone_real": true,
-   "endereco": "Rua dos Guajajaras, Centro, Belo Horizonte",
-   "cidade": "Belo Horizonte/Brasil",
-   "categoria": "advocacia",
-   "fonte": "GitHub-robo OSM/Overpass (sem site no cadastro)",
-   "varredura": "11/10/2026 16:36 UTC"
-  },
-  {
-   "nome": "Safe e Lima Advogados",
-   "fone": "",
-   "fone_real": false,
-   "endereco": "Avenida Raja Gabaglia",
-   "cidade": "Belo Horizonte/Brasil",
-   "categoria": "advocacia",
-   "fonte": "GitHub-robo OSM/Overpass (sem site no cadastro)",
-   "varredura": "11/10/2026 16:36 UTC"
-  },
-  {
-   "nome": "SANTOS & CASAGRANDE ADVOCACIA E CONSUTORIA JURÍDICA",
-   "fone": "",
-   "fone_real": false,
-   "endereco": "",
-   "cidade": "Belo Horizonte/Brasil",
-   "categoria": "advocacia",
-   "fonte": "GitHub-robo OSM/Overpass (sem site no cadastro)",
-   "varredura": "11/10/2026 16:36 UTC"
-  },
-  {
-   "nome": "Imobiliária Apolar Jardim das Américas",
-   "fone": "",
-   "fone_real": false,
-   "endereco": "",
-   "cidade": "Curitiba/Brasil",
-   "categoria": "imobiliaria",
-   "fonte": "GitHub-robo OSM/Overpass (sem site no cadastro)",
-   "varredura": "11/10/2026 16:36 UTC"
-  },
-  {
-   "nome": "Imobiliária M2",
-   "fone": "",
-   "fone_real": false,
-   "endereco": "",
-   "cidade": "Curitiba/Brasil",
-   "categoria": "imobiliaria",
-   "fonte": "GitHub-robo OSM/Overpass (sem site no cadastro)",
-   "varredura": "11/10/2026 16:36 UTC"
-  },
-  {
-   "nome": "J8 Imóveis",
-   "fone": "",
-   "fone_real": false,
-   "endereco": "Avenida Vicente Machado, Batel, Curitiba",
-   "cidade": "Curitiba/Brasil",
-   "categoria": "imobiliaria",
-   "fonte": "GitHub-robo OSM/Overpass (sem site no cadastro)",
-   "varredura": "11/10/2026 16:36 UTC"
-  },
-  {
-   "nome": "Bar e Restaurante Perceu",
-   "fone": "",
-   "fone_real": false,
-   "endereco": "",
-   "cidade": "São Paulo SP/Brasil",
-   "categoria": "restaurante",
-   "fonte": "GitHub-robo OSM/Overpass (sem site no cadastro)",
-   "varredura": "10/10/2026 16:09 UTC"
   },
   {
    "nome": "Rancho",
