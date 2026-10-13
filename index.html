@@ -438,7 +438,7 @@ canvas#bannerCanvas{width:100%;max-width:420px;border-radius:16px;border:1px sol
 <div style="display:flex;gap:.5rem;flex-wrap:wrap;margin:.6rem 0">
 <button class="btn btn-p" onclick="dbRelatorio()">🔍 Auditar</button>
 <button class="btn btn-wa" onclick="alert(dbReparar())">🔧 Reparar</button>
-<button class="btn btn-x" onclick="limparFakes()">🧹 Limpar fakes</button>
+<button class="btn btn-x" onclick="limpezaGeral()">🧹 Limpeza geral</button>
 <button class="btn btn-v" onclick="dbBackup()">💾 Backup</button>
 <input type="file" id="db-file" accept=".json" style="max-width:220px"><button class="btn btn-v" onclick="dbRestaurar()">♻️ Restaurar</button>
 </div><div id="db-rel"></div><div id="db-vivo" style="margin-top:.6rem"></div></div>
@@ -626,6 +626,9 @@ if(semLink)r.push('ℹ️ '+semLink+' tarefa(s) sem vínculo (dá p/ religar pel
 const semId=(DB.eq||[]).filter(f=>!f.id).length;if(semId)r.push('⚠️ '+semId+' funcionário(s) sem ID');
 let lidasSemId=0;(DB.comunicados||[]).forEach(c=>(c.lidas||[]).forEach(l=>{if(!l.id&&!DB.eq.find(x=>x.n===l.nome))lidasSemId++;}));if(lidasSemId)r.push('⚠️ '+lidasSemId+' confirmação(ões) de ex-membro');
 const semLead=(DB.projetos||[]).filter(p=>!p.leadId&&p.cliente).length;if(semLead)r.push('ℹ️ '+semLead+' projeto(s) com cliente sem vínculo');
+const vistos={};let nomesRep=0;(DB.projetos||[]).forEach(p=>{const k=String(p.nome||'').trim().toLowerCase();if(vistos[k])nomesRep++;else vistos[k]=1;});if(nomesRep)r.push('⚠️ '+nomesRep+' projeto(s) com nome repetido (somados entre aparelhos)');
+const lixo=(DB.tarefas||[]).filter(t=>/^Follow-up plantão:/.test(t.tit||'')).length;if(lixo)r.push('ℹ️ '+lixo+' tarefa(s) lixo do plantão antigo');
+const fakes=(DB.leads||[]).filter(l=>/\(plantão\)/i.test(l.nome||'')||String(l.tel||'').replace(/\D/g,'')==='11900000000').length;if(fakes)r.push('⚠️ '+fakes+' lead(s) falsos do plantão antigo');
 return r.length?r:['✅ Banco íntegro — tudo interligado, nenhum conflito.'];}
 function dbReparar(){dbMigrate();const antes=dbAuditar().length;let dups=0;
 [['leads'],['tarefas'],['contas'],['projetos']].forEach(k=>{const arr=DB[k[0]]||[];const v={};DB[k[0]]=arr.filter(x=>{if(v[x.id]){dups++;return false;}v[x.id]=1;return true;});});
@@ -929,7 +932,17 @@ DB.ultSync=Date.now();return true;}
 function cloudCopiarURL(){const u=document.getElementById('cfg-cloud').value.trim();if(!u)return alert('Sem URL — salve primeiro');copiarTexto('URL da nuvem do app: '+u);}
 function cloudZapURL(){const u=document.getElementById('cfg-cloud').value.trim();if(!u)return alert('Sem URL — salve primeiro');window.open(waLink(num(),'Minha URL da nuvem do app (colar em Config → Nuvem no celular): '+u),'_blank');}
 function cloudQR(){const u=document.getElementById('cfg-cloud').value.trim();const box=document.getElementById('cloud-qr');if(!u){box.innerHTML='';return alert('Sem URL — salve primeiro');}box.innerHTML='<p class="legend">Aponte a câmera do celular p/ o QR, copie a URL e cole em Config → Nuvem:</p><img src="https://api.qrserver.com/v1/create-qr-code/?size=220x220&data='+encodeURIComponent(u)+'" alt="QR da nuvem" style="border:8px solid #111;border-radius:12px">';}
-function limparFakes(){const antes=DB.leads.length;DB.leads=DB.leads.filter(l=>!/\(plantão\)/i.test(l.nome||'')&&String(l.tel||'').replace(/\D/g,'')!=='11900000000');const n=antes-DB.leads.length;save();acaoReal('🧹 Limpeza de fakes',n+' lead(s) falsos do plantão antigo removidos');alert(n?('🧹 Removi '+n+' leads falsos do plantão antigo.'):'Nenhum lead falso encontrado ✅');}
+function limparFakes(){limpezaGeral();}
+function limpezaGeral(){const fakes=DB.leads.filter(l=>/\(plantão\)/i.test(l.nome||'')||String(l.tel||'').replace(/\D/g,'')==='11900000000');
+const vistos={};let dups=[];DB.projetos.forEach(p=>{const k=String(p.nome||'').trim().toLowerCase();if(vistos[k])dups.push(p);else vistos[k]=p;});
+const lixoT=DB.tarefas.filter(t=>/^Follow-up plantão:/.test(t.tit||''));
+if(!fakes.length&&!dups.length&&!lixoT.length)return alert('Nada a limpar ✅');
+if(!confirm('Remover '+fakes.length+' lead(s) falsos + '+dups.length+' projeto(s) repetido(s) + '+lixoT.length+' tarefa(s) lixo do plantão antigo?'))return;
+DB.leads=DB.leads.filter(l=>fakes.indexOf(l)<0);
+dups.forEach(d=>{const fica=archiveFix(d);DB.tarefas.forEach(t=>{if(t.projId===d.id)t.projId=fica.id;});DB.projetos=DB.projetos.filter(p=>p.id!==d.id);});
+DB.tarefas=DB.tarefas.filter(t=>lixoT.indexOf(t)<0);
+save();acaoReal('🧹 Limpeza geral',fakes.length+' fakes · '+dups.length+' projetos repetidos · '+lixoT.length+' tarefas lixo removidos');alert('🧹 Limpo: '+fakes.length+' fakes, '+dups.length+' repetidos, '+lixoT.length+' tarefas lixo.');}
+function archiveFix(d){const k=String(d.nome||'').trim().toLowerCase();const fica=DB.projetos.find(p=>p.id!==d.id&&String(p.nome||'').trim().toLowerCase()===k);return fica||d;}
 async function cloudPush(silent){const u=cloudURL();if(!u)return alert('Cole a URL do Firebase em Configurações → Nuvem');try{await fetch(u+'/crm.json',{method:'PUT',body:JSON.stringify(cloudPayload())});DB.ultSync=Date.now();localStorage.setItem(KEY,JSON.stringify(DB));document.getElementById('cloud-st').textContent='nuvem: enviado ✅ '+new Date().toLocaleTimeString('pt-BR');if(!silent)alert('✅ Nuvem atualizada! Abra no celular e puxe.');}catch(e){alert('⚠️ Falha nuvem — confira URL e regras do Firebase');}}
 async function cloudPull(){const u=cloudURL();if(!u)return alert('Cole a URL do Firebase em Configurações → Nuvem');try{const j=await(await fetch(u+'/crm.json')).json();if(j&&(j.leads||j.tarefas)){cloudMerge(j);if(DB.plantao&&DB.plantao.on&&!plantaoOn){try{retomarPlantao();}catch(e){}}save();document.getElementById('cloud-st').textContent='nuvem: recebido ✅ '+new Date().toLocaleTimeString('pt-BR');alert('✅ Dados da nuvem carregados e mesclados sem perder nada!');}else alert('Nuvem vazia ainda — envie primeiro.');}catch(e){alert('⚠️ Falha ao puxar — confira URL');}}
 async function cloudTestar(){const u=cloudURL();const st=document.getElementById('cloud-st');if(!u){st.textContent='nuvem: sem URL — cole a URL do Firebase';return alert('Cole a URL do Firebase primeiro');}
