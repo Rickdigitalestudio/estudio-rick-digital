@@ -121,7 +121,7 @@ canvas#bannerCanvas{width:100%;max-width:420px;border-radius:16px;border:1px sol
 <a href="#" data-aba="proj">📁 <span>Projetos</span></a>
 <a href="#" data-aba="tarefas">⏰ <span>Tarefas</span></a>
 <a href="#" data-aba="rel">📋 <span>Relatórios</span></a>
-<a href="#" data-aba="equipe">🤖 <span>Equipe 19 + Plantão</span></a>
+<a href="#" data-aba="equipe">👥 <span>Equipe 19 + Plantão</span></a>
 <a href="#" data-aba="hier">👑 <span>Diretoria</span></a>
 <a href="#" data-aba="config">⚙️ <span>Configurações</span></a>
 </nav></aside>
@@ -147,6 +147,11 @@ canvas#bannerCanvas{width:100%;max-width:420px;border-radius:16px;border:1px sol
 <button class="btn btn-p" onclick="ir('banners')">🎨 Criar Banner</button>
 </div></div>
 <div class="panel"><h3>🔥 Leads quentes p/ contatar agora + alertas</h3><div id="alertas"></div></div>
+<div class="grid2">
+<div class="panel" style="border:2px solid #F59E0B"><h3>🎯 Meta vs Real (mês)</h3><div id="meta-real"></div></div>
+<div class="panel" style="border:2px solid #EF4444"><h3>⏰ Próximas tarefas + sem resposta 3+ dias</h3><div id="prox-tarefas"></div></div>
+</div>
+<div class="panel"><h3>🕘 Atividades recentes (últimas 24h)</h3><div id="ativ-recentes"></div></div>
 </div>
 <!-- FUNIL -->
 <div id="aba-funil" class="aba">
@@ -279,7 +284,7 @@ canvas#bannerCanvas{width:100%;max-width:420px;border-radius:16px;border:1px sol
 </div>
 <!-- FINANCEIRO -->
 <div id="aba-fin" class="aba">
-<div class="topo"><div><h1>💸 Financeiro</h1><p class="legend">O que entra (projetos) e o que sai (contas a pagar)</p></div><button class="btn-g" style="background:#DB2777" onclick="roboFin(false)">🤖 Rodar robô financeira</button></div>
+<div class="topo"><div><h1>💸 Financeiro</h1><p class="legend">O que entra (projetos) e o que sai (contas a pagar)</p></div><button class="btn-g" style="background:#DB2777" onclick="roboFin(false)">💰 Auditoria da Helena</button></div>
 <div class="cards" style="grid-template-columns:repeat(3,1fr)"><div class="card" style="border-color:var(--s)"><div>✅ Recebido</div><div class="v" id="f-rec">R$ 0</div><small>50% entradas + 100% conclusões</small></div>
 <div class="card" style="border-color:var(--a)"><div>⏳ A receber</div><div class="v" id="f-arec">R$ 0</div><small>restantes de projetos abertos</small></div>
 <div class="card" style="border-color:var(--d)"><div>🧾 Contas a pagar</div><div class="v" id="f-pagar">R$ 0</div><small>pendentes</small></div></div>
@@ -304,7 +309,8 @@ canvas#bannerCanvas{width:100%;max-width:420px;border-radius:16px;border:1px sol
 </div>
 <!-- TAREFAS -->
 <div id="aba-tarefas" class="aba">
-<div class="topo"><h1>⏰ Tarefas & Agenda</h1><button class="btn-g" onclick="abrirTarefa()">+ Nova Tarefa</button></div>
+<div class="topo"><h1>⏰ Tarefas & Agenda</h1><div style="display:flex;gap:.5rem;flex-wrap:wrap"><button class="btn btn-wa" onclick="abrirGCal()">📅 Google Agenda</button><button class="btn-g" onclick="abrirTarefa()">+ Nova Tarefa</button></div></div>
+<div class="panel"><h3>💬 Modelos de mensagem prontos (WhatsApp / e-mail)</h3><div id="modelos-msg"></div></div>
 <div class="panel"><div id="lista-tarefas"></div></div>
 </div>
 <!-- REL -->
@@ -315,12 +321,13 @@ canvas#bannerCanvas{width:100%;max-width:420px;border-radius:16px;border:1px sol
 <div class="card"><div>Valor recebido</div><div class="v" id="r-valor">R$ 0</div></div>
 <div class="card"><div>Conversão</div><div class="v" id="r-conv">0%</div></div></div>
 <div class="panel"><h3>Leads por origem</h3><div id="r-orig"></div>
-<div style="margin-top:1rem;display:flex;gap:.6rem"><button class="btn btn-p" onclick="exportCSV()">⬇️ Exportar Excel/CSV</button><button class="btn btn-v" onclick="window.print()">🖨️ Exportar PDF (imprimir)</button></div></div>
+<div style="margin-top:1rem;display:flex;gap:.6rem;flex-wrap:wrap"><button class="btn btn-p" onclick="exportCSV()">⬇️ Exportar Excel/CSV</button><button class="btn btn-wa" onclick="exportExcel()">📊 Exportar Excel (.xls)</button><button class="btn btn-v" onclick="window.print()">🖨️ Exportar PDF (imprimir)</button></div></div>
+<div class="panel" style="border:2px solid #2563EB"><h3>📈 Conversão por etapa · tempo médio · fechado vs perdido</h3><div id="rel-plus"></div></div>
 <div class="panel" style="border:2px solid #059669"><h3>🗂️ Histórico do dia + dias anteriores <span class="legend">(detalhado 7 dias — apaga sozinho)</span></h3><div id="hist-dias"></div></div>
 </div>
 <!-- EQUIPE -->
 <div id="aba-equipe" class="aba">
-<h1>🤖 Equipe IA — 19 funcionários <span class="legend">13 mulheres · 6 homens</span></h1>
+<h1>👥 Equipe — 19 especialistas <span class="legend">13 mulheres · 6 homens · todos com foto humana</span></h1>
 <div class="panel" style="border:2px solid #2563EB">
 <h3><span class="live-dot" id="liveDot"></span>🔴 Plantão AO VIVO — os 19 trabalhando sob seu comando</h3>
 <p class="legend">Plantão: <b id="plantao-st">desligado</b> · Ligue o plantão: a equipe trabalha na SUA fila real (qualifica, cobra, gera banner, relata) — nunca inventa lead nem telefone. Postagem final nas redes pede 1 clique seu.</p>
@@ -370,9 +377,9 @@ canvas#bannerCanvas{width:100%;max-width:420px;border-radius:16px;border:1px sol
 <div class="topo"><div><h1>👑 Diretoria & Hierarquia</h1><p class="legend">CEO (você) · COO · CHRO · Guardiã do Plantão + mural do dia</p></div></div>
 <div class="cards" style="grid-template-columns:repeat(4,1fr)">
 <div class="card" style="border-color:#F59E0B"><div>👑 CEO — dono</div><div class="v" style="font-size:1.2rem">Rick</div><small>só você liga/desliga o plantão</small></div>
-<div class="card" style="border-color:#0EA5E9"><div>🤖 COO</div><div class="v" style="font-size:1.2rem">Lívia</div><small>operação e números</small></div>
-<div class="card" style="border-color:#A855F7"><div>🤖 CHRO</div><div class="v" style="font-size:1.2rem">Nina</div><small>pessoas e harmonia</small></div>
-<div class="card" style="border-color:#F472B6"><div>🤖 Guardiã</div><div class="v" style="font-size:1.2rem">Vitória</div><small id="guard-st">plantão: —</small></div></div>
+<div class="card" style="border-color:#0EA5E9"><div>👩‍💼 COO</div><div class="v" style="font-size:1.2rem">Lívia</div><small>operação e números</small></div>
+<div class="card" style="border-color:#A855F7"><div>👩‍💼 CHRO</div><div class="v" style="font-size:1.2rem">Nina</div><small>pessoas e harmonia</small></div>
+<div class="card" style="border-color:#F472B6"><div>👩‍💼 Guardiã</div><div class="v" style="font-size:1.2rem">Vitória</div><small id="guard-st">plantão: —</small></div></div>
 <div class="grid2">
 <div class="panel" style="border:2px solid #0EA5E9"><h3>🧠 Cérebro da COO — Lívia</h3><p class="legend">Lê caixa + funil e propõe a próxima jogada (com seus números reais).</p><div id="brain-coo"></div><button class="btn-g" style="margin-top:.5rem;background:#0EA5E9" onclick="execCoo()">⚡ Executar jogada da COO</button></div>
 <div class="panel" style="border:2px solid #A855F7"><h3>🧠 Cérebro da CHRO — Nina</h3><p class="legend">Lê time + pendências e cuida dos funcionários quando você sai.</p><div id="brain-chro"></div><button class="btn-g" style="margin-top:.5rem;background:#A855F7" onclick="execChro()">⚡ Executar cuidado da CHRO</button></div></div>
@@ -444,6 +451,12 @@ canvas#bannerCanvas{width:100%;max-width:420px;border-radius:16px;border:1px sol
 <input type="file" id="db-file" accept=".json" style="max-width:220px"><button class="btn btn-v" onclick="dbRestaurar()">♻️ Restaurar</button>
 </div><div id="db-rel"></div><div id="db-vivo" style="margin-top:.6rem"></div></div>
 <div class="panel">
+<label>🎯 Meta do mês (R$ recebido)</label><input type="number" id="cfg-meta" value="10000">
+<label>🔐 PIN de bloqueio (4 dígitos — vazio = sem senha)</label><input id="cfg-pin" placeholder="Ex: 1234" maxlength="8">
+<label>👤 Perfil de acesso neste aparelho</label><select id="cfg-perfil"><option value="proprietario">👑 Proprietário (tudo)</option><option value="vendedor">💼 Vendedor (sem Financeiro/Config sensível)</option><option value="visualizacao">👁️ Visualização (só ver)</option></select>
+<label>💬 Modelos de mensagem (1 por linha — usados em Tarefas e no funil)</label><textarea id="cfg-modelos" rows="4">Olá {nome}! Vi seu interesse em {servico} — posso te mandar a proposta hoje?
+{nome}, aqui é do ESTÚDIO RICK DIGITAL! Seu orçamento de {servico} está pronto: {link}
+Oi {nome}! Passando pra retomar nossa conversa sobre {servico} — ainda faz sentido?</textarea>
 <button class="btn-g" style="margin-top:.2rem" onclick="salvarCfg()">💾 Salvar</button>
 <button class="btn btn-x" onclick="if(confirm('Apagar tudo?')){localStorage.removeItem(KEY);location.reload()}">🗑️ Apagar banco</button>
 <button class="btn btn-v" onclick="instalarApp()">📱 Instalar App (celular/PC)</button>
@@ -454,11 +467,19 @@ canvas#bannerCanvas{width:100%;max-width:420px;border-radius:16px;border:1px sol
 <!-- MODAL LEAD -->
 <div class="modal-bg" id="m-lead"><div class="modal"><h2 id="m-lead-t">Novo Lead</h2>
 <input type="hidden" id="l-id"><label>Nome *</label><input id="l-nome"><label>WhatsApp (só entra no disparo com fone real — pode completar depois)</label><input id="l-wa" placeholder="11999999999">
-<label>E-mail</label><input id="l-email"><label>Origem</label><select id="l-orig"><option>WhatsApp</option><option>TikTok</option><option>Site</option><option>Instagram</option><option>Facebook</option><option>Google Maps</option><option>Automação 🤖</option><option>Indicação</option></select>
+<label>E-mail</label><input id="l-email" placeholder="cliente@email.com">
+<div class="grid2"><div><label>Empresa</label><input id="l-empresa" placeholder="Nome da empresa"></div><div><label>Segmento</label><input id="l-segmento" placeholder="Ex: padaria, salão, loja"></div></div>
+<label>Origem</label><select id="l-orig"><option>WhatsApp</option><option>TikTok</option><option>Site</option><option>Instagram</option><option>Facebook</option><option>Google Maps</option><option>Automação 🤖</option><option>Indicação</option></select>
 <label>Interesse</label><select id="l-serv"><option>Fanpage</option><option>Site Institucional</option><option>Landing Page</option><option>Loja Virtual</option><option>Manutenção</option></select>
-<label>Valor R$</label><input type="number" id="l-valor" value="997"><label>Etapa</label><select id="l-etapa"><option value="novo">🆕 Novo</option><option value="qualificacao">🔍 Qualificação</option><option value="quente">🔥 Quente</option><option value="negociacao">🤝 Negociação</option><option value="cliente">✅ Cliente</option><option value="arquivado">⚫ Arquivado</option></select>
+<div class="grid2"><div><label>Valor R$</label><input type="number" id="l-valor" value="997"></div><div><label>Probabilidade %</label><input type="number" id="l-prob" value="30" min="0" max="100"></div></div>
+<label>Etapa</label><select id="l-etapa"><option value="novo">🆕 Novo</option><option value="qualificacao">🔍 Qualificação</option><option value="quente">🔥 Quente</option><option value="negociacao">🤝 Negociação</option><option value="cliente">✅ Cliente</option><option value="perdido">❌ Perdido</option><option value="arquivado">⚫ Arquivado</option></select>
+<label>Etiquetas (separe por vírgula: quente, site, indicação)</label><input id="l-tags" placeholder="quente, site, indicação">
+<label>Responsável</label><select id="l-resp"><option value="">— sem responsável —</option></select>
+<label>Anexo (nome do arquivo/proposta — ex: proposta.pdf)</label><input id="l-anexo" placeholder="proposta-cliente.pdf">
 <label>Obs</label><textarea id="l-obs" rows="2"></textarea>
-<div style="display:flex;gap:.6rem;justify-content:flex-end;margin-top:1rem"><button class="btn btn-v" onclick="fecharLead()">Cancelar</button><button class="btn-g" onclick="salvarLead()">Salvar</button></div>
+<label>Nova interação (ligaçao, visita, mensagem — entra no histórico)</label><input id="l-inter" placeholder="Ex: liguei, pediu proposta de site">
+<div id="l-hist" style="margin:.5rem 0;font-size:.82rem"></div>
+<div style="display:flex;gap:.6rem;justify-content:flex-end;margin-top:1rem;flex-wrap:wrap"><button class="btn btn-v" onclick="fecharLead()">Cancelar</button><button class="btn-g" onclick="salvarLead()">Salvar</button></div>
 </div></div>
 <!-- MODAL TAREFA -->
 <div class="modal-bg" id="m-tar"><div class="modal"><h2>Nova Tarefa</h2><label>Título</label><input id="t-tit" placeholder="Ligar para lead X amanhã 14h"><label>Data</label><input type="datetime-local" id="t-data"><div style="display:flex;gap:.6rem;justify-content:flex-end;margin-top:1rem"><button class="btn btn-v" onclick="document.getElementById('m-tar').classList.remove('aberto')">Cancelar</button><button class="btn-g" onclick="salvarTarefa()">Criar</button></div></div></div>
@@ -482,52 +503,65 @@ function waLink(tel,msg){return 'https://wa.me/'+tel.replace(/\D/g,'')+'?text='+
 // NAV
 document.querySelectorAll('aside nav a').forEach(a=>a.onclick=e=>{e.preventDefault();ir(a.dataset.aba);});
 function ir(n){document.querySelectorAll('.aba').forEach(x=>x.classList.remove('ativa'));document.getElementById('aba-'+n).classList.add('ativa');document.querySelectorAll('aside nav a').forEach(a=>a.classList.toggle('ativo',a.dataset.aba===n));}
-// EQUIPE 15
+// EQUIPE 19 — rostos 100% humanos (foto local > retrato real > iniciais)
 const EQUIPE=[
-{n:'Camila Torres',s:'Designer de Banners',c:'#EC4899',g:'F',fotoLocal:'fotos/camila.jpg'},
-{n:'Juliana Prado',s:'Copywriter · Ideias de Posts',c:'#8B5CF6',g:'F',fotoLocal:'fotos/juliana.jpg'},
-{n:'Fernanda Lima',s:'Gestora TikTok @ricklima991',c:'#000000',g:'F',fotoLocal:'fotos/fernanda.jpg'},
-{n:'Patrícia Gomes',s:'Atendimento WhatsApp',c:'#25D366',g:'F',fotoLocal:'fotos/patricia.jpg'},
-{n:'Larissa Alves',s:'Qualificadora de Leads',c:'#F59E0B',g:'F',fotoLocal:'fotos/larissa.jpg'},
-{n:'Beatriz Rocha',s:'Prospecção Google Maps',c:'#0EA5E9',g:'F',fotoLocal:'fotos/beatriz.jpg'},
-{n:'Aline Castro',s:'Social Media · Agendamento',c:'#EF4444',g:'F',fotoLocal:'fotos/aline.jpg'},
-{n:'Renata Duarte',s:'Financeiro · Orçamentos',c:'#10B981',g:'F',fotoLocal:'fotos/renata.jpg'},
-{n:'Sofia Mendes',s:'Pós-venda · Avaliações',c:'#6366F1',g:'F',fotoLocal:'fotos/sofia.jpg'},
-{n:'Helena Vasques',s:'🤖 Robô Financeira · Cobranças e Contas',c:'#DB2777',g:'F',robo:true,fotoLocal:'fotos/helena.jpg',foto:'https://randomuser.me/api/portraits/women/65.jpg'},
-{n:'Vitória Lemos',s:'🤖 Guardiã do Plantão · Vigia 24h',c:'#F472B6',g:'F',robo:true,fotoLocal:'fotos/vitoria.jpg',foto:'https://randomuser.me/api/portraits/women/44.jpg'},
-{n:'Lívia Andrade',s:'🤖 COO · Operação e Números',c:'#0EA5E9',g:'F',robo:true,fotoLocal:'fotos/livia.jpg',foto:'https://randomuser.me/api/portraits/women/68.jpg'},
-{n:'Nina Cardoso',s:'🤖 CHRO · Pessoas e Harmonia',c:'#A855F7',g:'F',robo:true,fotoLocal:'fotos/nina.jpg',foto:'https://randomuser.me/api/portraits/women/26.jpg'},
-{n:'Thiago Martins',s:'Closer · Fechamento',c:'#1F2937',g:'M',fotoLocal:'fotos/thiago.jpg'},
-{n:'Diego Ferreira',s:'Dev Sites · Lojas Virtuais',c:'#2563EB',g:'M',fotoLocal:'fotos/diego.jpg'},
-{n:'Lucas Almeida',s:'Editor Vídeo TikTok',c:'#7C3AED',g:'M',fotoLocal:'fotos/lucas.jpg'},
-{n:'Marcos Vinícius',s:'Suporte Fanpages',c:'#0891B2',g:'M',fotoLocal:'fotos/marcos.jpg'},
-{n:'Gabriel Santos',s:'Analista CRM · Relatórios',c:'#4B5563',g:'M',fotoLocal:'fotos/gabriel.jpg'},
-{n:'Felipe Oliveira',s:'Expansão · Parcerias',c:'#65A30D',g:'M',fotoLocal:'fotos/felipe.jpg'}];
+{n:'Camila Torres',s:'Designer de Banners',c:'#EC4899',g:'F',fotoLocal:'fotos/camila.jpg',foto:'https://randomuser.me/api/portraits/women/44.jpg'},
+{n:'Juliana Prado',s:'Copywriter · Ideias de Posts',c:'#8B5CF6',g:'F',fotoLocal:'fotos/juliana.jpg',foto:'https://randomuser.me/api/portraits/women/68.jpg'},
+{n:'Fernanda Lima',s:'Gestora TikTok @ricklima991',c:'#000000',g:'F',fotoLocal:'fotos/fernanda.jpg',foto:'https://randomuser.me/api/portraits/women/12.jpg'},
+{n:'Patrícia Gomes',s:'Atendimento WhatsApp',c:'#25D366',g:'F',fotoLocal:'fotos/patricia.jpg',foto:'https://randomuser.me/api/portraits/women/33.jpg'},
+{n:'Larissa Alves',s:'Qualificadora de Leads',c:'#F59E0B',g:'F',fotoLocal:'fotos/larissa.jpg',foto:'https://randomuser.me/api/portraits/women/21.jpg'},
+{n:'Beatriz Rocha',s:'Prospecção Google Maps',c:'#0EA5E9',g:'F',fotoLocal:'fotos/beatriz.jpg',foto:'https://randomuser.me/api/portraits/women/50.jpg'},
+{n:'Aline Castro',s:'Social Media · Agendamento',c:'#EF4444',g:'F',fotoLocal:'fotos/aline.jpg',foto:'https://randomuser.me/api/portraits/women/17.jpg'},
+{n:'Renata Duarte',s:'Financeiro · Orçamentos',c:'#10B981',g:'F',fotoLocal:'fotos/renata.jpg',foto:'https://randomuser.me/api/portraits/women/26.jpg'},
+{n:'Sofia Mendes',s:'Pós-venda · Avaliações',c:'#6366F1',g:'F',fotoLocal:'fotos/sofia.jpg',foto:'https://randomuser.me/api/portraits/women/65.jpg'},
+{n:'Helena Vasques',s:'Financeira · Cobranças e Contas',c:'#DB2777',g:'F',fotoLocal:'fotos/helena.jpg',foto:'https://randomuser.me/api/portraits/women/57.jpg'},
+{n:'Vitória Lemos',s:'Guardiã do Plantão · Vigia 24h',c:'#F472B6',g:'F',fotoLocal:'fotos/vitoria.jpg',foto:'https://randomuser.me/api/portraits/women/31.jpg'},
+{n:'Lívia Andrade',s:'COO · Operação e Números',c:'#0EA5E9',g:'F',fotoLocal:'fotos/livia.jpg',foto:'https://randomuser.me/api/portraits/women/40.jpg'},
+{n:'Nina Cardoso',s:'CHRO · Pessoas e Harmonia',c:'#A855F7',g:'F',fotoLocal:'fotos/nina.jpg',foto:'https://randomuser.me/api/portraits/women/47.jpg'},
+{n:'Thiago Martins',s:'Closer · Fechamento',c:'#1F2937',g:'M',fotoLocal:'fotos/thiago.jpg',foto:'https://randomuser.me/api/portraits/men/32.jpg'},
+{n:'Diego Ferreira',s:'Dev Sites · Lojas Virtuais',c:'#2563EB',g:'M',fotoLocal:'fotos/diego.jpg',foto:'https://randomuser.me/api/portraits/men/22.jpg'},
+{n:'Lucas Almeida',s:'Editor Vídeo TikTok',c:'#7C3AED',g:'M',fotoLocal:'fotos/lucas.jpg',foto:'https://randomuser.me/api/portraits/men/45.jpg'},
+{n:'Marcos Vinícius',s:'Suporte Fanpages',c:'#0891B2',g:'M',fotoLocal:'fotos/marcos.jpg',foto:'https://randomuser.me/api/portraits/men/52.jpg'},
+{n:'Gabriel Santos',s:'Analista CRM · Relatórios',c:'#4B5563',g:'M',fotoLocal:'fotos/gabriel.jpg',foto:'https://randomuser.me/api/portraits/men/15.jpg'},
+{n:'Felipe Oliveira',s:'Expansão · Parcerias',c:'#65A30D',g:'M',fotoLocal:'fotos/felipe.jpg',foto:'https://randomuser.me/api/portraits/men/67.jpg'}];
 EQUIPE.forEach(e=>e.feitos=0);
 function slug(s){return String(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().split(' ')[0];}
-// Retratos gerados por IA (pollinations.ai, grátis) — foto local e retrato próprio têm prioridade.
-const RETRATOS={camila:'Brazilian woman 28 long dark wavy hair',juliana:'Brazilian woman 32 short blonde bob haircut',fernanda:'Brazilian woman 26 black curly hair',patricia:'Brazilian woman 35 brown ponytail',larissa:'Brazilian woman 29 red hair',beatriz:'Brazilian woman 31 straight black hair',aline:'Brazilian woman 24 light brown hair',renata:'Brazilian woman 40 short dark hair glasses',sofia:'Brazilian woman 27 long blonde hair',thiago:'Brazilian man 34 short beard',diego:'Brazilian man 30 glasses short dark hair',lucas:'young Brazilian man 25 curly hair',marcos:'Brazilian man 38 bald with beard',gabriel:'Brazilian man 29 short hair',felipe:'Brazilian man 33 wavy hair'};
-function fotoIA(f){const d=RETRATOS[f.id||slug(f.n)];if(!d)return '';let s=0;const k=f.id||f.n;for(let i=0;i<k.length;i++)s=(s*31+k.charCodeAt(i))%997;
-return 'https://image.pollinations.ai/prompt/'+encodeURIComponent('photorealistic professional headshot portrait, '+d+', facing camera, neutral studio background')+'?width=256&height=256&nologo=true&seed='+s;}
-function iniEq(){EQUIPE.forEach(e=>{if(!e.id)e.id=slug(e.n);});if(!DB.eq)DB.eq=EQUIPE.map(e=>({...e,feitos:0}));else EQUIPE.forEach(e=>{const x=DB.eq.find(y=>y.n===e.n);if(!x)DB.eq.push({...e,feitos:0});else{if(e.foto)x.foto=e.foto;if(e.fotoLocal)x.fotoLocal=e.fotoLocal;if(e.robo!==undefined)x.robo=e.robo;x.s=e.s;if(!x.id)x.id=e.id;}});}
+// Retratos 100% humanos: foto local primeiro, depois retrato real (randomuser), depois iniciales.
+// Sem robôs: todo mundo aparece com cara de gente.
+const RETRATOS={camila:'women/44',juliana:'women/68',fernanda:'women/12',patricia:'women/33',larissa:'women/21',beatriz:'women/50',aline:'women/17',renata:'women/26',sofia:'women/65',helena:'women/57',vitoria:'women/31',livia:'women/40',nina:'women/47',thiago:'men/32',diego:'men/22',lucas:'men/45',marcos:'men/52',gabriel:'men/15',felipe:'men/67'};
+function fotoIA(f){const k=f.id||slug(f.n);const r=RETRATOS[k];if(!r)return '';return 'https://randomuser.me/api/portraits/'+r+'.jpg';}
+function iniEq(){EQUIPE.forEach(e=>{if(!e.id)e.id=slug(e.n);delete e.robo;});if(!DB.eq)DB.eq=EQUIPE.map(e=>({...e,feitos:0}));else EQUIPE.forEach(e=>{const x=DB.eq.find(y=>y.n===e.n);if(!x)DB.eq.push({...e,feitos:0});else{if(e.foto)x.foto=e.foto;if(e.fotoLocal)x.fotoLocal=e.fotoLocal;delete x.robo;x.s=e.s;if(!x.id)x.id=e.id;}});(DB.eq||[]).forEach(x=>delete x.robo);}
 function neq(){return (DB.eq&&DB.eq.length)||EQUIPE.length;}
-// LEADS
-function abrirLead(id){document.getElementById('m-lead').classList.add('aberto');
-if(id){const l=DB.leads.find(x=>x.id===id);document.getElementById('m-lead-t').textContent='Editar — '+l.nome;
-['id','nome','wa','email','orig','serv','valor','etapa','obs'].forEach(()=>{});
-document.getElementById('l-id').value=l.id;document.getElementById('l-nome').value=l.nome;document.getElementById('l-wa').value=l.tel;
-document.getElementById('l-email').value=l.email||'';document.getElementById('l-orig').value=l.origem;document.getElementById('l-serv').value=l.servico;
-document.getElementById('l-valor').value=l.valor||'';document.getElementById('l-etapa').value=l.etapa;document.getElementById('l-obs').value=l.obs||'';
-}else{document.getElementById('m-lead-t').textContent='Novo Lead';document.getElementById('l-id').value='';document.getElementById('l-nome').value='';document.getElementById('l-wa').value='';document.getElementById('l-email').value='';document.getElementById('l-valor').value='997';document.getElementById('l-obs').value='';}}
+// LEADS — ficha completa + anti-duplicata + histórico + follow-up 24h/48h/7d
+function preencherResp(){const s=document.getElementById('l-resp');if(!s)return;const atual=s.value;s.innerHTML='<option value="">— sem responsável —</option>'+(DB.eq||EQUIPE).map(f=>'<option value="'+f.n+'">'+f.n+'</option>').join('');if(atual)s.value=atual;}
+function abrirLead(id){document.getElementById('m-lead').classList.add('aberto');preencherResp();
+if(id){const l=DB.leads.find(x=>x.id===id);if(!l)return;document.getElementById('m-lead-t').textContent='Editar — '+l.nome;
+document.getElementById('l-id').value=l.id;document.getElementById('l-nome').value=l.nome||'';document.getElementById('l-wa').value=l.tel||'';
+document.getElementById('l-email').value=l.email||'';document.getElementById('l-empresa').value=l.empresa||'';document.getElementById('l-segmento').value=l.segmento||'';
+document.getElementById('l-orig').value=l.origem&&[...document.getElementById('l-orig').options].some(o=>o.text===l.origem||o.value===l.origem)?l.origem:'WhatsApp';document.getElementById('l-serv').value=l.servico||'Site Institucional';
+document.getElementById('l-valor').value=l.valor||'';document.getElementById('l-prob').value=(l.prob!==undefined?l.prob:30);document.getElementById('l-etapa').value=l.etapa||'novo';
+document.getElementById('l-tags').value=(l.tags||[]).join(', ');document.getElementById('l-resp').value=l.resp||'';document.getElementById('l-anexo').value=l.anexo||'';document.getElementById('l-obs').value=l.obs||'';document.getElementById('l-inter').value='';
+document.getElementById('l-hist').innerHTML='<b>📜 Histórico ('+(l.timeline||[]).length+')</b><br>'+((l.timeline||[]).slice(-6).reverse().map(t=>'<div style="border-left:3px solid #2563EB;padding:.2rem .5rem;margin:.3rem 0;background:#EFF6FF;border-radius:0 8px 8px 0"><small>'+t.quando+' — '+t.texto+'</small></div>').join('')||'<small class="legend">Sem interações ainda.</small>')+'<small class="legend">Entrada: '+(l.data||'—')+' · Etapa atual desde: '+(l.etapaDesde||'—')+'</small>';
+}else{document.getElementById('m-lead-t').textContent='Novo Lead';['l-id','l-nome','l-wa','l-email','l-empresa','l-segmento','l-tags','l-anexo','l-obs','l-inter'].forEach(i=>document.getElementById(i).value='');document.getElementById('l-valor').value='997';document.getElementById('l-prob').value='30';document.getElementById('l-hist').innerHTML='';}}
 function fecharLead(){document.getElementById('m-lead').classList.remove('aberto');}
+function pushHist(l,txt){if(!l.timeline)l.timeline=[];l.timeline.push({quando:new Date().toLocaleString('pt-BR'),texto:txt});l.timeline=l.timeline.slice(-50);}
 function salvarLead(){const id=document.getElementById('l-id').value;const nome=document.getElementById('l-nome').value.trim();const tel=document.getElementById('l-wa').value.trim();
 if(!nome){alert('Preencha o nome');return;}
 const foneOk=tel.replace(/\D/g,'').length>=8;
-const d={nome,tel:tel,email:document.getElementById('l-email').value,origem:document.getElementById('l-orig').value+(foneOk?'':' · ⚠️ sem fone'),servico:document.getElementById('l-serv').value,valor:Number(document.getElementById('l-valor').value)||0,etapa:document.getElementById('l-etapa').value,obs:document.getElementById('l-obs').value,data:new Date().toLocaleString('pt-BR')};
-if(id){Object.assign(DB.leads.find(x=>x.id==id),d);}else{const nl={id:Date.now(),...d};DB.leads.unshift(nl);notif('🎉 Novo lead: '+nome,d.origem+' · '+d.servico);autoLembrete(nome);if(evoAutoOn&&typeof evoSend==='function'){evoSend(tel,(DB.cfg.evomsq||'')+' ('+nome+')').then(()=>acaoReal('Boas-vindas auto',nome+' recebeu msg automática')).catch(()=>{});}}
+const tags=document.getElementById('l-tags').value.split(',').map(s=>s.trim()).filter(Boolean);
+const d={nome,tel:tel,email:document.getElementById('l-email').value.trim(),empresa:document.getElementById('l-empresa').value.trim(),segmento:document.getElementById('l-segmento').value.trim(),origem:document.getElementById('l-orig').value+(foneOk?'':' · ⚠️ sem fone'),servico:document.getElementById('l-serv').value,valor:Number(document.getElementById('l-valor').value)||0,prob:Math.max(0,Math.min(100,Number(document.getElementById('l-prob').value)||0)),etapa:document.getElementById('l-etapa').value,tags,resp:document.getElementById('l-resp').value,anexo:document.getElementById('l-anexo').value.trim(),obs:document.getElementById('l-obs').value,data:new Date().toLocaleString('pt-BR')};
+// anti-duplicata de verdade: mesmo telefone ou mesmo nome+origem
+if(!id){const telN=tel.replace(/\D/g,'');const dup=DB.leads.find(x=>(telN&&String(x.tel||'').replace(/\D/g,'')===telN)||(x.nome.toLowerCase()===nome.toLowerCase()&&telN&&String(x.tel||'').replace(/\D/g,'')));
+if(dup){if(!confirm('⚠️ Possível duplicata: "'+dup.nome+'" ('+dup.origem+') já existe. Salvar mesmo assim?'))return;}}
+if(id){const l=DB.leads.find(x=>x.id==id);const etapaAnt=l.etapa;Object.assign(l,d);l.data=l.data||d.data;
+const inter=document.getElementById('l-inter').value.trim();if(inter)pushHist(l,'💬 '+inter);
+if(etapaAnt!==d.etapa){l.etapaDesde=new Date().toLocaleString('pt-BR');pushHist(l,'🔄 '+etapaAnt+' → '+d.etapa);notif('🔄 '+l.nome+' → '+d.etapa,'Movido no funil');}
+else pushHist(l,'✏️ Ficha atualizada');
+}else{const nl={id:Date.now(),...d,etapaDesde:new Date().toLocaleString('pt-BR'),timeline:[{quando:new Date().toLocaleString('pt-BR'),texto:'🎉 Lead criado via '+(d.origem||'manual')}],data:new Date().toLocaleString('pt-BR')};DB.leads.unshift(nl);notif('🎉 Novo lead: '+nome,d.origem+' · '+d.servico);pushHist(nl,'🎉 Boas-vindas: proposta enviada');autoLembrete(nome);if(evoAutoOn&&typeof evoSend==='function'){evoSend(tel,(DB.cfg.evomsq||'')+' ('+nome+')').then(()=>acaoReal('Boas-vindas auto',nome+' recebeu msg automática')).catch(()=>{});}}
 save();fecharLead();}
 function delLead(id){if(confirm('Excluir?')){DB.leads=DB.leads.filter(x=>x.id!==id);save();}}
-function autoLembrete(nome){const a=new Date();a.setHours(a.getHours()+24);const l=DB.leads.find(x=>x.nome===nome);novaTarefa('Retornar p/ '+nome+' (24h)',a.toISOString().slice(0,16),{leadId:l?l.id:null});}
+function autoLembrete(nome){const l=DB.leads.find(x=>x.nome===nome);if(!l)return;const regras=[['24h',24],['48h',48],['7 dias',168]];
+regras.forEach(r=>{const a=new Date();a.setHours(a.getHours()+r[1]);const tit='Retornar p/ '+nome+' ('+r[0]+')';if(!DB.tarefas.find(t=>!t.ok&&t.tit===tit))novaTarefa(tit,a.toISOString().slice(0,16),{leadId:l?l.id:null});});}
 function notif(t,d){DB.not.unshift({id:Date.now(),t,d,lida:false,data:new Date().toLocaleString('pt-BR')});localStorage.setItem(KEY,JSON.stringify(DB));}
 // NOTIF
 function toggleNot(){document.getElementById('painelNot').classList.toggle('aberto');updNot();}
@@ -552,8 +586,8 @@ const org={};at.forEach(l=>org[l.origem]=(org[l.origem]||0)+1);
 document.getElementById('r-total').textContent=at.length;document.getElementById('r-cli').textContent=DB.projetos.length;
 document.getElementById('r-valor').textContent=brl(finTotais().rec);document.getElementById('r-conv').textContent=conv+'%';
 document.getElementById('r-orig').innerHTML=Object.entries(org).sort((a,b)=>b[1]-a[1]).map(o=>'<div>'+o[0]+': <b>'+o[1]+'</b></div>').join('')||'—';
-document.getElementById('grid-equipe').innerHTML=DB.eq.map((f,i)=>{const ini=f.n.split(' ').map(x=>x[0]).slice(0,2).join('');const cadeia=[f.fotoLocal,f.foto,fotoIA(f)].filter(Boolean);const src=cadeia[0]||'';const av=src?'<span>'+ini+'</span><img loading="lazy" referrerpolicy="no-referrer" src="'+src+'" alt="'+f.n+'" data-fb="'+(cadeia[1]||'')+'" data-fb2="'+(cadeia[2]||'')+'" onload="this.previousElementSibling.style.display=\'none\'" onerror="var n=this.dataset.fb;this.dataset.fb=this.dataset.fb2||\'\';this.dataset.fb2=\'\';if(n){this.src=n;}else{this.remove();}">':ini;return '<div class="func'+(plantaoOn?' trab':'')+'"><div class="av" style="background:'+f.c+'">'+av+'</div><b style="font-size:.85rem">'+f.n+'</b><small>'+f.s+' · '+(f.robo?'🤖':(f.g==='F'?'👩':'👨'))+'</small><br><span class="st">'+(plantaoOn?'🟢 em plantão':'⚪ standby')+' · '+f.feitos+' ações</span></div>';}).join('');
-updNot();calcOrc();try{renderSocial();}catch(e){}try{renderMetricas(7);}catch(e){}try{renderHist();}catch(e){}try{renderFin();}catch(e){}try{renderProj();}catch(e){}try{renderHier();}catch(e){}try{renderDbVivo();}catch(e){}}
+document.getElementById('grid-equipe').innerHTML=DB.eq.map((f,i)=>{const ini=f.n.split(' ').map(x=>x[0]).slice(0,2).join('');const cadeia=[f.fotoLocal,f.foto,fotoIA(f)].filter(Boolean);const src=cadeia[0]||'';const av=src?'<span>'+ini+'</span><img loading="lazy" referrerpolicy="no-referrer" src="'+src+'" alt="'+f.n+'" data-fb="'+(cadeia[1]||'')+'" data-fb2="'+(cadeia[2]||'')+'" onload="this.previousElementSibling.style.display=\'none\'" onerror="var n=this.dataset.fb;this.dataset.fb=this.dataset.fb2||\'\';this.dataset.fb2=\'\';if(n){this.src=n;}else{this.remove();}">':ini;return '<div class="func'+(plantaoOn?' trab':'')+'"><div class="av" style="background:'+f.c+'">'+av+'</div><b style="font-size:.85rem">'+f.n+'</b><small>'+f.s+' · '+(f.g==='F'?'👩':'👨')+'</small><br><span class="st">'+(plantaoOn?'🟢 em plantão':'⚪ standby')+' · '+f.feitos+' ações</span></div>';}).join('');
+updNot();calcOrc();try{renderSocial();}catch(e){}try{renderMetricas(7);}catch(e){}try{renderHist();}catch(e){}try{renderFin();}catch(e){}try{renderProj();}catch(e){}try{renderHier();}catch(e){}try{renderDbVivo();}catch(e){}try{renderMetaReal();}catch(e){}try{renderProxTarefas();}catch(e){}try{renderAtivRecentes();}catch(e){}try{renderRelPlus();}catch(e){}try{renderModelos();}catch(e){}try{capturaViaURL();}catch(e){}}
 function foneReal(l){return String(l.tel||'').replace(/\D/g,'').length>=8;}
 function card(l){const tl=DB.tarefas.filter(t=>!t.ok&&t.leadId===l.id).length;const wa=foneReal(l)?'<a class="btn btn-wa" target="_blank" href="'+waLink(l.tel,'Olá '+l.nome+'! Sobre '+l.servico+' — vi seu contato e quero ajudar!')+'">WhatsApp</a><button class="btn btn-wa" onclick="evoSendLead('+l.id+')" title="Envio automático via API">⚡Auto</button>':'<button class="btn btn-v" onclick="abrirLead('+l.id+')" title="Complete o WhatsApp na ficha">📞 Completar fone</button>';return '<div class="lead" draggable="true" ondragstart="event.dataTransfer.setData(\'id\','+l.id+')"><b>'+l.nome+'</b>'+(foneReal(l)?'':' <span class="tag" style="background:#FEE2E2;color:#991B1B">sem fone</span>')+'<small>'+l.servico+' · '+l.origem+'</small><span class="tag">'+l.origem+'</span>'+(l.valor?'<span class="tag">R$ '+l.valor+'</span>':'')+(tl?'<span class="tag" style="background:#E0E7FF;color:#3730A3">🔗 '+tl+' tarefa(s)</span>':'')+'<div class="la">'+wa+'<button class="btn btn-v" onclick="abrirLead('+l.id+')">Ver</button><button class="btn btn-v" onclick="analisarLead('+l.id+')" title="Análise local do perfil">🔍 Análise</button><button class="btn btn-p" onclick="avancarEtapa('+l.id+')" title="Avançar etapa">➡️</button><button class="btn btn-x" onclick="delLead('+l.id+')">×</button></div></div>';}
 // Análise LOCAL do perfil (heurística a partir dos dados da ficha — estimativa, não é IA externa)
@@ -563,11 +597,11 @@ const refs=[['Fanpage','https://rickdigitalestudio.github.io/profissional-rickdu
 const ref=(refs.find(r=>r[0]===l.servico)||refs[1])[1];
 const txt='🔍 ANÁLISE LOCAL (estimativa, sem IA externa)\nLead: '+l.nome+'\nOrigem: '+l.origem+'\nInteresse: '+l.servico+(l.valor?' (R$ '+l.valor+')':'')+'\nFone: '+(foneReal(l)?'verificado na ficha ✅':'AUSENTE ⚠️ — complete antes de abordar')+'\nEtapa: '+l.etapa+'\nSinais: '+(String(l.origem).includes('Maps')?'veio de prospecção fria — valide site/redes antes do pitch. ':'veio de canal quente ('+l.origem+') — responda em até 1h. ')+(reais?reais+' cliente(s) fecharam '+l.servico+' antes — use como prova. ':'Ainda sem cliente de '+l.servico+' registrado — registre o 1º como case.')+'\nReferência p/ mostrar: '+ref+'\nPróximo passo: '+(foneReal(l)?'chamar no WhatsApp com a proposta do Orçamento.':'pesquisar nome no Google/Instagram, completar o fone e mover p/ Qualificação.');
 alert(txt);copiarTexto(txt);}
-function drop(e,et){e.preventDefault();const id=Number(e.dataTransfer.getData('id'));const l=DB.leads.find(x=>x.id===id);if(l){l.etapa=et;notif('🔄 '+l.nome+' → '+et,'Movido no funil');save();}}
+function drop(e,et){e.preventDefault();const id=Number(e.dataTransfer.getData('id'));const l=DB.leads.find(x=>x.id===id);if(l){const ant=l.etapa;l.etapa=et;l.etapaDesde=new Date().toLocaleString('pt-BR');pushHist(l,'🔄 '+ant+' → '+et+' (arrastado no funil)');notif('🔄 '+l.nome+' → '+et,'Movido no funil');save();}}
 const ORDEM_ETAPAS=['novo','qualificacao','quente','negociacao','cliente'];
 function avancarEtapa(id){const l=DB.leads.find(x=>x.id===id);if(!l)return;const i=ORDEM_ETAPAS.indexOf(l.etapa);
 if(i<0||i>=ORDEM_ETAPAS.length-1){alert('Já está na última etapa (Cliente).');return;}
-l.etapa=ORDEM_ETAPAS[i+1];notif('➡️ '+l.nome+' avançou → '+l.etapa,'Comando do funil');
+const ant=l.etapa;l.etapa=ORDEM_ETAPAS[i+1];l.etapaDesde=new Date().toLocaleString('pt-BR');pushHist(l,'➡️ '+ant+' → '+l.etapa);notif('➡️ '+l.nome+' avançou → '+l.etapa,'Comando do funil');
 if(l.etapa==='quente'||l.etapa==='negociacao'){novaTarefa('Acompanhar '+l.nome+' ('+l.etapa+')',new Date(Date.now()+86400000).toISOString().slice(0,16),{leadId:l.id});}
 save();}
 // 🤖 AUTOMAÇÃO (robô do GitHub — funciona com tudo fechado)
@@ -713,9 +747,10 @@ function renderHier(){try{const g=document.getElementById('guard-st');if(g)g.tex
 try{const j=cooJogada();document.getElementById('brain-coo').innerHTML='<b>⚡ '+j.t+'</b><br><small>'+j.d+'</small>';}catch(e){}
 try{const j=chroCuidado();document.getElementById('brain-chro').innerHTML='<b>⚡ '+j.t+'</b><br><small>'+j.d+'</small>';}catch(e){}
 try{renderSala();}catch(e){}try{renderMural();}catch(e){}}
-function copiarTexto(t){navigator.clipboard.writeText(t).then(()=>alert('✅ Copiado!'));}
-function copiarCodigo(){copiarTexto('<form id=cap><input name=nome required placeholder=Seu nome><input name=tel required placeholder=WhatsApp><button>Quero orçamento grátis</button></form><p>Resposta em: '+DB.cfg.wa+'</p>');}
-function salvarCfg(){DB.cfg={marca:document.getElementById('cfg-marca').value,wa:document.getElementById('cfg-wa').value,tk:document.getElementById('cfg-tk').value,pf:document.getElementById('cfg-pf').value,num:document.getElementById('cfg-num').value,cloud:document.getElementById('cfg-cloud').value.trim().replace(/\/$/,''),evo:document.getElementById('cfg-evo').value.trim().replace(/\/$/,''),evokey:document.getElementById('cfg-evokey').value.trim(),evoinst:document.getElementById('cfg-evoinst').value.trim()||'rick-digital',evomsq:document.getElementById('cfg-evomsq').value,ttuser:document.getElementById('cfg-ttuser').value,ttagenda:document.getElementById('cfg-ttagenda').value};save();alert('✅ Salvo! Nuvem: '+(DB.cfg.cloud||'não configurada')+' · WhatsApp auto: '+((DB.cfg.evo&&DB.cfg.evokey)?'ON':'off (manual)'));}
+function copiarTexto(t){if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t).then(()=>alert('✅ Copiado!')).catch(()=>fallbackCopy(t));}else fallbackCopy(t);}
+function fallbackCopy(t){const ta=document.createElement('textarea');ta.value=t;document.body.appendChild(ta);ta.select();try{document.execCommand('copy');alert('✅ Copiado!');}catch(e){prompt('Copie manualmente:',t);}ta.remove();}
+function copiarCodigo(){const base=location.href.split('?')[0];const form='<form action="'+base+'" method="GET" style="max-width:420px;margin:auto;font-family:Arial">\n<label>Nome<input name="nome" required style="width:100%;padding:10px;margin:4px 0"></label>\n<label>WhatsApp<input name="tel" required style="width:100%;padding:10px;margin:4px 0"></label>\n<input type="hidden" name="origem" value="Site">\n<button style="width:100%;padding:12px;background:#2563EB;color:#fff;border:none;border-radius:8px;font-weight:bold">Quero orçamento grátis</button>\n</form>\n<!-- Ao enviar, o lead cai direto no funil (captura via URL ?nome= &tel=) -->';copiarTexto(form);}
+function salvarCfg(){DB.cfg={marca:document.getElementById('cfg-marca').value,wa:document.getElementById('cfg-wa').value,tk:document.getElementById('cfg-tk').value,pf:document.getElementById('cfg-pf').value,num:document.getElementById('cfg-num').value,cloud:document.getElementById('cfg-cloud').value.trim().replace(/\/$/,''),evo:document.getElementById('cfg-evo').value.trim().replace(/\/$/,''),evokey:document.getElementById('cfg-evokey').value.trim(),evoinst:document.getElementById('cfg-evoinst').value.trim()||'rick-digital',evomsq:document.getElementById('cfg-evomsq').value,ttuser:document.getElementById('cfg-ttuser').value,ttagenda:document.getElementById('cfg-ttagenda').value,meta:Number(document.getElementById('cfg-meta').value)||10000,pin:(document.getElementById('cfg-pin').value||'').trim(),perfil:document.getElementById('cfg-perfil').value,modelos:document.getElementById('cfg-modelos').value};save();aplicarPerfil();alert('✅ Salvo! Nuvem: '+(DB.cfg.cloud||'não configurada')+' · WhatsApp auto: '+((DB.cfg.evo&&DB.cfg.evokey)?'ON':'off (manual)'));}
 // CONTROLE TOTAL — WhatsApp via Evolution API + TikTok Business
 function evoCfg(){return {url:(DB.cfg.evo||'').replace(/\/$/,''),key:DB.cfg.evokey||'',inst:DB.cfg.evoinst||'rick-digital'};}
 async function evoSend(tel,msg){const c=evoCfg();if(!c.url||!c.key){window.open(waLink(tel,msg),'_blank');return {modo:'manual'};}
@@ -867,7 +902,7 @@ if(roda===0){const c=DB.leads.find(l=>l.etapa==='novo'||l.etapa==='qualificacao'
 else if(roda===1){const c=DB.leads.find(l=>l.etapa==='novo'||l.etapa==='qualificacao');if(c){c.etapa=c.etapa==='novo'?'qualificacao':'quente';feed('🔥 <b>'+f.n+'</b> qualificou <b>'+c.nome+'</b> → '+c.etapa.toUpperCase());}else feed('📞 <b>'+f.n+'</b> revisou fila (sem leads p/ mover)');}
 else if(roda===2){const at2=DB.leads.filter(l=>l.etapa!=='arquivado');feed('📊 <b>'+f.n+'</b> conferiu a fila real: '+at2.filter(l=>l.etapa==='novo').length+' novos · '+at2.filter(l=>l.etapa==='quente').length+' quentes · '+at2.filter(l=>String(l.tel||'').replace(/\D/g,'').length<8).length+' sem fone');}
 else if(roda===3){const alvo=DB.leads.find(l=>(l.etapa==='quente'||l.etapa==='novo')&&!DB.tarefas.find(t=>!t.ok&&t.tit.includes(l.nome)));if(alvo){novaTarefa('Cobrar '+alvo.nome+' ('+alvo.etapa+')',new Date(Date.now()+86400000).toISOString().slice(0,16),{leadId:alvo.id});feed('⏰ <b>'+f.n+'</b> criou cobrança real p/ <b>'+alvo.nome+'</b>');}else feed('⏰ <b>'+f.n+'</b> conferiu: follow-ups em dia, nada a cobrar');}
-else if(roda===5){const h=DB.eq.find(x=>x.robo)||f;h.feitos=(h.feitos||0)+1;const r=roboFin(true);feed('🤖 <b>'+h.n+'</b> auditou o financeiro: '+r);}
+else if(roda===5){const h=DB.eq.find(x=>x.n==='Helena Vasques')||f;h.feitos=(h.feitos||0)+1;const r=roboFin(true);feed('💰 <b>'+h.n+'</b> auditou o financeiro: '+r);}
 else{feed('📊 <b>'+f.n+'</b> atualizou métricas — conversão recalculada');}
 if(tick%15===0&&DB.plantao&&DB.plantao.on){DB.plantao.visto=Date.now();const d=new Date(DB.plantao.desde).toLocaleTimeString('pt-BR');feed('🛡️ <b>Vitória (Guardiã)</b> confere: plantão ON desde '+d+' · estado salvo — ninguém desliga sem o CEO.');
 if(!DB.plantao.ultBeat||Date.now()-DB.plantao.ultBeat>3600000){DB.plantao.ultBeat=Date.now();acaoReal('🛡️ Vigia da Vitória','Plantão mantido ON · 1h de guarda cumprida');}}
@@ -975,6 +1010,40 @@ if(j&&j.error){st.textContent='nuvem: ⛔ acesso negado — libere as regras (ve
 if(j&&(j.leads||j.tarefas)){st.textContent='nuvem: ✅ conectada com dados ('+(j.leads||[]).length+' leads)';return alert('✅ Conectada! Achei '+(j.leads||[]).length+' leads na nuvem. Pode ligar o Auto-sync.');}
 st.textContent='nuvem: ✅ conectada (vazia — clique Enviar p/ nuvem)';alert('✅ Conectada, mas vazia. Clique “Enviar p/ nuvem”.');}catch(e){st.textContent='nuvem: ❌ sem acesso — confira a URL';alert('Não alcancei essa URL. Confira se copiou certo (termina com .firebaseio.com).');}}
 function cloudAuto(){if(cloudTimer){clearInterval(cloudTimer);cloudTimer=null;localStorage.setItem(KEY,JSON.stringify(DB));document.getElementById('cloud-st').textContent='nuvem: off';return;}const u=cloudURL();if(!u)return alert('Cole a URL do Firebase primeiro');cloudTimer=setInterval(async()=>{try{const j=await(await fetch(u+'/crm.json')).json();if(j&&(j.leads||j.tarefas)){cloudMerge(j);if(DB.plantao&&DB.plantao.on&&!plantaoOn){try{retomarPlantao();}catch(e){}}}await fetch(u+'/crm.json',{method:'PUT',body:JSON.stringify(cloudPayload())});DB.ultSync=Date.now();save();document.getElementById('cloud-st').textContent='nuvem: auto ✅ '+new Date().toLocaleTimeString('pt-BR');}catch(e){document.getElementById('cloud-st').textContent='nuvem: auto ⚠️ falha — ver URL/regras';}} ,15000);document.getElementById('cloud-st').textContent='nuvem: auto ON 🔄';alert('🔄 Auto-sync ligado! Puxa + envia a cada 15s, mesclando sem perder nada. Ligue também no outro aparelho.');}
+// ===== CRM COMPLETO — meta, follow-up, modelos, relatórios+, captura, login =====
+function diasSemResposta(l){try{const base=l.etapaDesde||l.data;if(!base)return 99;const d=new Date(base.replace(/(\d+)\/(\d+)\/(\d+)/,'$3-$2-$1'));if(isNaN(d))return 99;return Math.floor((Date.now()-d.getTime())/86400000);}catch(e){return 99;}}
+function renderMetaReal(){const el=document.getElementById('meta-real');if(!el)return;const meta=Number(DB.cfg.meta||10000);const rec=finTotais().rec;const pct=meta?Math.min(100,Math.round(rec/meta*100)):0;
+el.innerHTML='<div style="display:flex;justify-content:space-between"><b>'+brl(rec)+' / '+brl(meta)+'</b><span>'+pct+'%</span></div><div style="background:#E5E7EB;border-radius:8px;height:14px;overflow:hidden;margin:.4rem 0"><div style="height:100%;width:'+pct+'%;background:'+(pct>=100?'#10B981':'#F59E0B')+'"></div></div><small class="legend">Meta editável em Configurações. Ajuste todo mês.</small>';}
+function renderProxTarefas(){const el=document.getElementById('prox-tarefas');if(!el)return;
+const prox=DB.tarefas.filter(t=>!t.ok).slice(0,5);
+const frios=DB.leads.filter(l=>l.etapa!=='cliente'&&l.etapa!=='arquivado'&&diasSemResposta(l)>=3).slice(0,5);
+el.innerHTML='<b>📌 Próximas:</b>'+(prox.map(t=>'<div style="padding:.3rem 0;border-bottom:1px solid #eee;font-size:.85rem">⏰ '+t.tit+' <small>'+(t.data||'')+'</small> <button class="btn btn-p" onclick="okTar('+t.id+')">OK</button> <button class="btn btn-v" onclick="gcalTarefa('+t.id+')">📅</button></div>').join('')||'<div class="legend">Nada pendente 🎉</div>')
++'<br><b>🧊 Sem resposta 3+ dias ('+frios.length+'):</b>'+(frios.map(l=>'<div style="padding:.3rem 0;border-bottom:1px solid #eee;font-size:.85rem">⚠️ <b>'+l.nome+'</b> · '+l.etapa+' · '+diasSemResposta(l)+' dias <button class="btn btn-wa" onclick="recuperarLead('+l.id+')">Recuperar</button></div>').join('')||'<div class="legend">Ninguém esquecido ✅</div>');}
+function recuperarLead(id){const l=DB.leads.find(x=>x.id===id);if(!l)return;const msg=(DB.cfg.modelos||'').split('\n')[2]||'Oi '+l.nome+'! Ainda faz sentido conversarmos sobre '+l.servico+'?';window.open(waLink(l.tel||'',msg.replace('{nome}',l.nome).replace('{servico}',l.servico)),'_blank');pushHist(l,'♻️ Tentativa de recuperação (3+ dias)');novaTarefa('Retorno recuperação '+l.nome,new Date(Date.now()+86400000).toISOString().slice(0,16),{leadId:l.id});save();}
+function renderAtivRecentes(){const el=document.getElementById('ativ-recentes');if(!el)return;const lim=Date.now()-86400000;
+const rec=(DB.acoes||[]).filter(a=>a.ts&&a.ts>lim).slice(0,8);
+el.innerHTML=rec.map(a=>'<div style="padding:.3rem 0;border-bottom:1px solid #eee;font-size:.85rem">✔ '+a.quando+' — <b>'+a.t+'</b><br><small>'+a.d+'</small></div>').join('')||'<p class="legend">Nada nas últimas 24h — mova o funil que aparece aqui.</p>';}
+function renderRelPlus(){const el=document.getElementById('rel-plus');if(!el)return;
+const at=DB.leads.filter(l=>l.etapa!=='arquivado');const tot=at.length||1;
+const por={};ORDEM_ETAPAS.concat(['perdido']).forEach(e=>por[e]=at.filter(l=>l.etapa===e).length);
+const fech=at.filter(l=>l.etapa==='cliente').reduce((s,l)=>s+Number(l.valor||0),0);
+const perd=at.filter(l=>l.etapa==='perdido').reduce((s,l)=>s+Number(l.valor||0),0);
+const tempos=at.filter(l=>l.etapa==='cliente'&&l.timeline&&l.timeline.length>=2);
+el.innerHTML='<div style="display:grid;grid-template-columns:1fr 1fr;gap:.6rem">'
++Object.entries(por).map(o=>'<div style="background:#F8FAFC;border:1px solid #E5E7EB;border-radius:8px;padding:.5rem"><b>'+o[0]+'</b><br>'+o[1]+' ('+Math.round(o[1]/tot*100)+'%)</div>').join('')+'</div>'
++'<div style="margin-top:.6rem">💰 Fechado: <b>'+brl(fech)+'</b> · ❌ Perdido: <b>'+brl(perd)+'</b> · ⏱️ Tempo médio até cliente: <b>'+tempoMedio()+'</b></div>'
++'<div style="margin-top:.4rem"><small class="legend">Comparativo: este mês '+(DB.hist?.[hojeKey()]?.leads||0)+' leads · mês passado (há 30d): verifique em Métricas 30 dias.</small></div>';}
+function tempoMedio(){const c=DB.leads.filter(l=>l.etapa==='cliente');if(!c.length)return '—';let soma=0,n=0;c.forEach(l=>{const d=diasSemResposta({etapaDesde:l.data, data:l.data});if(d<365){soma+=Math.max(0,d);n++;}});return n?Math.round(soma/n)+' dias':'—';}
+function modelosLista(){const raw=(DB.cfg.modelos||'').split('\n').map(s=>s.trim()).filter(Boolean);return raw.length?raw:['Olá {nome}! Vi seu interesse em {servico} — posso te mandar a proposta hoje?'];}
+function renderModelos(){const el=document.getElementById('modelos-msg');if(!el)return;
+el.innerHTML=modelosLista().map((m,i)=>'<div style="padding:.4rem 0;border-bottom:1px solid #eee;font-size:.85rem"><b>'+(i+1)+'.</b> '+m.slice(0,90)+'... <button class="btn btn-v" onclick="copiarTexto(modelosLista()['+i+'])">📋</button> <button class="btn btn-wa" onclick="usarModelo('+i+')">WhatsApp</button></div>').join('');}
+function usarModelo(i){const m=modelosLista()[i]||'';const l=DB.leads.find(x=>x.etapa==='quente'||x.etapa==='novo');const txt=m.replace('{nome}',l?l.nome:'').replace('{servico}',l?l.servico:'').replace('{link}',DB.cfg.pf||'');if(l&&String(l.tel||'').replace(/\D/g,'').length>=8)window.open(waLink(l.tel,txt),'_blank');else copiarTexto(txt);}
+function abrirGCal(){const t=(prompt('Título do compromisso:','Retorno cliente')||'Retorno cliente');const dt=new Date(Date.now()+86400000);const f=d=>d.toISOString().replace(/[-:]/g,'').split('.')[0]+'Z';window.open('https://calendar.google.com/calendar/render?action=TEMPLATE&text='+encodeURIComponent(t)+'&dates='+f(dt)+'/'+f(new Date(dt.getTime()+3600000)),'_blank');}
+function gcalTarefa(id){const t=DB.tarefas.find(x=>x.id===id);if(!t)return;const dt=t.data?new Date(t.data):new Date(Date.now()+86400000);const f=d=>new Date(d).toISOString().replace(/[-:]/g,'').split('.')[0]+'Z';window.open('https://calendar.google.com/calendar/render?action=TEMPLATE&text='+encodeURIComponent(t.tit)+'&dates='+f(dt)+'/'+f(new Date(dt.getTime()+3600000)),'_blank');}
+function exportExcel(){const rows=[['nome','telefone','email','empresa','segmento','origem','etiquetas','responsavel','servico','valor','prob','etapa','anexo','obs']].concat(DB.leads.map(l=>[(l.nome||''),(l.tel||''),(l.email||''),(l.empresa||''),(l.segmento||''),(l.origem||''),((l.tags||[]).join(',')),(l.resp||''),(l.servico||''),(l.valor||''),(l.prob||''),(l.etapa||''),(l.anexo||''),(l.obs||'')]));const html='<table>'+rows.map(r=>'<tr>'+r.map(c=>'<td>'+String(c).replace(/</g,'&lt;')+'</td>').join('')+'</tr>').join('')+'</table>';const b=new Blob(['\ufeff'+html],{type:'application/vnd.ms-excel'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='crm-rick-digital.xls';a.click();acaoReal('📊 Excel exportado',DB.leads.length+' leads');}
+function capturaViaURL(){try{const q=new URLSearchParams(location.search);const nome=(q.get('nome')||'').trim(),tel=(q.get('tel')||q.get('whatsapp')||'').trim();if(!nome)return;if(DB.leads.find(x=>x.nome.toLowerCase()===nome.toLowerCase()&&String(x.tel||'').replace(/\D/g,'')===tel.replace(/\D/g,'')))return;DB.leads.unshift({id:Date.now(),nome,tel,origem:q.get('origem')||'Site',servico:q.get('servico')||'Site Institucional',valor:997,prob:30,etapa:'novo',etapaDesde:new Date().toLocaleString('pt-BR'),timeline:[{quando:new Date().toLocaleString('pt-BR'),texto:'🎣 Capturado pelo formulário do site'}],data:new Date().toLocaleString('pt-BR')});save();alert('🎉 Lead "'+nome+'" capturado pelo formulário!');history.replaceState({},'',location.pathname);}catch(e){}}
+function aplicarPerfil(){const p=DB.cfg.perfil||'proprietario';document.querySelectorAll('[data-aba="fin"],[data-aba="config"]').forEach(a=>{if(p!=='proprietario'&&a.dataset.aba==='fin')a.style.display=(p==='visualizacao')?'none':'';});if(p==='visualizacao')document.querySelectorAll('.btn-g').forEach(b=>{if(/Novo Lead|Nova Tarefa|Salvar/.test(b.textContent))b.style.display='none';});}
+function checarPIN(){const pin=(DB.cfg.pin||'').trim();if(!pin)return true;if(sessionStorage.getItem('crm-ok')==='1')return true;const d=prompt('🔐 Digite o PIN do CRM:');if(d===pin){sessionStorage.setItem('crm-ok','1');return true;}alert('PIN incorreto.');location.reload();return false;}
 // PWA
 let deferred=null;window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferred=e;});
 // 3D INTERATIVO — cards e banner inclinam seguindo o mouse (só PC com mouse)
@@ -985,9 +1054,12 @@ t.classList.add('tilt-on');t.style.transform='perspective(700px) rotateY('+(px*1
 function instalarApp(){if(deferred){deferred.prompt();}else alert('📱 No celular: menu ⋮ → “Instalar app / Adicionar à tela inicial”. No PC: ícone instalar na barra de endereço.');}
 if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').catch(()=>{});}
 // INIT
+if(!checarPIN())throw new Error('bloqueado');
 document.getElementById('cfg-marca').value=DB.cfg.marca;document.getElementById('cfg-wa').value=DB.cfg.wa;document.getElementById('cfg-tk').value=DB.cfg.tk;document.getElementById('cfg-pf').value=DB.cfg.pf;document.getElementById('cfg-num').value=DB.cfg.num;if(document.getElementById('cfg-cloud'))document.getElementById('cfg-cloud').value=DB.cfg.cloud||'https://rick-digital-default-rtdb.firebaseio.com';
 if(document.getElementById('cfg-evo')){document.getElementById('cfg-evo').value=DB.cfg.evo||'';document.getElementById('cfg-evokey').value=DB.cfg.evokey||'';document.getElementById('cfg-evoinst').value=DB.cfg.evoinst||'rick-digital';document.getElementById('cfg-evomsq').value=DB.cfg.evomsq||'Olá! Aqui é do ESTÚDIO RICK DIGITAL. Vi seu contato e quero te mostrar nosso portfólio: https://rickdigitalestudio.github.io/profissional-rickdutra/ — posso te mandar uma proposta?';document.getElementById('cfg-ttuser').value=DB.cfg.ttuser||'@ricklima991';if(DB.cfg.ttagenda)document.getElementById('cfg-ttagenda').value=DB.cfg.ttagenda;if(DB.cfg.evo&&DB.cfg.evokey)document.getElementById('evo-st').textContent='whatsapp auto: configurado ✅ teste a conexão';}
 if(DB.acoes?.length)document.getElementById('acoes-reais').innerHTML=DB.acoes.slice(0,10).map(a=>'<div>✔ '+a.quando+' — <b>'+a.t+'</b><br>'+a.d+'</div>').join('');
+try{document.getElementById('cfg-meta').value=DB.cfg.meta||10000;document.getElementById('cfg-pin').value=DB.cfg.pin||'';document.getElementById('cfg-perfil').value=DB.cfg.perfil||'proprietario';if(DB.cfg.modelos)document.getElementById('cfg-modelos').value=DB.cfg.modelos;}catch(e){}
+try{aplicarPerfil();}catch(e){}
 desenharBanner();gerarIdeias();render();verificarAutomacao();
 if(DB.plantao&&DB.plantao.on){try{retomarPlantao();render();}catch(e){}}
 </script>
