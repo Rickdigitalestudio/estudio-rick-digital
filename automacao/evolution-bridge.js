@@ -43,6 +43,33 @@ const server = http.createServer(async (req, res) => {
   res.end('rick-digital bridge on');
 });
 
+// Vigia 24h de leads do SITE (opcional, p/ rodar hospedado):
+// POLL_SITE_LEADS=1 FIREBASE_URL=https://SEU-projeto-default-rtdb.firebaseio.com node evolution-bridge.js
+// A cada 1 min lê /site-leads, manda boas-vindas a quem tem fone real e marca enviado:true.
+// O CRM continua criando o lead no funil (sem duplicar o WhatsApp: ele respeita enviado:true).
+const FB = (process.env.FIREBASE_URL || '').replace(/\/$/, '');
+const vistosSite = new Set();
+async function vigiarSite() {
+  if (process.env.POLL_SITE_LEADS !== '1' || !FB) return;
+  try {
+    const j = await (await fetch(FB + '/site-leads.json')).json();
+    if (!j) return;
+    for (const k of Object.keys(j)) {
+      if (vistosSite.has(k) || j[k].enviado) continue;
+      vistosSite.add(k);
+      const tel = String(j[k].zap || j[k].whatsapp || '').replace(/\D/g, '');
+      if (tel.length >= 8) {
+        try {
+          await enviarTexto(process.env.EVO_URL, process.env.EVO_KEY, process.env.EVO_INST || 'rick-digital', tel, BOAS_VINDAS + ' (' + (j[k].nome || 'visitante') + ')');
+          await fetch(FB + '/site-leads/' + k + '.json', { method: 'PATCH', body: JSON.stringify({ enviado: true }) });
+          console.log('Site-lead atendido:', j[k].nome);
+        } catch (e) { console.error('falha site-lead:', e.message); }
+      }
+    }
+  } catch (e) { console.error('vigia site:', e.message); }
+}
+setInterval(vigiarSite, 60000);
+
 const PORT = process.env.PORT || 3001;
 server.listen(PORT, () => console.log('Bridge no ar:' + PORT));
 module.exports = { enviarTexto };

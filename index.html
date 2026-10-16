@@ -170,6 +170,17 @@ canvas#bannerCanvas{width:100%;max-width:420px;border-radius:16px;border:1px sol
 </div>
 <div id="auto-result"></div>
 </div>
+<div class="panel" style="border:2px solid #25D366"><h3>🌐 Leads do Site (portfólio) — recepção automática</h3>
+<p class="legend">O formulário do portfólio joga cada lead aqui via nuvem. A recepção cria o lead no funil, distribui p/ quem está de plantão, agenda retorno em 1h e — com Evolution API + boas-vindas ON — manda a mensagem sozinha. Nada é inventado: só entra o que o visitante digitou.</p>
+<div id="site-status" class="legend" style="margin:.5rem 0">Nunca verificado neste aparelho.</div>
+<div style="display:flex;gap:.5rem;flex-wrap:wrap">
+<button class="btn-g" style="background:#059669" onclick="puxarLeadsSite()">📥 Puxar leads do site agora</button>
+<button class="btn btn-v" onclick="toggleSiteAuto()">🔄 Vigia auto ON/OFF</button>
+<button class="btn btn-v" onclick="pedirNotificacao()">🔔 Ativar aviso sonoro + popup</button>
+<span class="legend" id="site-auto-st">vigia: off (só verifica com a aba aberta)</span>
+</div>
+<div id="site-result"></div>
+</div>
 <div class="panel"><h3>📍 Prospecção Google Maps por categoria <span class="legend">(referência Maps + OSM)</span></h3>
 <div class="grid2">
 <div><label>Cidade / Bairro</label><input id="maps-cidade" value="São Paulo SP" placeholder="Ex: Vila Ema, Lisboa, Orlando"></div>
@@ -612,6 +623,28 @@ if(!autoLeads.length){alert('Automação sem leads desta vez.');return;}
 document.getElementById('auto-result').innerHTML=autoLeads.slice(0,20).map(a=>'<div style="padding:.5rem 0;border-bottom:1px solid #eee"><b>'+a.nome+'</b> '+(a.fone_real?'<span class="tag" style="background:#D1FAE5">📞 fone real</span>':'<span class="tag" style="background:#FEE2E2;color:#991B1B">sem fone</span>')+' <span class="tag">⚠️ verificar site</span><br><small>'+(a.endereco||'')+' · '+(a.cidade||'')+' · '+(a.categoria||'')+' · <a target=_blank href="https://www.google.com/search?q='+encodeURIComponent(a.nome+' '+(a.cidade||''))+'">checar 🔍</a></small></div>').join('')+'<button class="btn-g" style="margin-top:.6rem;background:#059669" onclick="addAllAuto()">+ Jogar todos no funil</button>';
 notif('🤖 Automação: '+autoLeads.length+' candidatos','Varredura '+(j.varredura||''));}catch(e){alert('Não achei o arquivo da automação. Abra pelo link público (GitHub Pages) ou rode a busca manual.');}}
 function addAllAuto(){if(!autoLeads.length)return;let cf=0;autoLeads.forEach((a,i)=>{const ok=String(a.fone||'').replace(/\D/g,'').length>=8||a.fone_real;if(ok)cf++;DB.leads.unshift({id:Date.now()+i,nome:a.nome,tel:a.fone||'',origem:'Automação 🤖 '+(a.cidade||'')+(ok?'':' · ⚠️ sem fone'),servico:'Site Institucional',valor:997,etapa:'novo',obs:'Da varredura '+(a.varredura||'')+' — '+(a.fonte||'robô OSM')+'. '+(ok?'Fone do cadastro. Validar antes de abordar.':'SEM fone no cadastro: completar manualmente.'),data:new Date().toLocaleString('pt-BR')});});save();acaoReal('🤖 Automação puxada','+'+autoLeads.length+' candidatos ('+cf+' com fone real) no funil (PC desligado OK)');alert('✅ '+autoLeads.length+' candidatos no funil! '+cf+' com fone real.');}
+// 🌐 RECEPÇÃO DE LEADS DO SITE (só dados reais digitados no formulário do portfólio)
+let siteTimer=null;
+function pedirNotificacao(){try{if(!('Notification' in window))return alert('Navegador sem popup — use o sino 🔔 aqui do app');Notification.requestPermission().then(p=>alert(p==='granted'?'✅ Avisos ativados neste aparelho!':'⚠️ Negado — libere no cadeado da barra de endereço'));}catch(e){alert('Erro: '+e.message)}}
+function apitar(){try{const C=window.AudioContext||window.webkitAudioContext;if(!C)return;const c=new C(),o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.frequency.value=880;g.gain.value=.12;o.start();g.gain.exponentialRampToValueAtTime(.001,c.currentTime+.6);o.stop(c.currentTime+.6);}catch(e){}}
+function avisarSite(t,d){notif(t,d);apitar();try{if('Notification' in window&&Notification.permission==='granted')new Notification(t,{body:String(d||'').slice(0,120)});}catch(e){}}
+function plantonista(){try{iniEq();}catch(e){}const eq=(DB.eq&&DB.eq.length?DB.eq:EQUIPE);const i=(DB.recepcaoIdx||0)%eq.length;DB.recepcaoIdx=(DB.recepcaoIdx||0)+1;return eq[i];}
+async function puxarLeadsSite(silencioso){const u=cloudURL();if(!u){if(!silencioso)alert('Configure a Nuvem (Firebase) em Configurações primeiro');return 0;}
+try{const j=await(await fetch(u+'/site-leads.json')).json();if(!j||!Object.keys(j).length){if(!silencioso)document.getElementById('site-status').textContent='Nenhum lead do site ainda — quando um visitante preencher o formulário, aparece aqui.';return 0;}
+if(!DB.siteImportados)DB.siteImportados=[];let novos=0;
+for(const k of Object.keys(j)){if(DB.siteImportados.includes(k))continue;DB.siteImportados.push(k);recepcionarSiteLead(j[k]||{});novos++;}
+DB.siteImportados=DB.siteImportados.slice(-500);save();
+document.getElementById('site-status').textContent=novos?('✅ '+novos+' lead(s) do site recepcionado(s) às '+new Date().toLocaleTimeString('pt-BR')):('Tudo em dia — verificado às '+new Date().toLocaleTimeString('pt-BR'));return novos;}catch(e){if(!silencioso)alert('⚠️ Falha ao ler site-leads — confira URL e regras do Firebase');return 0;}}
+function recepcionarSiteLead(d){const nome=String(d.nome||'Visitante').slice(0,60),tel=String(d.zap||d.whatsapp||'').replace(/\D/g,'');
+const dup=DB.leads.find(x=>(tel&&String(x.tel||'').replace(/\D/g,'')===tel)||(x.nome.toLowerCase()===nome.toLowerCase()&&String(x.origem||'').indexOf('Site')>=0));
+if(dup){pushHist(dup,'🌐 Nova visita ao site vinculada (já era lead)');save();return;}
+const eq=plantonista();if(eq)eq.feitos=(eq.feitos||0)+1;
+const nl={id:Date.now()+Math.floor(Math.random()*1000),nome,tel,origem:'Site Portfólio',servico:'Site Institucional',valor:997,prob:40,etapa:'novo',etapaDesde:new Date().toLocaleString('pt-BR'),tags:['site'],resp:eq?eq.n:'',obs:'Detalhe do formulário: '+(d.detalhe||'—'),data:new Date().toLocaleString('pt-BR'),timeline:[{quando:new Date().toLocaleString('pt-BR'),texto:'🌐 Chegou pelo formulário do portfólio — recepcionado por '+(eq?eq.n:'equipe')}]};
+DB.leads.unshift(nl);
+const v=new Date(Date.now()+36e5);novaTarefa('⚡ Retornar '+nome+' (site) em até 1h',v.toISOString().slice(0,16),{leadId:nl.id});
+avisarSite('🌐 Lead do site: '+nome,(tel||'sem fone')+' · '+(eq?eq.n:'equipe')+' acionado(a)');
+if(!d.enviado&&tel.length>=8&&evoAutoOn&&typeof evoSend==='function'){evoSend(tel,(DB.cfg.evomsq||'')+' ('+nome+')').then(()=>acaoReal('🌐 Boas-vindas auto (site)',nome+' recebeu msg automática')).catch(()=>{});}}
+function toggleSiteAuto(){const el=document.getElementById('site-auto-st');if(siteTimer){clearInterval(siteTimer);siteTimer=null;el.textContent='vigia: off (só verifica com a aba aberta)';return;}if(!cloudURL())return alert('Configure a Nuvem (Firebase) primeiro');siteTimer=setInterval(()=>puxarLeadsSite(true),60000);el.textContent='vigia: ON 👀 (verifica a cada 1 min com a aba aberta)';puxarLeadsSite(true);}
 function abrirTarefa(){document.getElementById('m-tar').classList.add('aberto');}
 function salvarTarefa(){const t=document.getElementById('t-tit').value;if(!t)return alert('Título obrigatório');DB.tarefas.push({id:Date.now(),tit:t,data:document.getElementById('t-data').value,ok:false});document.getElementById('m-tar').classList.remove('aberto');save();}
 function okTar(id){DB.tarefas.find(t=>t.id===id).ok=true;save();}
