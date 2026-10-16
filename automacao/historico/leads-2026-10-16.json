@@ -1,0 +1,556 @@
+{
+ "varredura": "16/10/2026 15:18 UTC",
+ "total": 60,
+ "leads": [
+  {
+   "nome": "Bar e Restaurante Perceu",
+   "fone": "",
+   "fone_real": false,
+   "endereco": "",
+   "cidade": "São Paulo SP/Brasil",
+   "categoria": "restaurante",
+   "fonte": "GitHub-robo OSM/Overpass (sem site no cadastro)",
+   "varredura": "16/10/2026 15:18 UTC"
+  },
+  {
+   "nome": "Studio Surya de Yoga",
+   "fone": "",
+   "fone_real": false,
+   "endereco": "",
+   "cidade": "Rio de Janeiro/Brasil",
+   "categoria": "fitness",
+   "fonte": "GitHub-robo OSM/Overpass (sem site no cadastro)",
+   "varredura": "16/10/2026 15:18 UTC"
+  },
+  {
+   "nome": "Academia Rio Gym",
+   "fone": "",
+   "fone_real": false,
+   "endereco": "",
+   "cidade": "Rio de Janeiro/Brasil",
+   "categoria": "fitness",
+   "fonte": "GitHub-robo OSM/Overpass (sem site no cadastro)",
+   "varredura": "16/10/2026 15:18 UTC"
+  },
+  {
+   "nome": "Citrus",
+   "fone": "",
+   "fone_real": false,
+   "endereco": "",
+   "cidade": "Rio de Janeiro/Brasil",
+   "categoria": "fitness",
+   "fonte": "GitHub-robo OSM/Overpass (sem site no cadastro)",
+   "varredura": "16/10/2026 15:18 UTC"
+  },
+  {
+   "nome": "Contours Express",
+   "fone": "55 21 2240 3600",
+   "fone_real": true,
+   "endereco": "Avenida Almirante Barroso",
+   "cidade": "Rio de Janeiro/Brasil",
+   "categoria": "fitness",
+   "fonte": "GitHub-robo OSM/Overpass (sem site no cadastro)",
+   "varredura": "16/10/2026 15:18 UTC"
+  },
+  {
+   "nome": "Academia Personal Physical Center",
+   "fone": "",
+   "fone_real": false,
+   "endereco": "Rua Corrêa Dutra, Catete, Rio de Janeiro",
+   "cidade": "Rio de Janeiro/Brasil",
+   "categoria": "fitness",
+   "fonte": "GitHub-robo OSM/Overpass (sem site no cadastro)",
+   "varredura": "16/10/2026 15:18 UTC"
+  },
+  {
+   "nome": "ATP",
+   "fone": "",
+   "fone_real": false,
+   "endereco": "",
+   "cidade": "Rio de Janeiro/Brasil",
+   "categoria": "fitness",
+   "fonte": "GitHub-robo OSM/Overpass (sem site no cadastro)",
+   "varredura": "16/10/2026 15:18 UTC"
+  },
+  {
+   "nome": "bios",
+   "fone": "",
+   "fone_real": false,
+   "endereco": "",
+   "cidade": "Rio de Janeiro/Brasil",
+   "categoria": "fitness",
+   "fonte": "GitHub-robo OSM/Overpass (sem site no cadastro)",
+   "varredura": "16/10/2026 15:18 UTC"
+  },
+  {
+   "nome": "Curves",
+   "fone": "",
+   "fone_real": false,
+   "endereco": "",
+   "cidade": "Rio de Janeiro/Brasil",
+   "categoria": "fitness",
+   "fonte": "GitHub-robo OSM/Overpass (sem site no cadastro)",
+   "varredura": "16/10/2026 15:18 UTC"
+  },
+  {
+   "nome": "Qualivida",
+   "fone": "",
+   "fone_real": false,
+   "endereco": "Rua Senador Vergueiro, Flamengo, Rio de Janeiro",
+   "cidade": "Rio de Janeiro/Brasil",
+   "categoria": "fitness",
+   "fonte": "GitHub-robo OSM/Overpass (sem site no cadastro)",
+   "varredura": "16/10/2026 15:18 UTC"
+  },
+  {
+   "nome": "Academia LifeFit",
+   "fone": "",
+   "fone_real": false,
+   "endereco": "",
+   "cidade": "Rio de Janeiro/Brasil",
+   "categoria": "fitness",
+   "fonte": "GitHub-robo OSM/Overpass (sem site no cadastro)",
+   "varredura": "16/10/2026 15:18 UTC"
+  },
+  {
+   "nome": "Academia da Terceira Idade",
+   "fone": "",
+   "fone_real": false,
+   "endereco": "",
+   "cidade": "Rio de Janeiro/Brasil",
+   "categoria": "fitness",
+   "fonte": "GitHub-robo OSM/Overpass (sem site no cadastro)",
+   "varredura": "16/10/2026 15:18 UTC"
+  },
+  {
+   "nome": "Body Move",
+   "fone": "",
+   "fone_real": false,
+   "endereco": "",
+   "cidade": "Rio de Janeiro/Brasil",
+   "categoria": "fitness",
+   "fonte": "GitHub-robo OSM/Overpass (sem site no cadastro)",
+   "varredura": "16/10/2026 15:18 UTC"
+  },
+  {
+   "nome": "Smart Fit",
+   "fone": "",
+   "fone_real": false,
+   "endereco": "",
+   "cidade": "Rio de Janeiro/Brasil",
+   "categoria": "fitness",
+   "fonte": "GitHub-robo OSM/Overpass (sem site no cadastro)",
+   "varredura": "16/10/2026 15:18 UTC"
+  },
+  {
+   "nome": "Academia Pro Health Fitness Studio",
+   "fone": "",
+   "fone_real": false,
+   "endereco": "Rua Riachuelo, Centro, Rio de Janeiro",
+   "cidade": "Rio de Janeiro/Brasil",
+   "categoria": "fitness",
+   "fonte": "GitHub-robo OSM/Overpass (sem site no cadastro)",
+   "varredura": "16/10/2026 15:18 UTC"
+  },
+  {
+   "nome": "CJI Dentistas",
+   "fone": "",
+   "fone_real": false,
+   "endereco": "Rua Silveira Martins, Rio de Janeiro",
+   "cidade": "Rio de Janeiro/Brasil",
+   "categoria": "dentista",
+   "fonte": "GitHub-robo OSM/Overpass (sem site no cadastro)",
+   "varredura": "16/10/2026 15:18 UTC"
+  },
+  {
+   "nome": "Diga X",
+   "fone": "",
+   "fone_real": false,
+   "endereco": "Rua do Bispo, Rio Comprido, Rio de Janeiro",
+   "cidade": "Rio de Janeiro/Brasil",
+   "categoria": "dentista",
+   "fonte": "GitHub-robo OSM/Overpass (sem site no cadastro)",
+   "varredura": "16/10/2026 15:18 UTC"
+  },
+  {
+   "nome": "Apelbaum Odontologia Integrada",
+   "fone": "",
+   "fone_real": false,
+   "endereco": "",
+   "cidade": "Rio de Janeiro/Brasil",
+   "categoria": "dentista",
+   "fonte": "GitHub-robo OSM/Overpass (sem site no cadastro)",
+   "varredura": "16/10/2026 15:18 UTC"
+  },
+  {
+   "nome": "Odontoplus",
+   "fone": "",
+   "fone_real": false,
+   "endereco": "Rua Nelson Mandela, Rio de Janeiro",
+   "cidade": "Rio de Janeiro/Brasil",
+   "categoria": "dentista",
+   "fonte": "GitHub-robo OSM/Overpass (sem site no cadastro)",
+   "varredura": "16/10/2026 15:18 UTC"
+  },
+  {
+   "nome": "Dental Consult Saúde e Estética",
+   "fone": "",
+   "fone_real": false,
+   "endereco": "Avenida Henrique Valadares, Centro, Rio de Janeiro",
+   "cidade": "Rio de Janeiro/Brasil",
+   "categoria": "dentista",
+   "fonte": "GitHub-robo OSM/Overpass (sem site no cadastro)",
+   "varredura": "16/10/2026 15:18 UTC"
+  },
+  {
+   "nome": "Arte Dental",
+   "fone": "",
+   "fone_real": false,
+   "endereco": "",
+   "cidade": "Rio de Janeiro/Brasil",
+   "categoria": "dentista",
+   "fonte": "GitHub-robo OSM/Overpass (sem site no cadastro)",
+   "varredura": "16/10/2026 15:18 UTC"
+  },
+  {
+   "nome": "Centro Odontológico Laranjeiras - COL",
+   "fone": "",
+   "fone_real": false,
+   "endereco": "Rua General Glicério, Laranjeiras, Rio de Janeiro",
+   "cidade": "Rio de Janeiro/Brasil",
+   "categoria": "dentista",
+   "fonte": "GitHub-robo OSM/Overpass (sem site no cadastro)",
+   "varredura": "16/10/2026 15:18 UTC"
+  },
+  {
+   "nome": "ASFODONTO",
+   "fone": "",
+   "fone_real": false,
+   "endereco": "Rua Evaristo da Veiga, Centro, Rio de Janeiro",
+   "cidade": "Rio de Janeiro/Brasil",
+   "categoria": "dentista",
+   "fonte": "GitHub-robo OSM/Overpass (sem site no cadastro)",
+   "varredura": "16/10/2026 15:18 UTC"
+  },
+  {
+   "nome": "Odonto Company",
+   "fone": "",
+   "fone_real": false,
+   "endereco": "",
+   "cidade": "Rio de Janeiro/Brasil",
+   "categoria": "dentista",
+   "fonte": "GitHub-robo OSM/Overpass (sem site no cadastro)",
+   "varredura": "16/10/2026 15:18 UTC"
+  },
+  {
+   "nome": "Tijuca Odontologia",
+   "fone": "55 21 98855-2005",
+   "fone_real": true,
+   "endereco": "Rua Camaragibe, Tijuca, Rio de Janeiro",
+   "cidade": "Rio de Janeiro/Brasil",
+   "categoria": "dentista",
+   "fonte": "GitHub-robo OSM/Overpass (sem site no cadastro)",
+   "varredura": "16/10/2026 15:18 UTC"
+  },
+  {
+   "nome": "Meraky",
+   "fone": "",
+   "fone_real": false,
+   "endereco": "",
+   "cidade": "Rio de Janeiro/Brasil",
+   "categoria": "dentista",
+   "fonte": "GitHub-robo OSM/Overpass (sem site no cadastro)",
+   "varredura": "16/10/2026 15:18 UTC"
+  },
+  {
+   "nome": "PLC Advogados – Portela, Lima & Colen",
+   "fone": "",
+   "fone_real": false,
+   "endereco": "Avenida Raja Gabaglia, Gutierrez, Belo Horizonte",
+   "cidade": "Belo Horizonte/Brasil",
+   "categoria": "advocacia",
+   "fonte": "GitHub-robo OSM/Overpass (sem site no cadastro)",
+   "varredura": "16/10/2026 15:18 UTC"
+  },
+  {
+   "nome": "Barcelos",
+   "fone": "",
+   "fone_real": false,
+   "endereco": "",
+   "cidade": "Belo Horizonte/Brasil",
+   "categoria": "advocacia",
+   "fonte": "GitHub-robo OSM/Overpass (sem site no cadastro)",
+   "varredura": "16/10/2026 15:18 UTC"
+  },
+  {
+   "nome": "Renato Parma Cantarino Escritório de Advocacia",
+   "fone": "55 31 9839 95342",
+   "fone_real": true,
+   "endereco": "Rua dos Guajajaras, Centro, Belo Horizonte",
+   "cidade": "Belo Horizonte/Brasil",
+   "categoria": "advocacia",
+   "fonte": "GitHub-robo OSM/Overpass (sem site no cadastro)",
+   "varredura": "16/10/2026 15:18 UTC"
+  },
+  {
+   "nome": "Safe e Lima Advogados",
+   "fone": "",
+   "fone_real": false,
+   "endereco": "Avenida Raja Gabaglia",
+   "cidade": "Belo Horizonte/Brasil",
+   "categoria": "advocacia",
+   "fonte": "GitHub-robo OSM/Overpass (sem site no cadastro)",
+   "varredura": "16/10/2026 15:18 UTC"
+  },
+  {
+   "nome": "SANTOS & CASAGRANDE ADVOCACIA E CONSUTORIA JURÍDICA",
+   "fone": "",
+   "fone_real": false,
+   "endereco": "",
+   "cidade": "Belo Horizonte/Brasil",
+   "categoria": "advocacia",
+   "fonte": "GitHub-robo OSM/Overpass (sem site no cadastro)",
+   "varredura": "16/10/2026 15:18 UTC"
+  },
+  {
+   "nome": "Imobiliária Apolar Jardim das Américas",
+   "fone": "",
+   "fone_real": false,
+   "endereco": "",
+   "cidade": "Curitiba/Brasil",
+   "categoria": "imobiliaria",
+   "fonte": "GitHub-robo OSM/Overpass (sem site no cadastro)",
+   "varredura": "16/10/2026 15:18 UTC"
+  },
+  {
+   "nome": "Imobiliária M2",
+   "fone": "",
+   "fone_real": false,
+   "endereco": "",
+   "cidade": "Curitiba/Brasil",
+   "categoria": "imobiliaria",
+   "fonte": "GitHub-robo OSM/Overpass (sem site no cadastro)",
+   "varredura": "16/10/2026 15:18 UTC"
+  },
+  {
+   "nome": "J8 Imóveis",
+   "fone": "",
+   "fone_real": false,
+   "endereco": "Avenida Vicente Machado, Batel, Curitiba",
+   "cidade": "Curitiba/Brasil",
+   "categoria": "imobiliaria",
+   "fonte": "GitHub-robo OSM/Overpass (sem site no cadastro)",
+   "varredura": "16/10/2026 15:18 UTC"
+  },
+  {
+   "nome": "Body Line",
+   "fone": "",
+   "fone_real": false,
+   "endereco": "",
+   "cidade": "Rio de Janeiro/Brasil",
+   "categoria": "fitness",
+   "fonte": "GitHub-robo OSM/Overpass (sem site no cadastro)",
+   "varredura": "13/10/2026 18:04 UTC"
+  },
+  {
+   "nome": "Rancho",
+   "fone": "",
+   "endereco": "",
+   "cidade": "Rio de Janeiro/Brasil",
+   "categoria": "restaurante",
+   "varredura": "02/10/2026 16:34 UTC"
+  },
+  {
+   "nome": "Rico's Lanches",
+   "fone": "",
+   "endereco": "",
+   "cidade": "Rio de Janeiro/Brasil",
+   "categoria": "restaurante",
+   "varredura": "02/10/2026 16:34 UTC"
+  },
+  {
+   "nome": "O Bom Galeto",
+   "fone": "",
+   "endereco": "",
+   "cidade": "Rio de Janeiro/Brasil",
+   "categoria": "restaurante",
+   "varredura": "02/10/2026 16:34 UTC"
+  },
+  {
+   "nome": "Paraíso do Chopp",
+   "fone": "",
+   "endereco": "Rua Dois de Dezembro, Catete, Rio de Janeiro",
+   "cidade": "Rio de Janeiro/Brasil",
+   "categoria": "restaurante",
+   "varredura": "02/10/2026 16:34 UTC"
+  },
+  {
+   "nome": "Botequim do Borges",
+   "fone": "",
+   "endereco": "Rua Dois de Dezembro, Catete, Rio de Janeiro",
+   "cidade": "Rio de Janeiro/Brasil",
+   "categoria": "restaurante",
+   "varredura": "02/10/2026 16:34 UTC"
+  },
+  {
+   "nome": "Glória Gourmet",
+   "fone": "",
+   "endereco": "Rua do Catete",
+   "cidade": "Rio de Janeiro/Brasil",
+   "categoria": "restaurante",
+   "varredura": "02/10/2026 16:34 UTC"
+  },
+  {
+   "nome": "Berbigão",
+   "fone": "",
+   "endereco": "Rua do Catete, Catete, Rio de Janeiro",
+   "cidade": "Rio de Janeiro/Brasil",
+   "categoria": "restaurante",
+   "varredura": "02/10/2026 16:34 UTC"
+  },
+  {
+   "nome": "Charlotte",
+   "fone": "",
+   "endereco": "Praia de Botafogo, Rio de Janeiro",
+   "cidade": "Rio de Janeiro/Brasil",
+   "categoria": "restaurante",
+   "varredura": "02/10/2026 16:34 UTC"
+  },
+  {
+   "nome": "Ben Ali",
+   "fone": "",
+   "endereco": "",
+   "cidade": "Rio de Janeiro/Brasil",
+   "categoria": "restaurante",
+   "varredura": "02/10/2026 16:34 UTC"
+  },
+  {
+   "nome": "Le Brants",
+   "fone": "552125582570",
+   "endereco": "Travessa dos Tamoios",
+   "cidade": "Rio de Janeiro/Brasil",
+   "categoria": "restaurante",
+   "varredura": "02/10/2026 16:34 UTC"
+  },
+  {
+   "nome": "Pizzaria Bella Capri",
+   "fone": "",
+   "endereco": "",
+   "cidade": "Rio de Janeiro/Brasil",
+   "categoria": "restaurante",
+   "varredura": "02/10/2026 16:34 UTC"
+  },
+  {
+   "nome": "Vó Alzira",
+   "fone": "55 21 2205 6585",
+   "endereco": "Rua Pedro Américo, Rio de Janeiro",
+   "cidade": "Rio de Janeiro/Brasil",
+   "categoria": "restaurante",
+   "varredura": "02/10/2026 16:34 UTC"
+  },
+  {
+   "nome": "Louroza",
+   "fone": "",
+   "endereco": "",
+   "cidade": "Rio de Janeiro/Brasil",
+   "categoria": "restaurante",
+   "varredura": "02/10/2026 16:34 UTC"
+  },
+  {
+   "nome": "Padaria Bakery",
+   "fone": "",
+   "endereco": "Avenida Mem de Sá, Centro, Rio de Janeiro",
+   "cidade": "Rio de Janeiro/Brasil",
+   "categoria": "restaurante",
+   "varredura": "02/10/2026 16:34 UTC"
+  },
+  {
+   "nome": "Restaurante Bar Brasil",
+   "fone": "",
+   "endereco": "Avenida Mem de Sá",
+   "cidade": "Rio de Janeiro/Brasil",
+   "categoria": "restaurante",
+   "varredura": "02/10/2026 16:34 UTC"
+  },
+  {
+   "nome": "Bistrô da Lapa",
+   "fone": "",
+   "endereco": "",
+   "cidade": "Rio de Janeiro/Brasil",
+   "categoria": "restaurante",
+   "varredura": "02/10/2026 16:34 UTC"
+  },
+  {
+   "nome": "Catetelândia",
+   "fone": "",
+   "endereco": "",
+   "cidade": "Rio de Janeiro/Brasil",
+   "categoria": "restaurante",
+   "varredura": "02/10/2026 16:34 UTC"
+  },
+  {
+   "nome": "Big Bi",
+   "fone": "",
+   "endereco": "",
+   "cidade": "Rio de Janeiro/Brasil",
+   "categoria": "restaurante",
+   "varredura": "02/10/2026 16:34 UTC"
+  },
+  {
+   "nome": "Mr. Chan",
+   "fone": "",
+   "endereco": "",
+   "cidade": "Rio de Janeiro/Brasil",
+   "categoria": "restaurante",
+   "varredura": "02/10/2026 16:34 UTC"
+  },
+  {
+   "nome": "WestFalia",
+   "fone": "",
+   "endereco": "",
+   "cidade": "Rio de Janeiro/Brasil",
+   "categoria": "restaurante",
+   "varredura": "01/10/2026 20:26 UTC"
+  },
+  {
+   "nome": "Hobby Lanches",
+   "fone": "55 21 2222-0947",
+   "endereco": "Rua da Glória, Rio de Janeiro",
+   "cidade": "Rio de Janeiro/Brasil",
+   "categoria": "restaurante",
+   "varredura": "01/10/2026 20:26 UTC"
+  },
+  {
+   "nome": "Megamatte",
+   "fone": "",
+   "endereco": "",
+   "cidade": "Rio de Janeiro/Brasil",
+   "categoria": "restaurante",
+   "varredura": "01/10/2026 20:26 UTC"
+  },
+  {
+   "nome": "Tratto",
+   "fone": "55 21 3190 0600;+55 21 99726 7312",
+   "endereco": "Avenida Almirante Barroso",
+   "cidade": "Rio de Janeiro/Brasil",
+   "categoria": "restaurante",
+   "varredura": "01/10/2026 20:26 UTC"
+  },
+  {
+   "nome": "Boca de Forno",
+   "fone": "",
+   "endereco": "Avenida Almirante Barroso",
+   "cidade": "Rio de Janeiro/Brasil",
+   "categoria": "restaurante",
+   "varredura": "01/10/2026 20:26 UTC"
+  },
+  {
+   "nome": "Restaurante Cosmopolitan",
+   "fone": "",
+   "endereco": "Rua da Assembléia",
+   "cidade": "Rio de Janeiro/Brasil",
+   "categoria": "restaurante",
+   "varredura": "01/10/2026 20:26 UTC"
+  }
+ ]
+}

@@ -1,7 +1,17 @@
 {
- "varredura": "15/10/2026 15:32 UTC",
+ "varredura": "16/10/2026 15:18 UTC",
  "total": 60,
  "leads": [
+  {
+   "nome": "Bar e Restaurante Perceu",
+   "fone": "",
+   "fone_real": false,
+   "endereco": "",
+   "cidade": "São Paulo SP/Brasil",
+   "categoria": "restaurante",
+   "fonte": "GitHub-robo OSM/Overpass (sem site no cadastro)",
+   "varredura": "16/10/2026 15:18 UTC"
+  },
   {
    "nome": "Studio Surya de Yoga",
    "fone": "",
@@ -10,7 +20,7 @@
    "cidade": "Rio de Janeiro/Brasil",
    "categoria": "fitness",
    "fonte": "GitHub-robo OSM/Overpass (sem site no cadastro)",
-   "varredura": "15/10/2026 15:32 UTC"
+   "varredura": "16/10/2026 15:18 UTC"
   },
   {
    "nome": "Academia Rio Gym",
@@ -20,7 +30,7 @@
    "cidade": "Rio de Janeiro/Brasil",
    "categoria": "fitness",
    "fonte": "GitHub-robo OSM/Overpass (sem site no cadastro)",
-   "varredura": "15/10/2026 15:32 UTC"
+   "varredura": "16/10/2026 15:18 UTC"
   },
   {
    "nome": "Citrus",
@@ -30,7 +40,7 @@
    "cidade": "Rio de Janeiro/Brasil",
    "categoria": "fitness",
    "fonte": "GitHub-robo OSM/Overpass (sem site no cadastro)",
-   "varredura": "15/10/2026 15:32 UTC"
+   "varredura": "16/10/2026 15:18 UTC"
   },
   {
    "nome": "Contours Express",
@@ -40,7 +50,7 @@
    "cidade": "Rio de Janeiro/Brasil",
    "categoria": "fitness",
    "fonte": "GitHub-robo OSM/Overpass (sem site no cadastro)",
-   "varredura": "15/10/2026 15:32 UTC"
+   "varredura": "16/10/2026 15:18 UTC"
   },
   {
    "nome": "Academia Personal Physical Center",
@@ -50,7 +60,7 @@
    "cidade": "Rio de Janeiro/Brasil",
    "categoria": "fitness",
    "fonte": "GitHub-robo OSM/Overpass (sem site no cadastro)",
-   "varredura": "15/10/2026 15:32 UTC"
+   "varredura": "16/10/2026 15:18 UTC"
   },
   {
    "nome": "ATP",
@@ -60,7 +70,7 @@
    "cidade": "Rio de Janeiro/Brasil",
    "categoria": "fitness",
    "fonte": "GitHub-robo OSM/Overpass (sem site no cadastro)",
-   "varredura": "15/10/2026 15:32 UTC"
+   "varredura": "16/10/2026 15:18 UTC"
   },
   {
    "nome": "bios",
@@ -70,7 +80,7 @@
    "cidade": "Rio de Janeiro/Brasil",
    "categoria": "fitness",
    "fonte": "GitHub-robo OSM/Overpass (sem site no cadastro)",
-   "varredura": "15/10/2026 15:32 UTC"
+   "varredura": "16/10/2026 15:18 UTC"
   },
   {
    "nome": "Curves",
@@ -80,7 +90,7 @@
    "cidade": "Rio de Janeiro/Brasil",
    "categoria": "fitness",
    "fonte": "GitHub-robo OSM/Overpass (sem site no cadastro)",
-   "varredura": "15/10/2026 15:32 UTC"
+   "varredura": "16/10/2026 15:18 UTC"
   },
   {
    "nome": "Qualivida",
@@ -90,7 +100,7 @@
    "cidade": "Rio de Janeiro/Brasil",
    "categoria": "fitness",
    "fonte": "GitHub-robo OSM/Overpass (sem site no cadastro)",
-   "varredura": "15/10/2026 15:32 UTC"
+   "varredura": "16/10/2026 15:18 UTC"
   },
   {
    "nome": "Academia LifeFit",
@@ -100,7 +110,7 @@
    "cidade": "Rio de Janeiro/Brasil",
    "categoria": "fitness",
    "fonte": "GitHub-robo OSM/Overpass (sem site no cadastro)",
-   "varredura": "15/10/2026 15:32 UTC"
+   "varredura": "16/10/2026 15:18 UTC"
   },
   {
    "nome": "Academia da Terceira Idade",
@@ -110,7 +120,7 @@
    "cidade": "Rio de Janeiro/Brasil",
    "categoria": "fitness",
    "fonte": "GitHub-robo OSM/Overpass (sem site no cadastro)",
-   "varredura": "15/10/2026 15:32 UTC"
+   "varredura": "16/10/2026 15:18 UTC"
   },
   {
    "nome": "Body Move",
@@ -120,7 +130,7 @@
    "cidade": "Rio de Janeiro/Brasil",
    "categoria": "fitness",
    "fonte": "GitHub-robo OSM/Overpass (sem site no cadastro)",
-   "varredura": "15/10/2026 15:32 UTC"
+   "varredura": "16/10/2026 15:18 UTC"
   },
   {
    "nome": "Smart Fit",
@@ -130,7 +140,7 @@
    "cidade": "Rio de Janeiro/Brasil",
    "categoria": "fitness",
    "fonte": "GitHub-robo OSM/Overpass (sem site no cadastro)",
-   "varredura": "15/10/2026 15:32 UTC"
+   "varredura": "16/10/2026 15:18 UTC"
   },
   {
    "nome": "Academia Pro Health Fitness Studio",
@@ -140,7 +150,7 @@
    "cidade": "Rio de Janeiro/Brasil",
    "categoria": "fitness",
    "fonte": "GitHub-robo OSM/Overpass (sem site no cadastro)",
-   "varredura": "15/10/2026 15:32 UTC"
+   "varredura": "16/10/2026 15:18 UTC"
   },
   {
    "nome": "CJI Dentistas",
@@ -150,7 +160,7 @@
    "cidade": "Rio de Janeiro/Brasil",
    "categoria": "dentista",
    "fonte": "GitHub-robo OSM/Overpass (sem site no cadastro)",
-   "varredura": "15/10/2026 15:32 UTC"
+   "varredura": "16/10/2026 15:18 UTC"
   },
   {
    "nome": "Diga X",
@@ -160,7 +170,7 @@
    "cidade": "Rio de Janeiro/Brasil",
    "categoria": "dentista",
    "fonte": "GitHub-robo OSM/Overpass (sem site no cadastro)",
-   "varredura": "15/10/2026 15:32 UTC"
+   "varredura": "16/10/2026 15:18 UTC"
   },
   {
    "nome": "Apelbaum Odontologia Integrada",
@@ -170,7 +180,7 @@
    "cidade": "Rio de Janeiro/Brasil",
    "categoria": "dentista",
    "fonte": "GitHub-robo OSM/Overpass (sem site no cadastro)",
-   "varredura": "15/10/2026 15:32 UTC"
+   "varredura": "16/10/2026 15:18 UTC"
   },
   {
    "nome": "Odontoplus",
@@ -180,7 +190,7 @@
    "cidade": "Rio de Janeiro/Brasil",
    "categoria": "dentista",
    "fonte": "GitHub-robo OSM/Overpass (sem site no cadastro)",
-   "varredura": "15/10/2026 15:32 UTC"
+   "varredura": "16/10/2026 15:18 UTC"
   },
   {
    "nome": "Dental Consult Saúde e Estética",
@@ -190,7 +200,7 @@
    "cidade": "Rio de Janeiro/Brasil",
    "categoria": "dentista",
    "fonte": "GitHub-robo OSM/Overpass (sem site no cadastro)",
-   "varredura": "15/10/2026 15:32 UTC"
+   "varredura": "16/10/2026 15:18 UTC"
   },
   {
    "nome": "Arte Dental",
@@ -200,7 +210,7 @@
    "cidade": "Rio de Janeiro/Brasil",
    "categoria": "dentista",
    "fonte": "GitHub-robo OSM/Overpass (sem site no cadastro)",
-   "varredura": "15/10/2026 15:32 UTC"
+   "varredura": "16/10/2026 15:18 UTC"
   },
   {
    "nome": "Centro Odontológico Laranjeiras - COL",
@@ -210,7 +220,7 @@
    "cidade": "Rio de Janeiro/Brasil",
    "categoria": "dentista",
    "fonte": "GitHub-robo OSM/Overpass (sem site no cadastro)",
-   "varredura": "15/10/2026 15:32 UTC"
+   "varredura": "16/10/2026 15:18 UTC"
   },
   {
    "nome": "ASFODONTO",
@@ -220,7 +230,7 @@
    "cidade": "Rio de Janeiro/Brasil",
    "categoria": "dentista",
    "fonte": "GitHub-robo OSM/Overpass (sem site no cadastro)",
-   "varredura": "15/10/2026 15:32 UTC"
+   "varredura": "16/10/2026 15:18 UTC"
   },
   {
    "nome": "Odonto Company",
@@ -230,7 +240,7 @@
    "cidade": "Rio de Janeiro/Brasil",
    "categoria": "dentista",
    "fonte": "GitHub-robo OSM/Overpass (sem site no cadastro)",
-   "varredura": "15/10/2026 15:32 UTC"
+   "varredura": "16/10/2026 15:18 UTC"
   },
   {
    "nome": "Tijuca Odontologia",
@@ -240,7 +250,7 @@
    "cidade": "Rio de Janeiro/Brasil",
    "categoria": "dentista",
    "fonte": "GitHub-robo OSM/Overpass (sem site no cadastro)",
-   "varredura": "15/10/2026 15:32 UTC"
+   "varredura": "16/10/2026 15:18 UTC"
   },
   {
    "nome": "Meraky",
@@ -250,7 +260,7 @@
    "cidade": "Rio de Janeiro/Brasil",
    "categoria": "dentista",
    "fonte": "GitHub-robo OSM/Overpass (sem site no cadastro)",
-   "varredura": "15/10/2026 15:32 UTC"
+   "varredura": "16/10/2026 15:18 UTC"
   },
   {
    "nome": "PLC Advogados – Portela, Lima & Colen",
@@ -260,7 +270,7 @@
    "cidade": "Belo Horizonte/Brasil",
    "categoria": "advocacia",
    "fonte": "GitHub-robo OSM/Overpass (sem site no cadastro)",
-   "varredura": "15/10/2026 15:32 UTC"
+   "varredura": "16/10/2026 15:18 UTC"
   },
   {
    "nome": "Barcelos",
@@ -270,7 +280,7 @@
    "cidade": "Belo Horizonte/Brasil",
    "categoria": "advocacia",
    "fonte": "GitHub-robo OSM/Overpass (sem site no cadastro)",
-   "varredura": "15/10/2026 15:32 UTC"
+   "varredura": "16/10/2026 15:18 UTC"
   },
   {
    "nome": "Renato Parma Cantarino Escritório de Advocacia",
@@ -280,7 +290,7 @@
    "cidade": "Belo Horizonte/Brasil",
    "categoria": "advocacia",
    "fonte": "GitHub-robo OSM/Overpass (sem site no cadastro)",
-   "varredura": "15/10/2026 15:32 UTC"
+   "varredura": "16/10/2026 15:18 UTC"
   },
   {
    "nome": "Safe e Lima Advogados",
@@ -290,7 +300,7 @@
    "cidade": "Belo Horizonte/Brasil",
    "categoria": "advocacia",
    "fonte": "GitHub-robo OSM/Overpass (sem site no cadastro)",
-   "varredura": "15/10/2026 15:32 UTC"
+   "varredura": "16/10/2026 15:18 UTC"
   },
   {
    "nome": "SANTOS & CASAGRANDE ADVOCACIA E CONSUTORIA JURÍDICA",
@@ -300,7 +310,7 @@
    "cidade": "Belo Horizonte/Brasil",
    "categoria": "advocacia",
    "fonte": "GitHub-robo OSM/Overpass (sem site no cadastro)",
-   "varredura": "15/10/2026 15:32 UTC"
+   "varredura": "16/10/2026 15:18 UTC"
   },
   {
    "nome": "Imobiliária Apolar Jardim das Américas",
@@ -310,7 +320,7 @@
    "cidade": "Curitiba/Brasil",
    "categoria": "imobiliaria",
    "fonte": "GitHub-robo OSM/Overpass (sem site no cadastro)",
-   "varredura": "15/10/2026 15:32 UTC"
+   "varredura": "16/10/2026 15:18 UTC"
   },
   {
    "nome": "Imobiliária M2",
@@ -320,7 +330,7 @@
    "cidade": "Curitiba/Brasil",
    "categoria": "imobiliaria",
    "fonte": "GitHub-robo OSM/Overpass (sem site no cadastro)",
-   "varredura": "15/10/2026 15:32 UTC"
+   "varredura": "16/10/2026 15:18 UTC"
   },
   {
    "nome": "J8 Imóveis",
@@ -330,17 +340,7 @@
    "cidade": "Curitiba/Brasil",
    "categoria": "imobiliaria",
    "fonte": "GitHub-robo OSM/Overpass (sem site no cadastro)",
-   "varredura": "15/10/2026 15:32 UTC"
-  },
-  {
-   "nome": "Bar e Restaurante Perceu",
-   "fone": "",
-   "fone_real": false,
-   "endereco": "",
-   "cidade": "São Paulo SP/Brasil",
-   "categoria": "restaurante",
-   "fonte": "GitHub-robo OSM/Overpass (sem site no cadastro)",
-   "varredura": "14/10/2026 15:45 UTC"
+   "varredura": "16/10/2026 15:18 UTC"
   },
   {
    "nome": "Body Line",
