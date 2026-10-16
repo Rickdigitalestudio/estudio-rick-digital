@@ -1065,7 +1065,19 @@ const tempos=at.filter(l=>l.etapa==='cliente'&&l.timeline&&l.timeline.length>=2)
 el.innerHTML='<div style="display:grid;grid-template-columns:1fr 1fr;gap:.6rem">'
 +Object.entries(por).map(o=>'<div style="background:#F8FAFC;border:1px solid #E5E7EB;border-radius:8px;padding:.5rem"><b>'+o[0]+'</b><br>'+o[1]+' ('+Math.round(o[1]/tot*100)+'%)</div>').join('')+'</div>'
 +'<div style="margin-top:.6rem">💰 Fechado: <b>'+brl(fech)+'</b> · ❌ Perdido: <b>'+brl(perd)+'</b> · ⏱️ Tempo médio até cliente: <b>'+tempoMedio()+'</b></div>'
-+'<div style="margin-top:.4rem"><small class="legend">Comparativo: este mês '+(DB.hist?.[hojeKey()]?.leads||0)+' leads · mês passado (há 30d): verifique em Métricas 30 dias.</small></div>';}
++'<div style="margin-top:.4rem"><small class="legend">Comparativo: este mês '+(DB.hist?.[hojeKey()]?.leads||0)+' leads · mês passado (há 30d): verifique em Métricas 30 dias.</small></div>'
++'<h3 style="margin:.9rem 0 .4rem">💰 Ganho real por cliente (base: Projetos)</h3><div style="overflow-x:auto"><table><tr><th>Cliente</th><th>Projeto</th><th>Recebido</th><th>A receber</th><th>Status</th></tr>'+linhasGanhoCliente()+'</table></div>'
++'<div style="margin-top:.4rem"><small class="legend">“Recebido” = 50% entrada + 100% conclusão (regra dos Projetos). Leads “cliente” sem projeto aparecem abaixo p/ vincular.</small></div>'
++'<div style="margin-top:.5rem">'+leadsSemProjeto()+'</div>';}
+function esc(s){return String(s||'').replace(/</g,'&lt;');}
+function linhasGanhoCliente(){iniFin();const rows=DB.projetos.map(p=>{const v=Number(p.valor||0);const rec=(p.pago50?v/2:0)+(p.pago100?v/2:0);return {cli:p.cliente||'—',nome:p.nome,rec:rec,arec:v-rec,st:p.status==='concluido'?'✅ concluído':'🚧 '+((p.prog||0))+'%'};}).sort((a,b)=>b.rec-a.rec);
+const tR=rows.reduce((s,r)=>s+r.rec,0),tA=rows.reduce((s,r)=>s+r.arec,0);
+return (rows.map(r=>'<tr><td><b>'+esc(r.cli)+'</b></td><td>'+esc(r.nome)+'</td><td><b>'+brl(r.rec)+'</b></td><td>'+brl(r.arec)+'</td><td>'+r.st+'</td></tr>').join('')||'<tr><td colspan="5">Nenhum projeto ainda — crie na aba 📁 Projetos.</td></tr>')
++'<tr style="background:#EFF6FF"><td colspan="2"><b>TOTAL REAL</b></td><td><b>'+brl(tR)+'</b></td><td><b>'+brl(tA)+'</b></td><td></td></tr>';}
+function leadsSemProjeto(){const sem=DB.leads.filter(l=>l.etapa==='cliente'&&!DB.projetos.some(p=>p.leadId===l.id||(p.cliente&&l.nome&&p.cliente.toLowerCase()===l.nome.toLowerCase())));
+if(!sem.length)return '<small class="legend">Todos os clientes têm projeto vinculado ✅</small>';
+return '<b>⚠️ Clientes sem projeto (valor ainda não conta no caixa):</b>'+sem.map(l=>'<div style="padding:.5rem 0;border-bottom:1px solid #eee;display:flex;justify-content:space-between;gap:.5rem;flex-wrap:wrap"><div><b>'+esc(l.nome)+'</b> <small>· '+esc(l.servico)+' · '+brl(l.valor)+'</small></div><button class="btn btn-p" onclick="criarProjDoLead('+l.id+')">📁 Criar projeto (50% recebido)</button></div>').join('');}
+function criarProjDoLead(id){const l=DB.leads.find(x=>x.id===id);if(!l)return;iniFin();DB.projetos.unshift({id:Date.now(),nome:l.servico+' — '+l.nome,cliente:l.nome,leadId:l.id,servico:l.servico,valor:Number(l.valor)||997,status:'andamento',pago50:true,pago100:false,prog:50,data:new Date().toLocaleString('pt-BR')});pushHist(l,'📁 Projeto criado a partir do cliente (50% recebido)');notif('📁 Projeto criado: '+l.nome,'50% recebido');save();acaoReal('📁 Projeto criado do cliente',l.nome+' — 50% recebido');}
 function tempoMedio(){const c=DB.leads.filter(l=>l.etapa==='cliente');if(!c.length)return '—';let soma=0,n=0;c.forEach(l=>{const d=diasSemResposta({etapaDesde:l.data, data:l.data});if(d<365){soma+=Math.max(0,d);n++;}});return n?Math.round(soma/n)+' dias':'—';}
 function modelosLista(){const raw=(DB.cfg.modelos||'').split('\n').map(s=>s.trim()).filter(Boolean);return raw.length?raw:['Olá {nome}! Vi seu interesse em {servico} — posso te mandar a proposta hoje?'];}
 function renderModelos(){const el=document.getElementById('modelos-msg');if(!el)return;
