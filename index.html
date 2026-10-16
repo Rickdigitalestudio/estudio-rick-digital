@@ -331,6 +331,7 @@ canvas#bannerCanvas{width:100%;max-width:420px;border-radius:16px;border:1px sol
 <div class="card"><div>Clientes (projetos)</div><div class="v" id="r-cli">0</div></div>
 <div class="card"><div>Valor recebido</div><div class="v" id="r-valor">R$ 0</div></div>
 <div class="card"><div>Conversão</div><div class="v" id="r-conv">0%</div></div></div>
+<div style="margin:.4rem 0"><span class="legend" id="liveRel">🟢 AO VIVO</span></div>
 <div class="panel"><h3>Leads por origem</h3><div id="r-orig"></div>
 <div style="margin-top:1rem;display:flex;gap:.6rem;flex-wrap:wrap"><button class="btn btn-p" onclick="exportCSV()">⬇️ Exportar Excel/CSV</button><button class="btn btn-wa" onclick="exportExcel()">📊 Exportar Excel (.xls)</button><button class="btn btn-v" onclick="window.print()">🖨️ Exportar PDF (imprimir)</button></div></div>
 <div class="panel" style="border:2px solid #2563EB"><h3>📈 Conversão por etapa · tempo médio · fechado vs perdido</h3><div id="rel-plus"></div></div>
@@ -608,12 +609,13 @@ const refs=[['Fanpage','https://rickdigitalestudio.github.io/profissional-rickdu
 const ref=(refs.find(r=>r[0]===l.servico)||refs[1])[1];
 const txt='🔍 ANÁLISE LOCAL (estimativa, sem IA externa)\nLead: '+l.nome+'\nOrigem: '+l.origem+'\nInteresse: '+l.servico+(l.valor?' (R$ '+l.valor+')':'')+'\nFone: '+(foneReal(l)?'verificado na ficha ✅':'AUSENTE ⚠️ — complete antes de abordar')+'\nEtapa: '+l.etapa+'\nSinais: '+(String(l.origem).includes('Maps')?'veio de prospecção fria — valide site/redes antes do pitch. ':'veio de canal quente ('+l.origem+') — responda em até 1h. ')+(reais?reais+' cliente(s) fecharam '+l.servico+' antes — use como prova. ':'Ainda sem cliente de '+l.servico+' registrado — registre o 1º como case.')+'\nReferência p/ mostrar: '+ref+'\nPróximo passo: '+(foneReal(l)?'chamar no WhatsApp com a proposta do Orçamento.':'pesquisar nome no Google/Instagram, completar o fone e mover p/ Qualificação.');
 alert(txt);copiarTexto(txt);}
-function drop(e,et){e.preventDefault();const id=Number(e.dataTransfer.getData('id'));const l=DB.leads.find(x=>x.id===id);if(l){const ant=l.etapa;l.etapa=et;l.etapaDesde=new Date().toLocaleString('pt-BR');pushHist(l,'🔄 '+ant+' → '+et+' (arrastado no funil)');notif('🔄 '+l.nome+' → '+et,'Movido no funil');save();}}
+function drop(e,et){e.preventDefault();const id=Number(e.dataTransfer.getData('id'));const l=DB.leads.find(x=>x.id===id);if(l){const ant=l.etapa;l.etapa=et;l.etapaDesde=new Date().toLocaleString('pt-BR');pushHist(l,'🔄 '+ant+' → '+et+' (arrastado no funil)');notif('🔄 '+l.nome+' → '+et,'Movido no funil');if(et==='cliente'&&!DB.projetos.some(p=>p.leadId===l.id))criarProjDoLead(l.id);save();}}
 const ORDEM_ETAPAS=['novo','qualificacao','quente','negociacao','cliente'];
 function avancarEtapa(id){const l=DB.leads.find(x=>x.id===id);if(!l)return;const i=ORDEM_ETAPAS.indexOf(l.etapa);
 if(i<0||i>=ORDEM_ETAPAS.length-1){alert('Já está na última etapa (Cliente).');return;}
 const ant=l.etapa;l.etapa=ORDEM_ETAPAS[i+1];l.etapaDesde=new Date().toLocaleString('pt-BR');pushHist(l,'➡️ '+ant+' → '+l.etapa);notif('➡️ '+l.nome+' avançou → '+l.etapa,'Comando do funil');
 if(l.etapa==='quente'||l.etapa==='negociacao'){novaTarefa('Acompanhar '+l.nome+' ('+l.etapa+')',new Date(Date.now()+86400000).toISOString().slice(0,16),{leadId:l.id});}
+if(l.etapa==='cliente'&&!DB.projetos.some(p=>p.leadId===l.id))criarProjDoLead(l.id);
 save();}
 // 🤖 AUTOMAÇÃO (robô do GitHub — funciona com tudo fechado)
 let autoLeads=[];
@@ -1078,6 +1080,12 @@ function leadsSemProjeto(){const sem=DB.leads.filter(l=>l.etapa==='cliente'&&!DB
 if(!sem.length)return '<small class="legend">Todos os clientes têm projeto vinculado ✅</small>';
 return '<b>⚠️ Clientes sem projeto (valor ainda não conta no caixa):</b>'+sem.map(l=>'<div style="padding:.5rem 0;border-bottom:1px solid #eee;display:flex;justify-content:space-between;gap:.5rem;flex-wrap:wrap"><div><b>'+esc(l.nome)+'</b> <small>· '+esc(l.servico)+' · '+brl(l.valor)+'</small></div><button class="btn btn-p" onclick="criarProjDoLead('+l.id+')">📁 Criar projeto (50% recebido)</button></div>').join('');}
 function criarProjDoLead(id){const l=DB.leads.find(x=>x.id===id);if(!l)return;iniFin();DB.projetos.unshift({id:Date.now(),nome:l.servico+' — '+l.nome,cliente:l.nome,leadId:l.id,servico:l.servico,valor:Number(l.valor)||997,status:'andamento',pago50:true,pago100:false,prog:50,data:new Date().toLocaleString('pt-BR')});pushHist(l,'📁 Projeto criado a partir do cliente (50% recebido)');notif('📁 Projeto criado: '+l.nome,'50% recebido');save();acaoReal('📁 Projeto criado do cliente',l.nome+' — 50% recebido');}
+// 🔴 TEMPO REAL — Relatórios vivos: ticker, sincronia entre abas e releitura periódica
+function tickRel(){const el=document.getElementById('liveRel');if(!el)return;const s=Math.max(0,Math.round(((Date.now()-(DB.ultSave||Date.now()))/1000)));el.textContent=s<8?'🟢 AO VIVO · atualizado agora':'🟢 AO VIVO · atualizado há '+s+'s';}
+setInterval(tickRel,5000);
+setInterval(()=>{try{renderRelPlus();tickRel();}catch(e){}},30000);
+document.addEventListener('visibilitychange',()=>{if(!document.hidden){try{renderRelPlus();tickRel();}catch(e){}}});
+window.addEventListener('storage',e=>{if(e.key===KEY&&e.newValue){try{DB=Object.assign(DB,JSON.parse(e.newValue));render();tickRel();}catch(_){}}});
 function tempoMedio(){const c=DB.leads.filter(l=>l.etapa==='cliente');if(!c.length)return '—';let soma=0,n=0;c.forEach(l=>{const d=diasSemResposta({etapaDesde:l.data, data:l.data});if(d<365){soma+=Math.max(0,d);n++;}});return n?Math.round(soma/n)+' dias':'—';}
 function modelosLista(){const raw=(DB.cfg.modelos||'').split('\n').map(s=>s.trim()).filter(Boolean);return raw.length?raw:['Olá {nome}! Vi seu interesse em {servico} — posso te mandar a proposta hoje?'];}
 function renderModelos(){const el=document.getElementById('modelos-msg');if(!el)return;
