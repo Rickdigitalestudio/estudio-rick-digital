@@ -1,5 +1,5 @@
 {
- "varredura": "19/10/2026 17:23 UTC",
+ "varredura": "20/10/2026 15:35 UTC",
  "total": 60,
  "leads": [
   {
@@ -10,7 +10,197 @@
    "cidade": "São Paulo SP/Brasil",
    "categoria": "restaurante",
    "fonte": "GitHub-robo OSM/Overpass (sem site no cadastro)",
-   "varredura": "19/10/2026 17:23 UTC"
+   "varredura": "20/10/2026 15:35 UTC"
+  },
+  {
+   "nome": "CJI Dentistas",
+   "fone": "",
+   "fone_real": false,
+   "endereco": "Rua Silveira Martins, Rio de Janeiro",
+   "cidade": "Rio de Janeiro/Brasil",
+   "categoria": "dentista",
+   "fonte": "GitHub-robo OSM/Overpass (sem site no cadastro)",
+   "varredura": "20/10/2026 15:35 UTC"
+  },
+  {
+   "nome": "Diga X",
+   "fone": "",
+   "fone_real": false,
+   "endereco": "Rua do Bispo, Rio Comprido, Rio de Janeiro",
+   "cidade": "Rio de Janeiro/Brasil",
+   "categoria": "dentista",
+   "fonte": "GitHub-robo OSM/Overpass (sem site no cadastro)",
+   "varredura": "20/10/2026 15:35 UTC"
+  },
+  {
+   "nome": "Apelbaum Odontologia Integrada",
+   "fone": "",
+   "fone_real": false,
+   "endereco": "",
+   "cidade": "Rio de Janeiro/Brasil",
+   "categoria": "dentista",
+   "fonte": "GitHub-robo OSM/Overpass (sem site no cadastro)",
+   "varredura": "20/10/2026 15:35 UTC"
+  },
+  {
+   "nome": "Odontoplus",
+   "fone": "",
+   "fone_real": false,
+   "endereco": "Rua Nelson Mandela, Rio de Janeiro",
+   "cidade": "Rio de Janeiro/Brasil",
+   "categoria": "dentista",
+   "fonte": "GitHub-robo OSM/Overpass (sem site no cadastro)",
+   "varredura": "20/10/2026 15:35 UTC"
+  },
+  {
+   "nome": "Dental Consult Saúde e Estética",
+   "fone": "",
+   "fone_real": false,
+   "endereco": "Avenida Henrique Valadares, Centro, Rio de Janeiro",
+   "cidade": "Rio de Janeiro/Brasil",
+   "categoria": "dentista",
+   "fonte": "GitHub-robo OSM/Overpass (sem site no cadastro)",
+   "varredura": "20/10/2026 15:35 UTC"
+  },
+  {
+   "nome": "Arte Dental",
+   "fone": "",
+   "fone_real": false,
+   "endereco": "",
+   "cidade": "Rio de Janeiro/Brasil",
+   "categoria": "dentista",
+   "fonte": "GitHub-robo OSM/Overpass (sem site no cadastro)",
+   "varredura": "20/10/2026 15:35 UTC"
+  },
+  {
+   "nome": "Centro Odontológico Laranjeiras - COL",
+   "fone": "",
+   "fone_real": false,
+   "endereco": "Rua General Glicério, Laranjeiras, Rio de Janeiro",
+   "cidade": "Rio de Janeiro/Brasil",
+   "categoria": "dentista",
+   "fonte": "GitHub-robo OSM/Overpass (sem site no cadastro)",
+   "varredura": "20/10/2026 15:35 UTC"
+  },
+  {
+   "nome": "ASFODONTO",
+   "fone": "",
+   "fone_real": false,
+   "endereco": "Rua Evaristo da Veiga, Centro, Rio de Janeiro",
+   "cidade": "Rio de Janeiro/Brasil",
+   "categoria": "dentista",
+   "fonte": "GitHub-robo OSM/Overpass (sem site no cadastro)",
+   "varredura": "20/10/2026 15:35 UTC"
+  },
+  {
+   "nome": "Odonto Company",
+   "fone": "",
+   "fone_real": false,
+   "endereco": "",
+   "cidade": "Rio de Janeiro/Brasil",
+   "categoria": "dentista",
+   "fonte": "GitHub-robo OSM/Overpass (sem site no cadastro)",
+   "varredura": "20/10/2026 15:35 UTC"
+  },
+  {
+   "nome": "Tijuca Odontologia",
+   "fone": "55 21 98855-2005",
+   "fone_real": true,
+   "endereco": "Rua Camaragibe, Tijuca, Rio de Janeiro",
+   "cidade": "Rio de Janeiro/Brasil",
+   "categoria": "dentista",
+   "fonte": "GitHub-robo OSM/Overpass (sem site no cadastro)",
+   "varredura": "20/10/2026 15:35 UTC"
+  },
+  {
+   "nome": "Meraky",
+   "fone": "",
+   "fone_real": false,
+   "endereco": "",
+   "cidade": "Rio de Janeiro/Brasil",
+   "categoria": "dentista",
+   "fonte": "GitHub-robo OSM/Overpass (sem site no cadastro)",
+   "varredura": "20/10/2026 15:35 UTC"
+  },
+  {
+   "nome": "PLC Advogados – Portela, Lima & Colen",
+   "fone": "",
+   "fone_real": false,
+   "endereco": "Avenida Raja Gabaglia, Gutierrez, Belo Horizonte",
+   "cidade": "Belo Horizonte/Brasil",
+   "categoria": "advocacia",
+   "fonte": "GitHub-robo OSM/Overpass (sem site no cadastro)",
+   "varredura": "20/10/2026 15:35 UTC"
+  },
+  {
+   "nome": "Barcelos",
+   "fone": "",
+   "fone_real": false,
+   "endereco": "",
+   "cidade": "Belo Horizonte/Brasil",
+   "categoria": "advocacia",
+   "fonte": "GitHub-robo OSM/Overpass (sem site no cadastro)",
+   "varredura": "20/10/2026 15:35 UTC"
+  },
+  {
+   "nome": "Renato Parma Cantarino Escritório de Advocacia",
+   "fone": "55 31 9839 95342",
+   "fone_real": true,
+   "endereco": "Rua dos Guajajaras, Centro, Belo Horizonte",
+   "cidade": "Belo Horizonte/Brasil",
+   "categoria": "advocacia",
+   "fonte": "GitHub-robo OSM/Overpass (sem site no cadastro)",
+   "varredura": "20/10/2026 15:35 UTC"
+  },
+  {
+   "nome": "Safe e Lima Advogados",
+   "fone": "",
+   "fone_real": false,
+   "endereco": "Avenida Raja Gabaglia",
+   "cidade": "Belo Horizonte/Brasil",
+   "categoria": "advocacia",
+   "fonte": "GitHub-robo OSM/Overpass (sem site no cadastro)",
+   "varredura": "20/10/2026 15:35 UTC"
+  },
+  {
+   "nome": "SANTOS & CASAGRANDE ADVOCACIA E CONSUTORIA JURÍDICA",
+   "fone": "",
+   "fone_real": false,
+   "endereco": "",
+   "cidade": "Belo Horizonte/Brasil",
+   "categoria": "advocacia",
+   "fonte": "GitHub-robo OSM/Overpass (sem site no cadastro)",
+   "varredura": "20/10/2026 15:35 UTC"
+  },
+  {
+   "nome": "Imobiliária Apolar Jardim das Américas",
+   "fone": "",
+   "fone_real": false,
+   "endereco": "",
+   "cidade": "Curitiba/Brasil",
+   "categoria": "imobiliaria",
+   "fonte": "GitHub-robo OSM/Overpass (sem site no cadastro)",
+   "varredura": "20/10/2026 15:35 UTC"
+  },
+  {
+   "nome": "Imobiliária M2",
+   "fone": "",
+   "fone_real": false,
+   "endereco": "",
+   "cidade": "Curitiba/Brasil",
+   "categoria": "imobiliaria",
+   "fonte": "GitHub-robo OSM/Overpass (sem site no cadastro)",
+   "varredura": "20/10/2026 15:35 UTC"
+  },
+  {
+   "nome": "J8 Imóveis",
+   "fone": "",
+   "fone_real": false,
+   "endereco": "Avenida Vicente Machado, Batel, Curitiba",
+   "cidade": "Curitiba/Brasil",
+   "categoria": "imobiliaria",
+   "fonte": "GitHub-robo OSM/Overpass (sem site no cadastro)",
+   "varredura": "20/10/2026 15:35 UTC"
   },
   {
    "nome": "Studio Surya de Yoga",
@@ -149,196 +339,6 @@
    "endereco": "Rua Riachuelo, Centro, Rio de Janeiro",
    "cidade": "Rio de Janeiro/Brasil",
    "categoria": "fitness",
-   "fonte": "GitHub-robo OSM/Overpass (sem site no cadastro)",
-   "varredura": "19/10/2026 17:23 UTC"
-  },
-  {
-   "nome": "CJI Dentistas",
-   "fone": "",
-   "fone_real": false,
-   "endereco": "Rua Silveira Martins, Rio de Janeiro",
-   "cidade": "Rio de Janeiro/Brasil",
-   "categoria": "dentista",
-   "fonte": "GitHub-robo OSM/Overpass (sem site no cadastro)",
-   "varredura": "19/10/2026 17:23 UTC"
-  },
-  {
-   "nome": "Diga X",
-   "fone": "",
-   "fone_real": false,
-   "endereco": "Rua do Bispo, Rio Comprido, Rio de Janeiro",
-   "cidade": "Rio de Janeiro/Brasil",
-   "categoria": "dentista",
-   "fonte": "GitHub-robo OSM/Overpass (sem site no cadastro)",
-   "varredura": "19/10/2026 17:23 UTC"
-  },
-  {
-   "nome": "Apelbaum Odontologia Integrada",
-   "fone": "",
-   "fone_real": false,
-   "endereco": "",
-   "cidade": "Rio de Janeiro/Brasil",
-   "categoria": "dentista",
-   "fonte": "GitHub-robo OSM/Overpass (sem site no cadastro)",
-   "varredura": "19/10/2026 17:23 UTC"
-  },
-  {
-   "nome": "Odontoplus",
-   "fone": "",
-   "fone_real": false,
-   "endereco": "Rua Nelson Mandela, Rio de Janeiro",
-   "cidade": "Rio de Janeiro/Brasil",
-   "categoria": "dentista",
-   "fonte": "GitHub-robo OSM/Overpass (sem site no cadastro)",
-   "varredura": "19/10/2026 17:23 UTC"
-  },
-  {
-   "nome": "Dental Consult Saúde e Estética",
-   "fone": "",
-   "fone_real": false,
-   "endereco": "Avenida Henrique Valadares, Centro, Rio de Janeiro",
-   "cidade": "Rio de Janeiro/Brasil",
-   "categoria": "dentista",
-   "fonte": "GitHub-robo OSM/Overpass (sem site no cadastro)",
-   "varredura": "19/10/2026 17:23 UTC"
-  },
-  {
-   "nome": "Arte Dental",
-   "fone": "",
-   "fone_real": false,
-   "endereco": "",
-   "cidade": "Rio de Janeiro/Brasil",
-   "categoria": "dentista",
-   "fonte": "GitHub-robo OSM/Overpass (sem site no cadastro)",
-   "varredura": "19/10/2026 17:23 UTC"
-  },
-  {
-   "nome": "Centro Odontológico Laranjeiras - COL",
-   "fone": "",
-   "fone_real": false,
-   "endereco": "Rua General Glicério, Laranjeiras, Rio de Janeiro",
-   "cidade": "Rio de Janeiro/Brasil",
-   "categoria": "dentista",
-   "fonte": "GitHub-robo OSM/Overpass (sem site no cadastro)",
-   "varredura": "19/10/2026 17:23 UTC"
-  },
-  {
-   "nome": "ASFODONTO",
-   "fone": "",
-   "fone_real": false,
-   "endereco": "Rua Evaristo da Veiga, Centro, Rio de Janeiro",
-   "cidade": "Rio de Janeiro/Brasil",
-   "categoria": "dentista",
-   "fonte": "GitHub-robo OSM/Overpass (sem site no cadastro)",
-   "varredura": "19/10/2026 17:23 UTC"
-  },
-  {
-   "nome": "Odonto Company",
-   "fone": "",
-   "fone_real": false,
-   "endereco": "",
-   "cidade": "Rio de Janeiro/Brasil",
-   "categoria": "dentista",
-   "fonte": "GitHub-robo OSM/Overpass (sem site no cadastro)",
-   "varredura": "19/10/2026 17:23 UTC"
-  },
-  {
-   "nome": "Tijuca Odontologia",
-   "fone": "55 21 98855-2005",
-   "fone_real": true,
-   "endereco": "Rua Camaragibe, Tijuca, Rio de Janeiro",
-   "cidade": "Rio de Janeiro/Brasil",
-   "categoria": "dentista",
-   "fonte": "GitHub-robo OSM/Overpass (sem site no cadastro)",
-   "varredura": "19/10/2026 17:23 UTC"
-  },
-  {
-   "nome": "Meraky",
-   "fone": "",
-   "fone_real": false,
-   "endereco": "",
-   "cidade": "Rio de Janeiro/Brasil",
-   "categoria": "dentista",
-   "fonte": "GitHub-robo OSM/Overpass (sem site no cadastro)",
-   "varredura": "19/10/2026 17:23 UTC"
-  },
-  {
-   "nome": "PLC Advogados – Portela, Lima & Colen",
-   "fone": "",
-   "fone_real": false,
-   "endereco": "Avenida Raja Gabaglia, Gutierrez, Belo Horizonte",
-   "cidade": "Belo Horizonte/Brasil",
-   "categoria": "advocacia",
-   "fonte": "GitHub-robo OSM/Overpass (sem site no cadastro)",
-   "varredura": "19/10/2026 17:23 UTC"
-  },
-  {
-   "nome": "Barcelos",
-   "fone": "",
-   "fone_real": false,
-   "endereco": "",
-   "cidade": "Belo Horizonte/Brasil",
-   "categoria": "advocacia",
-   "fonte": "GitHub-robo OSM/Overpass (sem site no cadastro)",
-   "varredura": "19/10/2026 17:23 UTC"
-  },
-  {
-   "nome": "Renato Parma Cantarino Escritório de Advocacia",
-   "fone": "55 31 9839 95342",
-   "fone_real": true,
-   "endereco": "Rua dos Guajajaras, Centro, Belo Horizonte",
-   "cidade": "Belo Horizonte/Brasil",
-   "categoria": "advocacia",
-   "fonte": "GitHub-robo OSM/Overpass (sem site no cadastro)",
-   "varredura": "19/10/2026 17:23 UTC"
-  },
-  {
-   "nome": "Safe e Lima Advogados",
-   "fone": "",
-   "fone_real": false,
-   "endereco": "Avenida Raja Gabaglia",
-   "cidade": "Belo Horizonte/Brasil",
-   "categoria": "advocacia",
-   "fonte": "GitHub-robo OSM/Overpass (sem site no cadastro)",
-   "varredura": "19/10/2026 17:23 UTC"
-  },
-  {
-   "nome": "SANTOS & CASAGRANDE ADVOCACIA E CONSUTORIA JURÍDICA",
-   "fone": "",
-   "fone_real": false,
-   "endereco": "",
-   "cidade": "Belo Horizonte/Brasil",
-   "categoria": "advocacia",
-   "fonte": "GitHub-robo OSM/Overpass (sem site no cadastro)",
-   "varredura": "19/10/2026 17:23 UTC"
-  },
-  {
-   "nome": "Imobiliária Apolar Jardim das Américas",
-   "fone": "",
-   "fone_real": false,
-   "endereco": "",
-   "cidade": "Curitiba/Brasil",
-   "categoria": "imobiliaria",
-   "fonte": "GitHub-robo OSM/Overpass (sem site no cadastro)",
-   "varredura": "19/10/2026 17:23 UTC"
-  },
-  {
-   "nome": "Imobiliária M2",
-   "fone": "",
-   "fone_real": false,
-   "endereco": "",
-   "cidade": "Curitiba/Brasil",
-   "categoria": "imobiliaria",
-   "fonte": "GitHub-robo OSM/Overpass (sem site no cadastro)",
-   "varredura": "19/10/2026 17:23 UTC"
-  },
-  {
-   "nome": "J8 Imóveis",
-   "fone": "",
-   "fone_real": false,
-   "endereco": "Avenida Vicente Machado, Batel, Curitiba",
-   "cidade": "Curitiba/Brasil",
-   "categoria": "imobiliaria",
    "fonte": "GitHub-robo OSM/Overpass (sem site no cadastro)",
    "varredura": "19/10/2026 17:23 UTC"
   },
