@@ -11,7 +11,7 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from prospectar import eh_publico  # noqa: E402
+from prospectar import eh_publico, sem_acento  # noqa: E402
 
 BASE = Path(__file__).resolve().parent
 LEADS = BASE / "leads-latest.json"
@@ -35,6 +35,37 @@ def main() -> int:
                 and not eh_publico(l.get("nome"))
                 and l.get("fone")]
 
+    # corrige categoria pelo nome (o OSM as vezes nao tem tag suficiente)
+    def categoria_por_nome(nome, atual):
+        n = sem_acento(nome or "")
+        if any(x in n for x in ("ginasio", "academia", "fitness", "crossfit",
+                                "musculacao", "pilates")):
+            return "fitness"
+        if "drogaria" in n or "farmacia" in n or "farma" in n:
+            return "farmacia"
+        if any(x in n for x in ("barbearia", "barbeiro")):
+            return "barbearia"
+        if any(x in n for x in ("cabeleireir", "manicure", "pedicure",
+                                "salon de beleza")):
+            return "beleza"
+        if "veterinaria" in n:
+            return "pet"
+        if any(x in n for x in ("dentista", "odontolog")):
+            return "dentista"
+        if any(x in n for x in ("padaria", "panificadora", "confeitaria")):
+            return "padaria"
+        if any(x in n for x in ("restaurante", "lanchonete", "pizzaria",
+                                "churrascaria", "burger", "cafe", "lanchonete")):
+            return "restaurante"
+        return atual
+
+    corrigidos = 0
+    for l in limpados:
+        nova = categoria_por_nome(l.get("nome"), l.get("categoria"))
+        if nova != l.get("categoria"):
+            l["categoria"] = nova
+            corrigidos += 1
+
     # dedup por telefone
     vistos, unicos = set(), []
     for l in limpados:
@@ -52,6 +83,7 @@ def main() -> int:
     print(f"instituicao publica: {len(publics)}")
     print(f"sem telefone     : {len(sem_fone)}")
     print(f"duplicados (fone): {len(limpados) - len(unicos)}")
+    print(f"categorias corrigidas: {corrigidos}")
     print(f"leads finais     : {len(unicos)}")
     return 0
 

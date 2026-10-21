@@ -18,6 +18,7 @@ import json
 import os
 import re
 import time
+import unicodedata
 import urllib.parse
 import urllib.request
 from datetime import datetime, timezone
@@ -136,6 +137,7 @@ def tem_site(tags):
 
 PUBLICO = (
     "unidade basica", "ubs", "unidade saude", "unidade de saude",
+    "unidade basica de saude", "unidade de saude da familia", "saude da familia",
     "centro de saude", "posto de saude", "posto de saude", "centro de especialidade",
     "caps", "ps ", "pronto socorro", "hospital municipal", "samu", "upa ",
     "secretaria de", "prefeitura", "escola municipal", "creche municipal",
@@ -143,12 +145,19 @@ PUBLICO = (
 )
 
 
+def sem_acento(txt):
+    """Normaliza para comparar: 'Unidade Basica' == 'Unidade Básica'."""
+    return "".join(c for c in unicodedata.normalize("NFD", txt or "")
+                   if unicodedata.category(c) != "Mn").lower().strip()
+
+
 def eh_publico(nome):
     """Governo e sem fins lucrativos nao sao cliente de site particular."""
-    n = (nome or "").lower().strip()
+    n = sem_acento(nome)
     if not n:
         return True
     for p in PUBLICO:
+        p = sem_acento(p)
         if n.startswith(p) or p in n:
             return True
     return False
@@ -198,8 +207,35 @@ def categoria_de(tags):
     if o == "it":
         return "informatica"
     if tags.get("leisure") in ("fitness_centre", "sports_centre", "swimming_pool",
-                               "yoga_centre"):
+                               "yoga_centre", "sports_hall", "stadium"):
         return "fitness"
+    if tags.get("sport"):
+        return "fitness"
+
+    # fallback pelo nome: o OSM as vezes nao tem tag util
+    n = sem_acento(tags.get("name", ""))
+    if any(x in n for x in ("ginasio", "academia", "fitness", "crossfit",
+                            "musculacao", "studio pilates", "pilates", "box")):
+        return "fitness"
+    if "drogaria" in n or "farmacia" in n or "farma" in n:
+        return "farmacia"
+    if any(x in n for x in ("barbearia", "barbeiro", "cabeleireir", "salon",
+                            "espaco de beleza", "manicure", "pedicure")):
+        return "beleza" if "barbearia" not in n else "barbearia"
+    if "veterinaria" in n or "clinica vet" in n:
+        return "pet"
+    if any(x in n for x in ("dentista", "odontolog", "clinica odonto")):
+        return "dentista"
+    if any(x in n for x in ("padaria", "panificadora", "confeitaria")):
+        return "padaria"
+    if any(x in n for x in ("restaurante", "lanchonete", "pizzaria", "churrascaria",
+                            "burger", "food", "cafe", "cafeitaria", "lanchonete",
+                            "torresmo", "churrasqueira")):
+        return "restaurante"
+    if any(x in n for x in ("pet shop", "petshop", "banho e tosa")):
+        return "pet"
+    if any(x in n for x in ("oficina", "mecanica", "centro automotivo", "lavagem")):
+        return "oficina"
     return "loja"
 
 
