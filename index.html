@@ -618,13 +618,66 @@ if(l.etapa==='quente'||l.etapa==='negociacao'){novaTarefa('Acompanhar '+l.nome+'
 if(l.etapa==='cliente'&&!DB.projetos.some(p=>p.leadId===l.id))criarProjDoLead(l.id);
 save();}
 // 🤖 AUTOMAÇÃO (robô do GitHub — funciona com tudo fechado)
-let autoLeads=[];
 async function verificarAutomacao(){const el=document.getElementById('auto-status');try{const r=await fetch('automacao/leads-latest.json',{cache:'no-store'});if(!r.ok)throw 0;const j=await r.json();el.innerHTML='✅ Última varredura: <b>'+(j.varredura||'—')+'</b> · <b>'+(j.leads||[]).length+' candidatos</b> sem site no cadastro.';}catch(e){el.textContent='Nenhuma varredura ainda (o robô roda 1x/dia) ou offline — use a Busca manual abaixo.';}}
-async function carregarAutomacao(){try{const j=await(await fetch('automacao/leads-latest.json',{cache:'no-store'})).json();autoLeads=j.leads||[];
-if(!autoLeads.length){alert('Automação sem leads desta vez.');return;}
-document.getElementById('auto-result').innerHTML=autoLeads.slice(0,20).map(a=>'<div style="padding:.5rem 0;border-bottom:1px solid #eee"><b>'+a.nome+'</b> '+(a.fone_real?'<span class="tag" style="background:#D1FAE5">📞 fone real</span>':'<span class="tag" style="background:#FEE2E2;color:#991B1B">sem fone</span>')+' <span class="tag">⚠️ verificar site</span><br><small>'+(a.endereco||'')+' · '+(a.cidade||'')+' · '+(a.categoria||'')+' · <a target=_blank href="https://www.google.com/search?q='+encodeURIComponent(a.nome+' '+(a.cidade||''))+'">checar 🔍</a></small></div>').join('')+'<button class="btn-g" style="margin-top:.6rem;background:#059669" onclick="addAllAuto()">+ Jogar todos no funil</button>';
-notif('🤖 Automação: '+autoLeads.length+' candidatos','Varredura '+(j.varredura||''));}catch(e){alert('Não achei o arquivo da automação. Abra pelo link público (GitHub Pages) ou rode a busca manual.');}}
-function addAllAuto(){if(!autoLeads.length)return;let cf=0;autoLeads.forEach((a,i)=>{const ok=String(a.fone||'').replace(/\D/g,'').length>=8||a.fone_real;if(ok)cf++;DB.leads.unshift({id:Date.now()+i,nome:a.nome,tel:a.fone||'',origem:'Automação 🤖 '+(a.cidade||'')+(ok?'':' · ⚠️ sem fone'),servico:'Site Institucional',valor:997,etapa:'novo',obs:'Da varredura '+(a.varredura||'')+' — '+(a.fonte||'robô OSM')+'. '+(ok?'Fone do cadastro. Validar antes de abordar.':'SEM fone no cadastro: completar manualmente.'),data:new Date().toLocaleString('pt-BR')});});save();acaoReal('🤖 Automação puxada','+'+autoLeads.length+' candidatos ('+cf+' com fone real) no funil (PC desligado OK)');alert('✅ '+autoLeads.length+' candidatos no funil! '+cf+' com fone real.');}
+async function carregarAutomacao(){try{const j=await(await fetch('automacao/leads-latest.json',{cache:'no-store'})).json();autoLeads=(j.leads||[]).filter(a=>a.fone);try{autoContatados=JSON.parse(localStorage.getItem('autoContatados')||'{}');}catch(e){autoContatados={};}if(!autoLeads.length){alert('Automação sem leads com telefone desta vez.');return;}renderAuto();notif('🤖 '+autoLeads.length+' leads prontos para abordagem','Varredura '+(j.varredura||''));}catch(e){alert('Não achei o arquivo da automação. Abra pelo link público (GitHub Pages) ou rode a busca manual.');}}
+// ═══════════════ PROSPECCAO ATIVA (painel de abordagem) ═══════════════
+let autoLeads=[], autoFiltroCidade='', autoFiltroCat='', autoBusca='', autoContatados={};
+
+function renderAuto(){
+  const box=document.getElementById('auto-result'); if(!box)return;
+  const cid=autoFiltroCidade, cat=autoFiltroCat, q=autoBusca.toLowerCase();
+  const lista=autoLeads.filter(a=>{
+    if(cid && !(a.cidade||'').includes(cid)) return false;
+    if(cat && a.categoria!==cat) return false;
+    if(q && !((a.nome||'')+' '+(a.categoria||'')+' '+(a.endereco||'')).toLowerCase().includes(q)) return false;
+    return true;
+  });
+  if(!lista.length){box.innerHTML='<p class="legend">Nenhum lead com esse filtro.</p>';return;}
+  const cidades=[...new Set(autoLeads.map(a=>(a.cidade||'').split(',')[0].trim()))].sort();
+  const cats=[...new Set(autoLeads.map(a=>a.categoria).filter(Boolean))].sort();
+  box.innerHTML=
+    '<div style="display:flex;gap:.4rem;flex-wrap:wrap;margin-bottom:.6rem">'+
+      '<input id="auto-busca" placeholder="Buscar lead..." value="'+autoBusca.replace(/"/g,'&quot;')+'" style="flex:1;min-width:160px;padding:.4rem;border:1px solid #ddd;border-radius:8px" oninput="autoBusca=this.value;renderAuto()">'+
+      '<select onchange="autoFiltroCidade=this.value;renderAuto()" style="padding:.4rem;border:1px solid #ddd;border-radius:8px">'+
+        '<option value="">Todas as cidades</option>'+
+        cidades.map(c=>'<option '+(cid===c?'selected':'')+'>'+c+'</option>').join('')+
+      '</select>'+
+      '<select onchange="autoFiltroCat=this.value;renderAuto()" style="padding:.4rem;border:1px solid #ddd;border-radius:8px">'+
+        '<option value="">Todas as categorias</option>'+
+        cats.map(c=>'<option '+(cat===c?'selected':'')+'>'+c+'</option>').join('')+
+      '</select>'+
+    '</div>'+
+    '<div class="legend" style="margin-bottom:.4rem"><b>'+lista.length+'</b> leads prontos para abordagem ('+autoLeads.length+' no total)</div>'+
+    lista.map(a=>{
+      const k=(a.fone||a.nome);
+      const feito=autoContatados[k];
+      const link=a.wa_link||('https://wa.me/'+(a.fone||''));
+      const lp=a.landing?'https://rickdigitalestudio.github.io/profissional-rickdutra/'+a.landing:'';
+      return '<div style="padding:.5rem 0;border-bottom:1px solid #eee">'+
+        '<b>'+a.nome+'</b> '+
+        (a.fone?'<span class="tag" style="background:#D1FAE5">📞 '+a.fone+'</span>':'<span class="tag" style="background:#FEE2E2;color:#991B1B">sem fone</span>')+
+        ' <span class="tag">'+((a.categoria||'').toUpperCase())+'</span>'+
+        (feito?'<span class="tag" style="background:#DBEAFE;color:#1E40AF">✔ contatado</span>':'')+
+        '<br><small>'+(a.endereco||'')+' · '+((a.cidade||'').split(',')[0])+' · '+
+        '<a target=_blank rel=noopener href="https://www.google.com/search?q='+encodeURIComponent(a.nome+' '+((a.cidade||'').split(',')[0]))+'">checar no Google 🔍</a>'+
+        (lp?' · <a target=_blank rel=noopener href="'+lp+'">ver exemplo de site ↗</a>':'')+'</small>'+
+        '<div style="display:flex;gap:.4rem;flex-wrap:wrap;margin-top:.35rem">'+
+          '<a class="btn btn-wa" target=_blank rel=noopener href="'+link+'" onclick="marcarContatado(\''+k+'\')">📲 WhatsApp</a>'+
+          '<button class="btn btn-v" onclick="copiarTexto(\''+(a.pitch||'').replace(/'/g,"\\'")+'\')">📋 Copiar pitch</button>'+
+          '<button class="btn btn-v" onclick="addLeadAuto(\''+k+'\')">+ Funil</button>'+
+        '</div>'+
+      '</div>';
+    }).join('')+
+    '<div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.8rem">'+
+      '<button class="btn-g" style="background:#059669" onclick="addAllAuto()">+ Jogar os '+lista.length+' no funil</button>'+
+      '<button class="btn btn-v" onclick="copiarTodosPitches()">📋 Copiar todos os pitches</button>'+
+    '</div>';
+}
+function marcarContatado(k){autoContatados[k]=new Date().toLocaleString('pt-BR');try{localStorage.setItem('autoContatados',JSON.stringify(autoContatados));}catch(e){}renderAuto();}
+function copiarTodosPitches(){const l=autoLeads.filter(a=>a.pitch);copiarTexto(l.map(a=>'=== '+a.nome+' ('+a.categoria+') ===\n'+(a.wa_link||'')).join('\n\n'));}
+function addLeadAuto(k){const a=autoLeads.find(x=>(x.fone||x.nome)===k);if(!a)return;DB.leads.unshift({id:Date.now(),nome:a.nome,tel:a.fone||'',origem:'Prospecção 🤖 '+((a.cidade||'').split(',')[0]),servico:a.categoria==='loja'?'Loja Virtual':'Site Institucional',valor:a.categoria==='loja'?2497:997,etapa:'novo',obs:(a.pitch||'')+' | '+(a.endereco||'')+' | varredura '+(a.varredura||''),data:new Date().toLocaleString('pt-BR')});save();acaoReal('Lead da prospecção','+ '+a.nome+' ('+a.categoria+')');}
+
+function addAllAuto(){if(!autoLeads.length)return;let cf=0;autoLeads.filter(a=>a.fone).forEach((a,i)=>{const ok=true;if(ok)cf++;DB.leads.unshift({id:Date.now()+i,nome:a.nome,tel:a.fone||'',origem:'Automação 🤖 '+(a.cidade||'')+(ok?'':' · ⚠️ sem fone'),servico:'Site Institucional',valor:997,etapa:'novo',obs:'Da varredura '+(a.varredura||'')+' — '+(a.fonte||'robô OSM')+'. '+(ok?'Fone do cadastro. Validar antes de abordar.':'SEM fone no cadastro: completar manualmente.'),data:new Date().toLocaleString('pt-BR')});});save();acaoReal('🤖 Automação puxada','+'+autoLeads.length+' candidatos ('+cf+' com fone real) no funil (PC desligado OK)');alert('✅ '+autoLeads.length+' candidatos no funil! '+cf+' com fone real.');}
 // 🌐 RECEPÇÃO DE LEADS DO SITE (só dados reais digitados no formulário do portfólio)
 let siteTimer=null;
 function pedirNotificacao(){try{if(!('Notification' in window))return alert('Navegador sem popup — use o sino 🔔 aqui do app');Notification.requestPermission().then(p=>alert(p==='granted'?'✅ Avisos ativados neste aparelho!':'⚠️ Negado — libere no cadeado da barra de endereço'));}catch(e){alert('Erro: '+e.message)}}

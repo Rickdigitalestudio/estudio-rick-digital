@@ -1,14 +1,14 @@
 {
+  "raio_m": 8000,
+  "max_por_alvo": 40,
+  "observacao": "Alvos LOCAIS do ABC paulista. Negocio sem site + com telefone = lead mais quente para quem vende site. Pode visitar a pe e fechar pessoalmente.",
   "alvos": [
-    { "cidade": "São Paulo SP", "pais": "Brasil", "categoria": "beleza" },
-    { "cidade": "São Paulo SP", "pais": "Brasil", "categoria": "barbearia" },
-    { "cidade": "São Paulo SP", "pais": "Brasil", "categoria": "restaurante" },
-    { "cidade": "São Paulo SP", "pais": "Brasil", "categoria": "pet" },
-    { "cidade": "Rio de Janeiro", "pais": "Brasil", "categoria": "fitness" },
-    { "cidade": "Rio de Janeiro", "pais": "Brasil", "categoria": "dentista" },
-    { "cidade": "Belo Horizonte", "pais": "Brasil", "categoria": "advocacia" },
-    { "cidade": "Curitiba", "pais": "Brasil", "categoria": "imobiliaria" }
-  ],
-  "max_por_alvo": 25,
-  "raio_m": 5000
+    { "cidade": "Rio Grande da Serra, Sao Paulo", "pais": "Brasil", "raio_m": 9000 },
+    { "cidade": "Santo Andre, Sao Paulo", "pais": "Brasil", "raio_m": 8000 },
+    { "cidade": "Sao Bernardo do Campo, Sao Paulo", "pais": "Brasil", "raio_m": 8000 },
+    { "cidade": "Ribeirao Pires, Sao Paulo", "pais": "Brasil", "raio_m": 9000 },
+    { "cidade": "Maua, Sao Paulo", "pais": "Brasil", "raio_m": 8000 },
+    { "cidade": "Suzano, Sao Paulo", "pais": "Brasil", "raio_m": 7000 },
+    { "cidade": "Poa, Sao Paulo", "pais": "Brasil", "raio_m": 7000 }
+  ]
 }
