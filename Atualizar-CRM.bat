@@ -19,9 +19,9 @@ echo.
 echo Pasta: %APPDIR%
 echo.
 
-rem --- 1) fecha o app se estiver aberto ---
-taskkill /IM chrome.exe /FI "WINDOWTITLE eq EstudioRickDigital" /F >nul 2>&1
-taskkill /IM msedge.exe /FI "WINDOWTITLE eq EstudioRickDigital" /F >nul 2>&1
+rem --- 1) fecha o app se estiver aberto (so a janela do app, nao o Chrome todo) ---
+taskkill /IM chrome.exe /FI "WINDOWTITLE eq *ESTUDIO RICK DIGITAL*" /F >nul 2>&1
+taskkill /IM msedge.exe /FI "WINDOWTITLE eq *ESTUDIO RICK DIGITAL*" /F >nul 2>&1
 timeout /t 1 /nobreak >nul
 
 rem --- 2) puxa a versao nova do GitHub ---
