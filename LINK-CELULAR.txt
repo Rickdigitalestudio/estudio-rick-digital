@@ -1,8 +1,62 @@
-LINK DEFINITIVO DO APLICATIVO (funciona com PC DESLIGADO):
+ATUALIZAR O APLICATIVO (PC e CELULAR)
+=======================================
 
+O app se atualiza sozinho no fundo. Estas sao as formas de forcar
+a atualizacao na hora, sem esperar.
+
+--------------------------------------------------------------------
+NO CELULAR (PWA instalado na tela inicial)
+--------------------------------------------------------------------
+1. Abra o app
+2. Toque no botao VERDE "ðŸ”„ Atualizar" no topo (ao lado do sino)
+3. O app recarrega com a versao nova
+
+Nao precisa desinstalar nem reinstalar. Seus leads, tarefas e
+configuracoes ficam (eles ficam no armazenamento do aparelho).
+
+Se o botao nao aparecer: feche o app de vez (sem deixar em segundo
+plano) e abra de novo.
+
+--------------------------------------------------------------------
+NO PC (programa instalado na area de trabalho)
+--------------------------------------------------------------------
+1. Clique 2x em "Atualizar-CRM.bat" na pasta do app
+   (ele baixa a versao nova, limpa o cache e reabre o programa)
+2. Ou, direto no GitHub:  git pull origin main
+
+O programa do PC le os arquivos da pasta, entao depois do git pull
+ele ja abre atualizado.
+
+--------------------------------------------------------------------
+COMO SABER QUE ESTA ATUALIZADO
+--------------------------------------------------------------------
+Ao lado do botao "ðŸ”„ Atualizar" aparece um codigo de versao, ex:
+2026.10.21-1
+
+- Se o codigo tiver uma seta ( 2026.10.20-3 -> 2026.10.21-1 ),
+  o app esta com uma versao nova disponivel: toque em Atualizar.
+- Sem seta = versao atual.
+
+--------------------------------------------------------------------
+O QUE PODE DAR ERRADO
+--------------------------------------------------------------------
+"Se nao achei o arquivo da automacao"
+   O app nao conseguiu baixar a lista de leads. Conecte na internet e
+   toque em Atualizar. No PC, o app do tipo "programa" so funciona com
+   internet pra lista de leads (o resto do CRM funciona offline).
+
+"Sem leads nesta vez"
+   A varredura do dia ainda nao rodou. Ela roda 1x por dia no GitHub.
+   Enquanto isso, use a busca manual do Google Maps dentro do app.
+
+--------------------------------------------------------------------
+LINK DEFINITIVO (funciona com o PC DESLIGADO)
+--------------------------------------------------------------------
 https://rickdigitalestudio.github.io/estudio-rick-digital/
 
 No celular: abra o link > Menu > Adicionar a tela inicial = vira app.
-Dados sincronizados PC+celular via Config > Nuvem (URL Firebase + Auto-sync ON nos 2).
+Dados sincronizados PC+celular via Config > Nuvem
+(URL Firebase + Auto-sync ON nos 2).
 
-Link provisório mesma rede (só PC ligado): http://192.168.1.7:8080/estudio-rick-digital/index.html
+Link provisorio mesma rede (so PC ligado):
+http://192.168.1.5:8080/estudio-rick-digital/index.html

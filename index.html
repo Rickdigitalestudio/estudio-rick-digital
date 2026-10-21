@@ -26,7 +26,7 @@ header{background:rgba(15,23,42,.86);backdrop-filter:blur(14px);-webkit-backdrop
 .hbtn{padding:.55rem .95rem;border-radius:10px;text-decoration:none;font-weight:700;font-size:.85rem;color:#fff;box-shadow:0 4px 0 rgba(0,0,0,.35),0 8px 16px rgba(0,0,0,.3);transition:transform .12s,box-shadow .12s,filter .2s}
 .hbtn:hover{filter:brightness(1.12);transform:translateY(-2px)}.hbtn:active{transform:translateY(3px);box-shadow:0 1px 0 rgba(0,0,0,.35)}
 .wa{background:linear-gradient(180deg,#2fe07a,#1da851)}.tk{background:linear-gradient(180deg,#333,#000);border:1px solid #444}.pf{background:linear-gradient(180deg,#3b82f6,#1d4ed8)}
-.sino{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);border-radius:50%;width:36px;height:36px;display:grid;place-items:center;cursor:pointer;position:relative;font-weight:700;box-shadow:0 4px 10px rgba(0,0,0,.35);transition:transform .2s}.sino:hover{transform:scale(1.1)}
+.hbtn.at{background:linear-gradient(135deg,#0F766E,#059669);color:#fff}.hbtn.at:hover{filter:brightness(1.12)}.build-tag{font-size:.6rem;opacity:.55;letter-spacing:.04em;align-self:center;padding:0 .2rem}.sino{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);border-radius:50%;width:36px;height:36px;display:grid;place-items:center;cursor:pointer;position:relative;font-weight:700;box-shadow:0 4px 10px rgba(0,0,0,.35);transition:transform .2s}.sino:hover{transform:scale(1.1)}
 .sino span{position:absolute;top:-4px;right:-4px;background:var(--d);font-size:.65rem;min-width:18px;height:18px;border-radius:10px;display:grid;place-items:center;padding:0 4px}
 .app{display:flex;min-height:calc(100vh - 66px);perspective:1600px}
 aside{width:238px;background:linear-gradient(180deg,rgba(15,23,42,.94),rgba(30,27,75,.94));backdrop-filter:blur(12px);border-right:1px solid rgba(255,255,255,.1);padding:1rem .7rem;flex-shrink:0;box-shadow:8px 0 28px rgba(2,6,23,.25)}
@@ -105,6 +105,8 @@ canvas#bannerCanvas{width:100%;max-width:420px;border-radius:16px;border:1px sol
 <a class="hbtn wa" href="https://wa.me/qr/MOOILZTYKO2EI1" target="_blank">💬 WhatsApp</a>
 <a class="hbtn tk" href="https://www.tiktok.com/@ricklima991" target="_blank">🎵 TikTok</a>
 <a class="hbtn pf" href="https://rickdigitalestudio.github.io/profissional-rickdutra/" target="_blank">🌐 Portfólio</a>
+<button class="hbtn at" id="btn-atualizar" onclick="atualizarApp()" title="Atualizar o app (PC e celular)">🔄 Atualizar</button>
+<span class="build-tag" id="build-tag"></span>
 <div class="sino" onclick="toggleNot()">🔔<span id="qtdNot">0</span></div>
 </div>
 </header>
@@ -497,6 +499,47 @@ Oi {nome}! Passando pra retomar nossa conversa sobre {servico} — ainda faz sen
 <div class="modal-bg" id="m-tar"><div class="modal"><h2>Nova Tarefa</h2><label>Título</label><input id="t-tit" placeholder="Ligar para lead X amanhã 14h"><label>Data</label><input type="datetime-local" id="t-data"><div style="display:flex;gap:.6rem;justify-content:flex-end;margin-top:1rem"><button class="btn btn-v" onclick="document.getElementById('m-tar').classList.remove('aberto')">Cancelar</button><button class="btn-g" onclick="salvarTarefa()">Criar</button></div></div></div>
 <script>
 const KEY='crm-estudio-rick-v3';
+
+// ════ ATUALIZACAO / BUILD ════
+const BUILD='2026.10.21-1';
+const ABS_BASE='https://rickdigitalestudio.github.io/estudio-rick-digital';
+// No app do PC a pagina abre como file:// e o Chrome bloqueia fetch local
+// (CORS). Entao tentamos o caminho relativo primeiro e caimos na URL publica.
+async function buscarJSON(caminho){
+  const urls=[caminho, ABS_BASE+'/'+caminho.replace(/^\//,'')];
+  let ultimoErro=null;
+  for(const u of urls){
+    try{
+      const r=await fetch(u,{cache:'no-store'});
+      if(!r.ok) throw new Error('HTTP '+r.status);
+      return await r.json();
+    }catch(e){ ultimoErro=e; }
+  }
+  throw ultimoErro||new Error('sem resposta');
+}
+async function atualizarApp(){
+  const b=document.getElementById('btn-atualizar');
+  if(b){b.textContent='⏳ Atualizando...';b.disabled=true;}
+  try{
+    if(navigator.serviceWorker){
+      const regs=await navigator.serviceWorker.getRegistrations();
+      for(const r of regs) await r.unregister();
+    }
+  }catch(e){}
+  try{ if(window.caches){ const ks=await caches.keys(); for(const k of ks) await caches.delete(k); } }catch(e){}
+  try{ localStorage.setItem('build',BUILD); }catch(e){}
+  const u=new URL(location.href);
+  u.searchParams.set('_upd',Date.now());
+  location.replace(u.toString());
+}
+async function checarAtualizacao(){
+  try{
+    const el=document.getElementById('build-tag');
+    const salvo=localStorage.getItem('build')||'';
+    if(el) el.textContent=salvo===BUILD?BUILD:salvo+' → '+BUILD;
+  }catch(e){}
+}
+
 let DB={leads:[],tarefas:[],not:[],acoes:[],cfg:{marca:'ESTÚDIO RICK DIGITAL',wa:'https://wa.me/qr/MOOILZTYKO2EI1',tk:'https://www.tiktok.com/@ricklima991',pf:'https://rickdigitalestudio.github.io/profissional-rickdutra/',num:'5511989426415'}};
 try{const s=localStorage.getItem(KEY);if(s)DB=Object.assign(DB,JSON.parse(s));}catch(e){}
 function hojeKey(d){d=d||new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
@@ -618,8 +661,8 @@ if(l.etapa==='quente'||l.etapa==='negociacao'){novaTarefa('Acompanhar '+l.nome+'
 if(l.etapa==='cliente'&&!DB.projetos.some(p=>p.leadId===l.id))criarProjDoLead(l.id);
 save();}
 // 🤖 AUTOMAÇÃO (robô do GitHub — funciona com tudo fechado)
-async function verificarAutomacao(){const el=document.getElementById('auto-status');try{const r=await fetch('automacao/leads-latest.json',{cache:'no-store'});if(!r.ok)throw 0;const j=await r.json();const ac=(j.leads||[]).filter(a=>a.fone);el.innerHTML='✅ Última varredura: <b>'+(j.varredura||'—')+'</b> · <b>'+ac.length+'</b> leads prontos para abordar (com telefone, sem site). <b>'+(j.leads||[]).length+'</b> candidatos no total.';}catch(e){el.textContent='Nenhuma varredura ainda (o robô roda 1x/dia) ou offline — use a Busca manual abaixo.';}}
-async function carregarAutomacao(){try{const j=await(await fetch('automacao/leads-latest.json',{cache:'no-store'})).json();autoLeads=(j.leads||[]).filter(a=>a.fone);try{autoContatados=JSON.parse(localStorage.getItem('autoContatados')||'{}');}catch(e){autoContatados={};}if(!autoLeads.length){alert('Automação sem leads com telefone desta vez.');return;}renderAuto();notif('🤖 '+autoLeads.length+' leads prontos para abordagem','Varredura '+(j.varredura||''));}catch(e){alert('Não achei o arquivo da automação. Abra pelo link público (GitHub Pages) ou rode a busca manual.');}}
+async function verificarAutomacao(){const el=document.getElementById('auto-status');try{const j=await buscarJSON('automacao/leads-latest.json');const ac=(j.leads||[]).filter(a=>a.fone);el.innerHTML='✅ Última varredura: <b>'+(j.varredura||'—')+'</b> · <b>'+ac.length+'</b> leads prontos para abordar (com telefone, sem site). <b>'+(j.leads||[]).length+'</b> candidatos no total.';}catch(e){el.textContent='Nenhuma varredura ainda (o robô roda 1x/dia) ou offline — use a Busca manual abaixo.';}}
+async function carregarAutomacao(){try{const j=await buscarJSON('automacao/leads-latest.json');autoLeads=(j.leads||[]).filter(a=>a.fone);try{autoContatados=JSON.parse(localStorage.getItem('autoContatados')||'{}');}catch(e){autoContatados={};}if(!autoLeads.length){alert('Automação sem leads com telefone desta vez.');return;}renderAuto();notif('🤖 '+autoLeads.length+' leads prontos para abordagem','Varredura '+(j.varredura||''));}catch(e){alert('Não achei o arquivo da automação. Abra pelo link público (GitHub Pages) ou rode a busca manual.');}}
 // ═══════════════ PROSPECCAO ATIVA (painel de abordagem) ═══════════════
 let autoLeads=[], autoFiltroCidade='', autoFiltroCat='', autoBusca='', autoContatados={};
 
@@ -838,6 +881,7 @@ try{renderSala();}catch(e){}try{renderMural();}catch(e){}}
 function copiarTexto(t){if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t).then(()=>alert('✅ Copiado!')).catch(()=>fallbackCopy(t));}else fallbackCopy(t);}
 function fallbackCopy(t){const ta=document.createElement('textarea');ta.value=t;document.body.appendChild(ta);ta.select();try{document.execCommand('copy');alert('✅ Copiado!');}catch(e){prompt('Copie manualmente:',t);}ta.remove();}
 function copiarCodigo(){const base=location.href.split('?')[0];const form='<form action="'+base+'" method="GET" style="max-width:420px;margin:auto;font-family:Arial">\n<label>Nome<input name="nome" required style="width:100%;padding:10px;margin:4px 0"></label>\n<label>WhatsApp<input name="tel" required style="width:100%;padding:10px;margin:4px 0"></label>\n<input type="hidden" name="origem" value="Site">\n<button style="width:100%;padding:12px;background:#2563EB;color:#fff;border:none;border-radius:8px;font-weight:bold">Quero orçamento grátis</button>\n</form>\n<!-- Ao enviar, o lead cai direto no funil (captura via URL ?nome= &tel=) -->';copiarTexto(form);}
+checarAtualizacao();
 function salvarCfg(){DB.cfg={marca:document.getElementById('cfg-marca').value,wa:document.getElementById('cfg-wa').value,tk:document.getElementById('cfg-tk').value,pf:document.getElementById('cfg-pf').value,num:document.getElementById('cfg-num').value,cloud:document.getElementById('cfg-cloud').value.trim().replace(/\/$/,''),evo:document.getElementById('cfg-evo').value.trim().replace(/\/$/,''),evokey:document.getElementById('cfg-evokey').value.trim(),evoinst:document.getElementById('cfg-evoinst').value.trim()||'rick-digital',evomsq:document.getElementById('cfg-evomsq').value,ttuser:document.getElementById('cfg-ttuser').value,ttagenda:document.getElementById('cfg-ttagenda').value,meta:Number(document.getElementById('cfg-meta').value)||10000,pin:(document.getElementById('cfg-pin').value||'').trim(),perfil:document.getElementById('cfg-perfil').value,modelos:document.getElementById('cfg-modelos').value};save();aplicarPerfil();alert('✅ Salvo! Nuvem: '+(DB.cfg.cloud||'não configurada')+' · WhatsApp auto: '+((DB.cfg.evo&&DB.cfg.evokey)?'ON':'off (manual)'));}
 // CONTROLE TOTAL — WhatsApp via Evolution API + TikTok Business
 function evoCfg(){return {url:(DB.cfg.evo||'').replace(/\/$/,''),key:DB.cfg.evokey||'',inst:DB.cfg.evoinst||'rick-digital'};}
