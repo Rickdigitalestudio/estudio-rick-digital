@@ -28,6 +28,12 @@ header{background:rgba(15,23,42,.86);backdrop-filter:blur(14px);-webkit-backdrop
 .wa{background:linear-gradient(180deg,#2fe07a,#1da851)}.tk{background:linear-gradient(180deg,#333,#000);border:1px solid #444}.pf{background:linear-gradient(180deg,#3b82f6,#1d4ed8)}
 .hbtn.at{background:linear-gradient(135deg,#0F766E,#059669);color:#fff}.hbtn.at:hover{filter:brightness(1.12)}.build-tag{font-size:.6rem;opacity:.55;letter-spacing:.04em;align-self:center;padding:0 .2rem}.sino{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);border-radius:50%;width:36px;height:36px;display:grid;place-items:center;cursor:pointer;position:relative;font-weight:700;box-shadow:0 4px 10px rgba(0,0,0,.35);transition:transform .2s}.sino:hover{transform:scale(1.1)}
 .sino span{position:absolute;top:-4px;right:-4px;background:var(--d);font-size:.65rem;min-width:18px;height:18px;border-radius:10px;display:grid;place-items:center;padding:0 4px}
+.hbtn.at.novo{background:linear-gradient(135deg,#B45309,#F59E0B);animation:pulsa 1.5s ease-in-out infinite}
+@keyframes pulsa{0%,100%{transform:scale(1);filter:brightness(1)}50%{transform:scale(1.07);filter:brightness(1.3)}}
+.toast{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);background:rgba(15,23,42,.96);color:#fff;padding:.75rem 1rem;border-radius:14px;font-size:.85rem;z-index:600;max-width:92vw;display:none;align-items:center;gap:.7rem;box-shadow:0 16px 38px rgba(2,6,23,.5);border:1px solid rgba(255,255,255,.16)}
+.toast.aberto{display:flex;animation:sobe .25s ease}
+@keyframes sobe{from{opacity:0;transform:translate(-50%,16px)}to{opacity:1;transform:translate(-50%,0)}}
+.toast button{background:#059669;color:#fff;border:none;border-radius:9px;padding:.45rem .8rem;font-weight:800;font-size:.8rem;cursor:pointer;white-space:nowrap}
 .app{display:flex;min-height:calc(100vh - 66px);perspective:1600px}
 aside{width:238px;background:linear-gradient(180deg,rgba(15,23,42,.94),rgba(30,27,75,.94));backdrop-filter:blur(12px);border-right:1px solid rgba(255,255,255,.1);padding:1rem .7rem;flex-shrink:0;box-shadow:8px 0 28px rgba(2,6,23,.25)}
 aside nav a{display:flex;gap:.6rem;padding:.7rem 1rem;margin-bottom:.25rem;color:#CBD5E1;text-decoration:none;font-size:.92rem;border-radius:10px;border:1px solid transparent;transition:all .2s}
@@ -95,7 +101,7 @@ canvas#bannerCanvas{width:100%;max-width:420px;border-radius:16px;border:1px sol
 @keyframes pisca{to{opacity:.4}}
 ::-webkit-scrollbar{width:10px;height:10px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:linear-gradient(180deg,#2563EB,#7C3AED);border-radius:8px}
 @media(max-width:1000px){.cards{grid-template-columns:1fr 1fr}aside{width:62px}aside nav a span{display:none}aside nav a{justify-content:center;padding:.7rem .4rem}.grid2{grid-template-columns:1fr}.equipe{grid-template-columns:1fr 1fr}}
-@media(max-width:640px){.app{flex-direction:column}aside{width:100%;padding:.4rem;position:sticky;top:66px;z-index:90}aside nav{display:flex;overflow-x:auto;gap:.3rem;padding:.2rem}aside nav a{white-space:nowrap;margin:0;padding:.55rem .7rem;font-size:.8rem;flex-shrink:0}main{padding:.8rem}.cards{grid-template-columns:1fr}.topo h1{font-size:1.3rem}.boas3d{font-size:1.5rem}.panel{padding:.9rem}.funil .col{width:84vw}.equipe{grid-template-columns:1fr 1fr}.modal{padding:1.1rem}table{font-size:.78rem}th,td{padding:.4rem}.btn-g{width:100%;text-align:center}input,select,textarea{font-size:16px}}
+@media(max-width:640px){.app{flex-direction:column}aside{width:100%;padding:.4rem;position:sticky;top:66px;z-index:90}aside nav{display:flex;overflow-x:auto;gap:.3rem;padding:.2rem}aside nav a{white-space:nowrap;margin:0;padding:.55rem .7rem;font-size:.8rem;flex-shrink:0}main{padding:.8rem}.cards{grid-template-columns:1fr}.topo h1{font-size:1.3rem}.boas3d{font-size:1.5rem}.panel{padding:.9rem}.funil .col{width:84vw}.equipe{grid-template-columns:1fr 1fr}.modal{padding:1.1rem}table{font-size:.78rem}th,td{padding:.4rem}.btn-g{width:100%;text-align:center}input,select,textarea{font-size:16px}.hbtns{gap:.35rem}.hbtn{padding:.5rem .7rem;font-size:.78rem}.build-tag{font-size:.55rem}.sino{width:32px;height:32px}}
 </style>
 </head>
 <body>
@@ -478,6 +484,20 @@ Oi {nome}! Passando pra retomar nossa conversa sobre {servico} — ainda faz sen
 <button class="btn btn-x" onclick="if(confirm('Apagar tudo?')){localStorage.removeItem(KEY);location.reload()}">🗑️ Apagar banco</button>
 <button class="btn btn-v" onclick="instalarApp()">📱 Instalar App (celular/PC)</button>
 </div>
+<div class="panel" style="border:2px solid #059669">
+<h3>🔄 Atualização do app (PC e celular)</h3>
+<p class="legend" id="upd-status">Verifique agora para saber se há versão nova.</p>
+<div class="grid2" style="margin:.6rem 0">
+<div><label>Versão neste aparelho</label><div id="upd-local" style="font-weight:800">—</div></div>
+<div><label>Versão mais recente (servidor)</label><div id="upd-remota" style="font-weight:800">—</div></div>
+</div>
+<label>Última verificação</label><div class="legend" id="upd-quando">ainda não conferida</div>
+<div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.7rem">
+<button class="btn btn-p" onclick="checarVersao(true)">🔍 Verificar agora</button>
+<button class="btn btn-wa" onclick="atualizarApp()">⬇️ Atualizar agora</button>
+</div>
+<p class="legend" style="margin-top:.6rem">📱 <b>No celular:</b> o botão <b>🔄 Atualizar</b> no topo já faz tudo isso (limpa o cache e recarrega). <b>No PC:</b> use o arquivo <b>Atualizar-CRM.bat</b> na pasta do app.</p>
+</div>
 </div>
 </main>
 </div>
@@ -504,8 +524,10 @@ Oi {nome}! Passando pra retomar nossa conversa sobre {servico} — ainda faz sen
 const KEY='crm-estudio-rick-v3';
 
 // ════ ATUALIZACAO / BUILD ════
-const BUILD='2026.10.21-1';
+const BUILD='2026.10.22-1';
 const ABS_BASE='https://rickdigitalestudio.github.io/estudio-rick-digital';
+// Estado da atualizacao (preenchido por checarVersao)
+const UPD={remota:'',nova:false,quando:0,erro:''};
 // No app do PC a pagina abre como file:// e o Chrome bloqueia fetch local
 // (CORS). Entao tentamos o caminho relativo primeiro e caimos na URL publica.
 async function buscarJSON(caminho){
@@ -520,27 +542,105 @@ async function buscarJSON(caminho){
   }
   throw ultimoErro||new Error('sem resposta');
 }
+// ─── Aviso flutuante (não trava o app) ───
+let toastTimer=null;
+function toast(msg,btnTxt,fn){
+  let t=document.getElementById('toast-update');
+  if(!t){
+    t=document.createElement('div');t.id='toast-update';t.className='toast';
+    document.body.appendChild(t);
+  }
+  t.innerHTML='<span>'+msg+'</span>'+(btnTxt?'<button id="toast-btn">'+btnTxt+'</button>':'');
+  t.classList.add('aberto');
+  const b=document.getElementById('toast-btn');
+  if(b&&fn) b.onclick=()=>{fn();t.classList.remove('aberto');};
+  clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>t.classList.remove('aberto'),12000);
+}
+// ─── Botao do topo: fica laranja pulsando quando ha versao nova ───
+function marcarBotaoAtualizacao(nova){
+  const b=document.getElementById('btn-atualizar');
+  if(!b) return;
+  b.classList.toggle('novo',!!nova);
+  b.textContent=nova?'🔄 NOVA VERSÃO!':'🔄 Atualizar';
+  b.title=nova?('Versão nova disponível ('+UPD.remota+') — toque para atualizar'):'Atualizar o app (PC e celular)';
+}
+// ─── Compara versoes (formato AAAA.MM.DD-N) ───
+function buildMaior(a,b){
+  const pa=String(a||'').split('-'), pb=String(b||'').split('-');
+  const da=(pa[0]||'0.0.0').split('.').map(Number), db=(pb[0]||'0.0.0').split('.').map(Number);
+  for(let i=0;i<3;i++){ const x=da[i]||0, y=db[i]||0; if(x!==y) return x>y; }
+  return (Number(pa[1]||0))>(Number(pb[1]||0));
+}
+// ─── Confere se ha versao nova no servidor (funciona no celular) ───
+async function checarVersao(manual){
+  try{
+    const j=await buscarJSON('versao.json');
+    const remota=(j&&j.build)||'';
+    UPD.remota=remota; UPD.quando=Date.now(); UPD.erro='';
+    const nova=!!remota&&buildMaior(remota,BUILD);
+    const mudou=UPD.nova!==nova;
+    UPD.nova=nova;
+    marcarBotaoAtualizacao(nova);
+    try{localStorage.setItem('upd-remota',remota);}catch(e){}
+    painelUpdate();
+    if(nova&&mudou){
+      toast('🚀 Versão nova disponível: '+remota,'Atualizar',()=>atualizarApp());
+      try{acaoReal('🚀 Nova versão detectada',remota);}catch(e){}
+    }
+    if(manual) alert(nova?('🚀 Tem versão nova: '+remota+'\n\nToque em "Atualizar" (ou toque no botão verde do topo).'):('✅ App atualizado! Versão '+BUILD+'.'));
+    return nova;
+  }catch(e){
+    UPD.erro='sem internet';
+    painelUpdate();
+    if(manual) alert('⚠️ Não consegui checar agora (sem internet?).\nO app continua funcionando — seus dados estão salvos.');
+    return false;
+  }
+}
+// ─── Atualiza de verdade: limpa cache + desregistra o service worker + recarrega ───
 async function atualizarApp(){
   const b=document.getElementById('btn-atualizar');
   if(b){b.textContent='⏳ Atualizando...';b.disabled=true;}
   try{
     if(navigator.serviceWorker){
       const regs=await navigator.serviceWorker.getRegistrations();
-      for(const r of regs) await r.unregister();
+      for(const r of regs){
+        try{ if(r.waiting) r.waiting.postMessage({type:'SKIP_WAITING'}); }catch(e){}
+        try{ await r.unregister(); }catch(e){}
+      }
     }
   }catch(e){}
   try{ if(window.caches){ const ks=await caches.keys(); for(const k of ks) await caches.delete(k); } }catch(e){}
-  try{ localStorage.setItem('build',BUILD); }catch(e){}
+  try{ localStorage.setItem('build',BUILD); sessionStorage.setItem('upd-limpo',String(Date.now())); }catch(e){}
   const u=new URL(location.href);
   u.searchParams.set('_upd',Date.now());
   location.replace(u.toString());
 }
-async function checarAtualizacao(){
+// ─── Selo de versao no header ───
+function checarAtualizacao(){
   try{
     const el=document.getElementById('build-tag');
     const salvo=localStorage.getItem('build')||'';
-    if(el) el.textContent=salvo===BUILD?BUILD:salvo+' → '+BUILD;
+    if(el) el.textContent=salvo===BUILD?BUILD:(salvo?salvo+' → '+BUILD:BUILD);
   }catch(e){}
+}
+// ─── Painel de atualizacao (aba Config) ───
+function painelUpdate(){
+  const l=document.getElementById('upd-local'), r=document.getElementById('upd-remota'), q=document.getElementById('upd-quando');
+  if(l) l.textContent=BUILD;
+  if(r) r.textContent=UPD.remota?(UPD.nova?'⚠️ '+UPD.remota+' (nova!)':(UPD.remota===BUILD?UPD.remota+' (igual ✅)':UPD.remota+' (servidor mais antigo)')):(UPD.erro?'sem conexão':'—');
+  if(q) q.textContent=UPD.quando?new Date(UPD.quando).toLocaleString('pt-BR'):'ainda não conferida';
+  const s=document.getElementById('upd-status');
+  if(s) s.textContent=UPD.nova?'🚀 Há versão nova — toque em Atualizar para instalar.':(UPD.remota?'✅ Você está na versão mais recente.':'Verifique agora para saber se há versão nova.');
+}
+// ─── Monitor: checa sozinho ao abrir, ao voltar do segundo plano e de tempos em tempos ───
+function iniciarMonitorUpdate(){
+  checarAtualizacao();
+  painelUpdate();
+  setTimeout(()=>checarVersao(false),2500);
+  document.addEventListener('visibilitychange',()=>{ if(!document.hidden) setTimeout(()=>checarVersao(false),600); });
+  window.addEventListener('online',()=>checarVersao(false));
+  setInterval(()=>{ if(!document.hidden) checarVersao(false); },10*60*1000);
 }
 
 let DB={leads:[],tarefas:[],not:[],acoes:[],cfg:{marca:'ESTÚDIO RICK DIGITAL',wa:'https://wa.me/qr/MOOILZTYKO2EI1',tk:'https://www.tiktok.com/@ricklima991',pf:'https://rickdigitalestudio.github.io/profissional-rickdutra/',num:'5511989426415'}};
@@ -1078,7 +1178,7 @@ try{renderSala();}catch(e){}try{renderMural();}catch(e){}}
 function copiarTexto(t){if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t).then(()=>alert('✅ Copiado!')).catch(()=>fallbackCopy(t));}else fallbackCopy(t);}
 function fallbackCopy(t){const ta=document.createElement('textarea');ta.value=t;document.body.appendChild(ta);ta.select();try{document.execCommand('copy');alert('✅ Copiado!');}catch(e){prompt('Copie manualmente:',t);}ta.remove();}
 function copiarCodigo(){const base=location.href.split('?')[0];const form='<form action="'+base+'" method="GET" style="max-width:420px;margin:auto;font-family:Arial">\n<label>Nome<input name="nome" required style="width:100%;padding:10px;margin:4px 0"></label>\n<label>WhatsApp<input name="tel" required style="width:100%;padding:10px;margin:4px 0"></label>\n<input type="hidden" name="origem" value="Site">\n<button style="width:100%;padding:12px;background:#2563EB;color:#fff;border:none;border-radius:8px;font-weight:bold">Quero orçamento grátis</button>\n</form>\n<!-- Ao enviar, o lead cai direto no funil (captura via URL ?nome= &tel=) -->';copiarTexto(form);}
-checarAtualizacao();
+iniciarMonitorUpdate();
 function salvarCfg(){DB.cfg={marca:document.getElementById('cfg-marca').value,wa:document.getElementById('cfg-wa').value,tk:document.getElementById('cfg-tk').value,pf:document.getElementById('cfg-pf').value,num:document.getElementById('cfg-num').value,cloud:document.getElementById('cfg-cloud').value.trim().replace(/\/$/,''),bridge:document.getElementById('cfg-bridge')?document.getElementById('cfg-bridge').value.trim().replace(/\/$/,''):'',evo:document.getElementById('cfg-evo').value.trim().replace(/\/$/,''),evokey:document.getElementById('cfg-evokey').value.trim(),evoinst:document.getElementById('cfg-evoinst').value.trim()||'rick-digital',evomsq:document.getElementById('cfg-evomsq').value,ttuser:document.getElementById('cfg-ttuser').value,ttagenda:document.getElementById('cfg-ttagenda').value,meta:Number(document.getElementById('cfg-meta').value)||10000,pin:(document.getElementById('cfg-pin').value||'').trim(),perfil:document.getElementById('cfg-perfil').value,modelos:document.getElementById('cfg-modelos').value};save();aplicarPerfil();alert('✅ Salvo! Nuvem: '+(DB.cfg.cloud||'não configurada')+' · WhatsApp auto: '+((DB.cfg.evo&&DB.cfg.evokey)?'ON':'off (manual)'));}
 // CONTROLE TOTAL — WhatsApp via Evolution API + TikTok Business
 function evoCfg(){return {url:(DB.cfg.evo||'').replace(/\/$/,''),key:DB.cfg.evokey||'',inst:DB.cfg.evoinst||'rick-digital'};}
@@ -1409,7 +1509,10 @@ document.addEventListener('mousemove',e=>{const t=e.target.closest&&e.target.clo
 if(!t)return;const r=t.getBoundingClientRect();const px=(e.clientX-r.left)/r.width-.5,py=(e.clientY-r.top)/r.height-.5;
 t.classList.add('tilt-on');t.style.transform='perspective(700px) rotateY('+(px*10)+'deg) rotateX('+(-py*10)+'deg) translateY(-4px)';});})();
 function instalarApp(){if(deferred){deferred.prompt();}else alert('📱 No celular: menu ⋮ → “Instalar app / Adicionar à tela inicial”. No PC: ícone instalar na barra de endereço.');}
-if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').catch(()=>{});}
+if('serviceWorker' in navigator){
+  // ?v=BUILD: quando sai versao nova o navegador busca um sw.js diferente
+  navigator.serviceWorker.register('sw.js?v='+BUILD).then(r=>{try{r.update();}catch(e){}}).catch(()=>{});
+}
 // INIT
 if(!checarPIN())throw new Error('bloqueado');
 document.getElementById('cfg-marca').value=DB.cfg.marca;document.getElementById('cfg-wa').value=DB.cfg.wa;document.getElementById('cfg-tk').value=DB.cfg.tk;document.getElementById('cfg-pf').value=DB.cfg.pf;document.getElementById('cfg-num').value=DB.cfg.num;if(document.getElementById('cfg-cloud'))document.getElementById('cfg-cloud').value=DB.cfg.cloud||'https://rick-digital-default-rtdb.firebaseio.com';

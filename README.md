@@ -112,6 +112,25 @@ estudio-rick-digital/
 ### Opção 3 — celular como app
 Android/iOS → abra o link → ⋮ → **Instalar app / Adicionar à tela inicial**.
 
+### 🔄 Atualizar o app (PC e celular)
+
+| Onde | Como |
+|------|------|
+| 📱 Celular (PWA) | Botão **🔄 Atualizar** no topo — limpa o cache e recarrega. Sem reinstalar. |
+| 💻 PC (programa) | 2x em **`Atualizar-CRM.bat`** (git pull + limpa cache + reabre). |
+| ⚙️ Config | Aba **Config → 🔄 Atualização do app**: versão local, versão do servidor, "Verificar agora" e "Atualizar agora". |
+
+O app confere o servidor sozinho (ao abrir, ao voltar do segundo plano, quando
+a internet volta e a cada 10 min). Se houver versão nova, o botão do topo fica
+**laranja pulsando** e aparece o aviso "🚀 Versão nova disponível".
+
+Detalhes: [`LINK-CELULAR.txt`](LINK-CELULAR.txt).
+
+**Ao publicar uma mudança:** rode `python automacao/bump_build.py` (sobe o
+`BUILD` do `index.html`, o `versao.json` e o cache do service worker) e depois
+`git push` — o GitHub Pages publica e o celular recebe.
+
+
 ## ⬆️ Subir para o GitHub
 
 ```bash

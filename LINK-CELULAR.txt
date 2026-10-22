@@ -18,6 +18,35 @@ Se o botao nao aparecer: feche o app de vez (sem deixar em segundo
 plano) e abra de novo.
 
 --------------------------------------------------------------------
+O CELULAR AVISA SOZINHO QUANDO SAI VERSAO NOVA
+--------------------------------------------------------------------
+O app confere o arquivo "versao.json" do servidor:
+
+- Ao abrir o app
+- Ao voltar do segundo plano (vc saiu e abriu de novo)
+- Quando a internet volta
+- A cada 10 minutos com o app aberto
+
+Se houver versao nova:
+- o botao do topo fica LARANJA pulsando: "🔄 NOVA VERSAO!"
+- aparece um aviso embaixo na tela: "🚀 Versao nova disponivel"
+- o codigo de versao mostra a troca:  2026.10.21-1 -> 2026.10.22-1
+
+Basta tocar em "Atualizar". Para ver o detalle: Config > "🔄 Atualizacao
+do app" (versao local, versao do servidor, ultima verificacao).
+
+--------------------------------------------------------------------
+SE O CELULAR NAO ATUALIZAR
+--------------------------------------------------------------------
+1. Feche o app de vez (sem deixar em segundo plano) e abra de novo
+2. Confirme que tem internet (o aviso "sem conexao" aparece no Config)
+3. Android: puxe a tela para baixo com o dedo (pull to refresh)
+4. iPhone: saia do app deslizando para cima e abra de novo
+5. Ultimo recurso: apague o icone da tela inicial, abra o link no
+   navegador e faca "Adicionar a tela inicial" de novo
+   (isso nao apaga seus leads: eles ficam no armazenamento do app)
+
+--------------------------------------------------------------------
 NO PC (programa instalado na area de trabalho)
 --------------------------------------------------------------------
 1. Clique 2x em "Atualizar-CRM.bat" na pasta do app
@@ -31,11 +60,10 @@ ele ja abre atualizado.
 COMO SABER QUE ESTA ATUALIZADO
 --------------------------------------------------------------------
 Ao lado do botao "🔄 Atualizar" aparece um codigo de versao, ex:
-2026.10.21-1
+2026.10.22-1
 
-- Se o codigo tiver uma seta ( 2026.10.20-3 -> 2026.10.21-1 ),
-  o app esta com uma versao nova disponivel: toque em Atualizar.
-- Sem seta = versao atual.
+- Botao verde normal = versao atual (nada a fazer).
+- Botao LARANJA "🔄 NOVA VERSAO!" = tem update: toque em Atualizar.
 
 --------------------------------------------------------------------
 O QUE PODE DAR ERRADO
@@ -60,3 +88,14 @@ Dados sincronizados PC+celular via Config > Nuvem
 
 Link provisorio mesma rede (so PC ligado):
 http://192.168.1.5:8080/estudio-rick-digital/index.html
+
+--------------------------------------------------------------------
+QUANDO MUDAR O CODIGO (para o dev)
+--------------------------------------------------------------------
+Toda mudanca que vao pro celular precisa subir a versao:
+
+    python automacao/bump_build.py
+
+Isso ajusta o BUILD do index.html, o versao.json e o cache do
+service worker. Depois: git add + git commit + git push
+(o GitHub Pages publica e o celular atualiza).
