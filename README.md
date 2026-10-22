@@ -33,10 +33,21 @@ Abra `index.html` no navegador — **sem servidor, sem build, sem API key**. Fun
 - Filtros automáticos:
   - ✅ `website / contact:website / url` → descartado
   - ✅ Selo `🚫 SEM SITE` + link `checar se tem site`
+- **2ª passada por rede social** (`contact:instagram/facebook/tiktok`) — acha
+  comércio que o OSM não classificou por ofício
+- **Canal definido por lead**: 📲 WhatsApp · 📸 Rede social · ☎️ Ligar
+- **Telefone classificado de verdade**: celular (11 díg, 3º=9) · celular antigo
+  (recupera o 9) · **linha fixa (não tem WhatsApp)** · inválido
+- **🔎 Verificar WhatsApp** — confirma na Evolution se o número existe;
+  linha fixa vira "Ligar", celular sem zap vira "Rede social"
 - **Cidade/Bairro + País** (funciona no mundo todo)
 - **🇧🇷 Modo brasileiros no exterior**: filtra por `cuisine=brazilian` + nome (brasil, churrasco, picanha, feijoada, açaí, coxinha…)
 - Botões **Buscar / 🔄 Atualizar / + Funil / + Todos**
 - Importação CSV (`nome,telefone,origem`) + links de captura p/ site, WhatsApp e TikTok
+
+> 📖 **Guia completo dos canais:** [`automacao/GUIA-CANAIS.md`](automacao/GUIA-CANAIS.md)
+> — a medição do problema (79% dos leads eram linha fixa), como ativar a
+> checagem real de WhatsApp, Google Places e leitura de site.
 
 ### 🎨 4. Fábrica de Banners
 - Canvas 1080×1080, 3 modelos (Azul Pro / Roxo TikTok / Verde WhatsApp)
@@ -75,7 +86,15 @@ estudio-rick-digital/
 ├── manifest.json   # PWA instalável
 ├── sw.js           # Service Worker (offline)
 ├── icon.svg        # Logo RD
-└── README.md
+├── README.md
+└── automacao/
+    ├── canais.py            # classifica telefone BR + detecta redes
+    ├── prospectar.py        # varredura OSM (categoria + rede social)
+    ├── verificar_canais.py  # checa WhatsApp na Evolution + Places + site
+    ├── evolution-bridge.js  # ponte (envio + /check-number)
+    ├── alvos.json           # cidades-alvo
+    ├── leads-latest.json    # base (gerada pelo robô)
+    └── GUIA-CANAIS.md       # 📖 como ativar cada camada
 ```
 
 ## ▶️ Como rodar
@@ -122,10 +141,17 @@ Mensagens diretas usam `wa.me/55+DDD+numero` com texto pré-preenchido por lead/
 ## 🗺️ Como funciona a prospecção SEM site?
 
 1. Geocodifica `Cidade + País` via Nominatim (OSM)
-2. Busca categoria via Overpass (`amenity/shop/office/cuisine`)
-3. Descarta tudo que tiver `website/contact:website/url`
-4. Se modo BR ligado, mantém só `isBR()` (regex + cuisine)
-5. Exibe 20 oportunidades com selo + prova + ação em 1 clique
+2. **Passada 1** — busca por categoria via Overpass (`amenity/shop/office/cuisine`)
+3. **Passada 2** — busca por presença em rede social (`contact:instagram/facebook/tiktok`)
+4. Descarta tudo que tiver `website/contact:website/url`
+5. **Classifica o telefone**: celular (WhatsApp) · celular antigo (recupera o 9)
+   · **linha fixa (só ligação)** · inválido (DDD inexistente)
+6. **Define o canal** de cada lead e monta a mensagem no tom certo
+   (WhatsApp / direct na rede / roteiro de ligação)
+7. Se modo BR ligado, mantém só `isBR()` (regex + cuisine)
+8. Exibe as oportunidades com selo de canal + prova + ação em 1 clique
+
+> 📖 Detalhes e ativação da checagem real de WhatsApp: [`automacao/GUIA-CANAIS.md`](automacao/GUIA-CANAIS.md)
 
 > Limites gratuitos do OSM se aplicam. Se instável, use o botão `Abrir referência no Google Maps`.
 

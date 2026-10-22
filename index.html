@@ -433,11 +433,14 @@ canvas#bannerCanvas{width:100%;max-width:420px;border-radius:16px;border:1px sol
 <label>URL da Evolution API (ex: https://sua-evo.up.railway.app)</label><input id="cfg-evo" placeholder="https://sua-evo.up.railway.app">
 <label>API Key da Evolution</label><input id="cfg-evokey" placeholder="cole a APIKEY">
 <label>Instância (nome da conexão, ex: rick-digital)</label><input id="cfg-evoinst" value="rick-digital">
+<label>URL da Ponte / Bridge (opcional — a mesma URL acima, se você hospeda o evolution-bridge.js)</label><input id="cfg-bridge" placeholder="https://sua-ponte.up.railway.app">
+<p class="legend">A ponte expõe <b>/check-number</b>: o CRM pergunta à Evolution se o número <b>realmente tem WhatsApp</b> e separa o que dá pra mandar mensagem do que só dá pra ligar. Sem ponte, a checagem usa a Evolution direto (precisa de URL + Key acima).</p>
 <label>Mensagem automática de boas-vindas</label><input id="cfg-evomsq" value="Olá! Aqui é do ESTÚDIO RICK DIGITAL. Vi seu contato e quero te mostrar nosso portfólio: https://rickdigitalestudio.github.io/profissional-rickdutra/criacao-de-sites-profissionais.html — posso te mandar uma proposta?">
 <div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.5rem">
 <button class="btn btn-wa" onclick="evoTestar()">✅ Testar conexão</button>
 <button class="btn btn-p" onclick="evoDisparoQuentes()">🚀 Disparo auto p/ Quentes</button>
 <button class="btn btn-v" onclick="evoBoasVindas()">🤖 Ligar boas-vindas auto</button>
+<button class="btn btn-v" onclick="verificarWaLote()">🔎 Verificar WhatsApp dos leads</button>
 <span class="legend" id="evo-st">whatsapp auto: off (manual wa.me)</span>
 </div>
 <p class="legend" id="evo-log" style="margin-top:.5rem">Nenhum envio via API ainda.</p>
@@ -643,14 +646,154 @@ document.getElementById('r-valor').textContent=brl(finTotais().rec);document.get
 document.getElementById('r-orig').innerHTML=Object.entries(org).sort((a,b)=>b[1]-a[1]).map(o=>'<div>'+o[0]+': <b>'+o[1]+'</b></div>').join('')||'—';
 document.getElementById('grid-equipe').innerHTML=DB.eq.map((f,i)=>{const ini=f.n.split(' ').map(x=>x[0]).slice(0,2).join('');const cadeia=[f.fotoLocal,f.foto,fotoIA(f)].filter(Boolean);const src=cadeia[0]||'';const av=src?'<span>'+ini+'</span><img loading="lazy" referrerpolicy="no-referrer" src="'+src+'" alt="'+f.n+'" data-fb="'+(cadeia[1]||'')+'" data-fb2="'+(cadeia[2]||'')+'" onload="this.previousElementSibling.style.display=\'none\'" onerror="var n=this.dataset.fb;this.dataset.fb=this.dataset.fb2||\'\';this.dataset.fb2=\'\';if(n){this.src=n;}else{this.remove();}">':ini;return '<div class="func'+(plantaoOn?' trab':'')+'"><div class="av" style="background:'+f.c+'">'+av+'</div><b style="font-size:.85rem">'+f.n+'</b><small>'+f.s+' · '+(f.g==='F'?'👩':'👨')+'</small><br><span class="st">'+(plantaoOn?'🟢 em plantão':'⚪ standby')+' · '+f.feitos+' ações</span></div>';}).join('');
 updNot();calcOrc();try{renderSocial();}catch(e){}try{renderMetricas(7);}catch(e){}try{renderHist();}catch(e){}try{renderFin();}catch(e){}try{renderProj();}catch(e){}try{renderHier();}catch(e){}try{renderDbVivo();}catch(e){}try{renderMetaReal();}catch(e){}try{renderProxTarefas();}catch(e){}try{renderAtivRecentes();}catch(e){}try{renderRelPlus();}catch(e){}try{renderModelos();}catch(e){}try{capturaViaURL();}catch(e){}}
-function foneReal(l){return String(l.tel||'').replace(/\D/g,'').length>=8;}
-function card(l){const tl=DB.tarefas.filter(t=>!t.ok&&t.leadId===l.id).length;const wa=foneReal(l)?'<a class="btn btn-wa" target="_blank" href="'+waLink(l.tel,'Olá '+l.nome+'! Sobre '+l.servico+' — vi seu contato e quero ajudar!')+'">WhatsApp</a><button class="btn btn-wa" onclick="evoSendLead('+l.id+')" title="Envio automático via API">⚡Auto</button>':'<button class="btn btn-v" onclick="abrirLead('+l.id+')" title="Complete o WhatsApp na ficha">📞 Completar fone</button>';return '<div class="lead" draggable="true" ondragstart="event.dataTransfer.setData(\'id\','+l.id+')"><b>'+l.nome+'</b>'+(foneReal(l)?'':' <span class="tag" style="background:#FEE2E2;color:#991B1B">sem fone</span>')+'<small>'+l.servico+' · '+l.origem+'</small><span class="tag">'+l.origem+'</span>'+(l.valor?'<span class="tag">R$ '+l.valor+'</span>':'')+(tl?'<span class="tag" style="background:#E0E7FF;color:#3730A3">🔗 '+tl+' tarefa(s)</span>':'')+'<div class="la">'+wa+'<button class="btn btn-v" onclick="abrirLead('+l.id+')">Ver</button><button class="btn btn-v" onclick="analisarLead('+l.id+')" title="Análise local do perfil">🔍 Análise</button><button class="btn btn-p" onclick="avancarEtapa('+l.id+')" title="Avançar etapa">➡️</button><button class="btn btn-x" onclick="delLead('+l.id+')">×</button></div></div>';}
+// ── Telefone: classifica de verdade (espelha automacao/canais.py) ───────
+// O app antigo dizia "fone real" para QUALQUER numero com 8+ digitos.
+// Em uma base real, 79% eram LINHA FIXA: o link wa.me existia e a
+// mensagem nao chegava em ninguem. Aqui o numero e classificado antes.
+const DDDS_BR=new Set('11 12 13 14 15 16 17 18 19 21 22 24 27 28 31 32 33 34 35 37 38 41 42 43 44 45 46 47 48 49 51 53 54 55 61 62 63 64 65 66 67 68 69 71 73 74 75 77 79 81 82 83 84 85 86 87 88 89 91 92 93 94 95 96 97 98 99'.split(' '));
+function classificaTel(tel){
+  let d=String(tel||'').replace(/\D/g,'');
+  if(d.length<8) return {tipo:'invalido',e164:''};
+  let loc=d;
+  if((d.length===12||d.length===13)&&d.startsWith('55')) loc=d.slice(2);
+  if(!DDDS_BR.has(loc.slice(0,2))) return {tipo:'invalido',e164:''};
+  if(loc.length===11&&loc[2]==='9') return {tipo:'celular',e164:'55'+loc};
+  if(loc.length===10){
+    if('2345'.includes(loc[2])) return {tipo:'fixo',e164:'55'+loc};
+    if('6789'.includes(loc[2])) return {tipo:'antigo',e164:'55'+loc,e164Celular:'55'+loc.slice(0,2)+'9'+loc.slice(2)};
+  }
+  return {tipo:'invalido',e164:''};
+}
+function telWhats(tel){const c=classificaTel(tel);return c.tipo==='celular'||c.tipo==='antigo';}
+// normaliza o lead vindo do motor Python (snake_case) para o app.
+// O JSON usa wa_verificado / tipo_fone; o app usa waVerificado / tipoFone.
+function normLead(a){
+  if(!a)return a;
+  if(a.wa_verificado!==undefined&&a.waVerificado===undefined)a.waVerificado=a.wa_verificado;
+  if(a.tipo_fone&&!a.tipoFone)a.tipoFone=(a.tipo_fone==='celular_antigo'?'antigo':a.tipo_fone);
+  if(a.fone_fixo&&!a.foneFixo)a.foneFixo=a.fone_fixo;
+  if(a.msg&&!a.msgCanal)a.msgCanal=a.msg;
+  if(a.wa_link&&!a.waLink)a.waLink=a.wa_link;
+  if(a.tel_link&&!a.telLink)a.telLink=a.tel_link;
+  if(a.status_site&&!a.statusSite)a.statusSite=a.status_site;
+  return a;
+}
+function foneReal(l){
+  const wv=(l.waVerificado!==undefined?l.waVerificado:l.wa_verificado);
+  if(wv===true) return true;
+  if(wv===false) return false;
+  if(l.canal) return l.canal==='whatsapp'||l.canal==='whatsapp_provavel';
+  const tf=l.tipoFone||l.tipo_fone;
+  if(tf) return tf==='celular'||tf==='celular_antigo'||tf==='antigo';
+  return telWhats(l.tel);
+}
+// canal de abordagem de um lead (prospectacao ou funil)
+function canalDe(a){
+  if(a.canal) return a.canal;
+  const wv=(a.waVerificado!==undefined?a.waVerificado:a.wa_verificado);
+  if(wv===true) return 'whatsapp';
+  if(telWhats(a.fone||a.tel)) return 'whatsapp_provavel';
+  return (a.redes&&Object.keys(a.redes).length)?'social':((a.fone||a.tel)?'ligacao':'sem_contato');
+}
+const CANAL_META={
+  whatsapp:{rot:'WhatsApp ✓',cor:'#D1FAE5',txt:'#065F46'},
+  whatsapp_provavel:{rot:'Celular · validar',cor:'#FEF3C7',txt:'#92400E'},
+  social:{rot:'Rede social',cor:'#DBEAFE',txt:'#1E40AF'},
+  ligacao:{rot:'Só fixo · ligar',cor:'#FEE2E2',txt:'#991B1B'},
+  sem_contato:{rot:'Sem contato',cor:'#E5E7EB',txt:'#374151'}
+};
+function badgeCanal(a){const c=canalDe(a),m=CANAL_META[c]||CANAL_META.sem_contato;return '<span class="tag" style="background:'+m.cor+';color:'+m.txt+'">'+m.rot+'</span>';}
+// links de rede do lead (Instagram/Facebook/TikTok...)
+const REDE_ROT={instagram:'📸 Instagram',facebook:'📘 Facebook',tiktok:'🎵 TikTok',twitter:'🐦 X',youtube:'▶️ YouTube',linkedin:'💼 LinkedIn',telegram:'✈️ Telegram',email:'✉️ E-mail',linktree:'🔗 Link',whatsapp:'📲 WhatsApp'};
+function linksRedes(a,max){
+  const r=a.redes||{};const c=canalDe(a);
+  const chaves=Object.keys(r).filter(k=>!(k==='whatsapp'&&c.indexOf('whatsapp')===0)).slice(0,max||4);
+  return chaves.map(k=>'<a class="btn btn-v" target=_blank rel=noopener style="text-decoration:none" href="'+r[k]+'" title="Abrir '+k+'">'+(REDE_ROT[k]||('🔗 '+k))+'</a>').join('');
+}
+// ── VERIFICAÇÃO REAL DE WHATSAPP ─────────────────────────────────────
+// Um link wa.me para linha FIXA abre o WhatsApp, mas a mensagem nao
+// chega em ninguem. A Evolution responde "existe" (tem WhatsApp) ou nao.
+// Rotas: /chat/checkNumber (Evolution nova) e /chat/whatsappNumbers (v2).
+async function evoCheckNumbers(nums){
+  const c=evoCfg();
+  const bridge=(DB.cfg.bridge||'').replace(/\/$/,'');
+  const limpo=(nums||[]).map(n=>String(n).replace(/\D/g,'')).filter(n=>n.length>=10);
+  if(!limpo.length) return {};
+  if(bridge){
+    try{
+      const r=await fetch(bridge+'/check-number',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({numbers:limpo})});
+      if(r.ok){const j=await r.json();if(j&&typeof j==='object'&&!j.erro&&Object.keys(j).length)return j;}
+    }catch(e){}
+  }
+  if(!c.url||!c.key) return {};
+  for(const rota of ['/chat/checkNumber/','/chat/whatsappNumbers/']){
+    try{
+      const r=await fetch(c.url+rota+encodeURIComponent(c.inst),{method:'POST',headers:{'Content-Type':'application/json',apikey:c.key},body:JSON.stringify({numbers:limpo})});
+      if(!r.ok)continue;
+      const j=await r.json();
+      const itens=Array.isArray(j)?j:(j&&j.result)||[];
+      if(!Array.isArray(itens)||!itens.length)continue;
+      const out={};
+      itens.forEach(it=>{const n=String((it&&it.number)||'').replace(/\D/g,'');if(n)out[n]={exists:!!it.exists,jid:it.jid||''};});
+      if(Object.keys(out).length)return out;
+    }catch(e){}
+  }
+  return {};
+}
+// Verifica em lote a lista de prospeccao (ou o funil) e reclassifica
+// cada lead: com WhatsApp / so fixo / so rede social.
+async function verificarWaLote(){
+  const base=autoLeads.length?autoLeads:DB.leads;
+  const nums=[...new Set(base.map(a=>String(a.fone||a.tel||'')).filter(n=>n&&telWhats(n)))];
+  if(!nums.length)return alert('Nenhum celular na lista — linha fixa nao tem WhatsApp (so da para ligar).');
+  if(!evoCfg().url&&!(DB.cfg.bridge||''))return alert('Configure a Evolution (URL + Key) ou a URL da Ponte em Config → Controle Total WhatsApp.');
+  const st=document.getElementById('evo-log');
+  if(st)st.textContent='Verificando '+nums.length+' numeros...';
+  const res=await evoCheckNumbers(nums);
+  const chaves=Object.keys(res);
+  if(!chaves.length){if(st)st.textContent='Sem resposta da API — confira URL/Key/instancia e o QR da Evolution.';return alert('A API nao respondeu. Confira URL + Key + instancia.');}
+  let ok=0;
+  const marcar=a=>{const n=String(a.fone||a.tel||'').replace(/\D/g,'');const r=res[n];if(!r)return;a.waVerificado=!!r.exists;if(r.exists)ok++;};
+  autoLeads.forEach(marcar);DB.leads.forEach(marcar);
+  save();
+  if(st)st.textContent='Verificados: '+chaves.length+' numeros · '+ok+' COM WhatsApp · '+(chaves.length-ok)+' sem WhatsApp';
+  acaoReal('🔎 WhatsApp verificado',ok+' de '+chaves.length+' numeros tem WhatsApp');
+  try{renderAuto();}catch(e){}
+  try{render();}catch(e){}
+  alert('Verificados '+chaves.length+' numeros:\n\n✅ '+ok+' TEM WhatsApp\n❌ '+(chaves.length-ok)+' nao tem WhatsApp\n\nO painel ja foi reclassificado: os que nao tem zap aparecem como "So fixo" (ligar) ou "Rede social" (direct).');
+}
+function thisLead(id){return DB.leads.find(x=>x.id===id)||{};}
+// mensagem coerente com o canal REAL do lead (espelha automacao/verificar_canais.py)
+function msgDoLead(l){
+  if(l.msgCanal) return l.msgCanal;
+  if(l.msg) return l.msg;
+  const c=canalDe(l);
+  if(c==='ligacao') return 'Script de ligacao - '+l.nome+': "Ola, aqui e do Estudio Rick Digital. Vi que o '+l.nome+' ainda nao tem site. Eu monto site em 10 dias a partir de R$ 997. Quer que eu mande o exemplo por e-mail ou WhatsApp?"';
+  if(c==='social') return 'Ola! Vi que o '+l.nome+' ainda nao tem site. Posso montar em 10 dias, a partir de R$ 997. Meu trabalho: '+(DB.cfg.pf||'');
+  return 'Ola '+l.nome+'! Sobre '+(l.servico||'o servico')+' - vi seu contato e quero ajudar! Portfolio: '+(DB.cfg.pf||'');
+}
+function card(l){const tl=DB.tarefas.filter(t=>!t.ok&&t.leadId===l.id).length;const c=canalDe(l);const redes=l.redes||{};const temRede=Object.keys(redes).length>0;const zap=foneReal(l);
+let acao=zap
+ ?'<a class="btn btn-wa" target=_blank href="'+waLink(l.tel,msgDoLead(l))+'">WhatsApp</a><button class="btn btn-wa" onclick="evoSendLead('+l.id+')" title="Envio automatico via API">⚡Auto</button>'
+ :temRede
+  ?'<button class="btn btn-v" onclick="copiarTexto(msgDoLead(thisLead('+l.id+')))" title="Copiar a mensagem de abordagem">📋 Copiar msg</button>'
+  :'<button class="btn btn-v" onclick="abrirLead('+l.id+')" title="Complete o WhatsApp na ficha">📞 Completar fone</button>';
+if(!zap&&c==='ligacao'&&l.tel)acao='<a class="btn btn-v" href="tel:+'+String(l.tel).replace(/\D/g,'')+'">☎️ Ligar</a>'+acao;
+return '<div class="lead" draggable="true" ondragstart="event.dataTransfer.setData(\'id\','+l.id+')"><b>'+l.nome+'</b> '+badgeCanal(l)+(l.waVerificado===true?'<span class="tag" style="background:#D1FAE5;color:#065F46">📲 zap confirmado</span>':'')+'<small>'+l.servico+' · '+l.origem+'</small><span class="tag">'+l.origem+'</span>'+(l.valor?'<span class="tag">R$ '+l.valor+'</span>':'')+(tl?'<span class="tag" style="background:#E0E7FF;color:#3730A3">🔗 '+tl+' tarefa(s)</span>':'')+'<div class="la">'+acao+(temRede?'<span style="display:inline-flex;gap:.25rem;flex-wrap:wrap">'+linksRedes(l,3)+'</span>':'')+'<button class="btn btn-v" onclick="abrirLead('+l.id+')">Ver</button><button class="btn btn-v" onclick="analisarLead('+l.id+')" title="Analise local do perfil">🔍 Análise</button><button class="btn btn-p" onclick="avancarEtapa('+l.id+')" title="Avancar etapa">➡️</button><button class="btn btn-x" onclick="delLead('+l.id+')">×</button></div></div>';}
 // Análise LOCAL do perfil (heurística a partir dos dados da ficha — estimativa, não é IA externa)
 function analisarLead(id){const l=DB.leads.find(x=>x.id===id);if(!l)return;
 const reais=DB.leads.filter(x=>x.servico===l.servico&&x.etapa==='cliente').length;
-const refs=[['Fanpage','https://rickdigitalestudio.github.io/profissional-rickdutra/fanpage-que-vende.html'],['Site Institucional','https://rickdigitalestudio.github.io/profissional-rickdutra/criacao-de-sites-profissionais.html'],['Landing Page','https://rickdigitalestudio.github.io/profissional-rickdutra/landing-page-que-converte.html'],['Loja Virtual','https://rickdigitalestudio.github.io/profissional-rickdutra/loja-virtual-completa.html'],['Logo','https://rickdigitalestudio.github.io/profissional-rickdutra/criacao-de-logo-profissional.html'],['LinkedIn','https://rickdigitalestudio.github.io/profissional-rickdutra/otimizacao-de-perfil-linkedin.html'],['Acadêmico','https://rickdigitalestudio.github.io/profissional-rickdutra/trabalho-academico-abnt.html'],['Manutenção','https://rickdigitalestudio.github.io/profissional-rickdutra/criacao-de-sites-profissionais.html#investimento']];
+const refs=[['Fanpage','https://rickdigitalestudio.github.io/profissional-rickdutra/fanpage-que-vende.html'],['Site Institucional','https://rickdigitalestudio.github.io/profissional-rickdutra/criacao-de-sites-profissionais.html'],['Landing Page','https://rickdigitalestudio.github.io/profissional-rickdutra/landing-page-que-converte.html'],['Loja Virtual','https://rickdigitalestudio.github.io/profissional-rickdutra/loja-virtual-completa.html'],['Logo','https://rickdigitalestudio.github.io/profissional-rickdutra/criacao-de-logo-profissional.html'],['LinkedIn','https://rickdigitalestudio.github.io/profissional-rickdutra/otimizacao-de-perfil-linkedin.html'],['Academico','https://rickdigitalestudio.github.io/profissional-rickdutra/trabalho-academico-abnt.html'],['Manutencao','https://rickdigitalestudio.github.io/profissional-rickdutra/criacao-de-sites-profissionais.html#investimento']];
 const ref=(refs.find(r=>r[0]===l.servico)||refs[1])[1];
-const txt='🔍 ANÁLISE LOCAL (estimativa, sem IA externa)\nLead: '+l.nome+'\nOrigem: '+l.origem+'\nInteresse: '+l.servico+(l.valor?' (R$ '+l.valor+')':'')+'\nFone: '+(foneReal(l)?'verificado na ficha ✅':'AUSENTE ⚠️ — complete antes de abordar')+'\nEtapa: '+l.etapa+'\nSinais: '+(String(l.origem).includes('Maps')?'veio de prospecção fria — valide site/redes antes do pitch. ':'veio de canal quente ('+l.origem+') — responda em até 1h. ')+(reais?reais+' cliente(s) fecharam '+l.servico+' antes — use como prova. ':'Ainda sem cliente de '+l.servico+' registrado — registre o 1º como case.')+'\nReferência p/ mostrar: '+ref+'\nPróximo passo: '+(foneReal(l)?'chamar no WhatsApp com a proposta do Orçamento.':'pesquisar nome no Google/Instagram, completar o fone e mover p/ Qualificação.');
+const c=canalDe(l);const meta=CANAL_META[c]||CANAL_META.sem_contato;
+const redes=Object.keys(l.redes||{});
+const waTxt=(l.waVerificado===true)?'CONFIRMADO no WhatsApp ✅':(l.waVerificado===false)?'checado e NAO tem WhatsApp ❌':(foneReal(l)?'celular — ainda nao checado no WhatsApp ⚠️':'AUSENTE ⚠️');
+const prox=(c==='whatsapp')?'chamar no WhatsApp agora com a proposta do Orçamento.'
+ :(c==='whatsapp_provavel')?'clicar em "Verificar WhatsApp" e, se confirmar, mandar a proposta.'
+ :(c==='social')?'mandar a mensagem pelo '+(redes[0]||'direct')+' (copie a msg que ja esta pronta pro canal).'
+ :(c==='ligacao')?'LIGAR no telefone cadastrado e usar o script de ligacao.'
+ :'pesquisar o nome no Google/Instagram, achar o WhatsApp e completar a ficha.';
+const txt='🔍 ANÁLISE LOCAL (estimativa, sem IA externa)\nLead: '+l.nome+'\nOrigem: '+l.origem+'\nInteresse: '+l.servico+(l.valor?' (R$ '+l.valor+')':'')+'\n\n📡 CANAL DE CONTATO: '+meta.rot+'\nTelefone: '+waTxt+'\nRedes encontradas: '+(redes.length?redes.join(', '):'nenhuma — so ligar')+'\n\nEtapa: '+l.etapa+'\nSinais: '+(String(l.origem).includes('Maps')?'veio de prospecção fria — o cadastro nao garante WhatsApp, por isso o canal. ':'veio de canal quente ('+l.origem+') — responda em até 1h. ')+(reais?reais+' cliente(s) fecharam '+l.servico+' antes — use como prova. ':'Ainda sem cliente de '+l.servico+' registrado — registre o 1º como case.')+'\nReferência p/ mostrar: '+ref+'\n\n👉 Próximo passo: '+prox;
 alert(txt);copiarTexto(txt);}
 function drop(e,et){e.preventDefault();const id=Number(e.dataTransfer.getData('id'));const l=DB.leads.find(x=>x.id===id);if(l){const ant=l.etapa;l.etapa=et;l.etapaDesde=new Date().toLocaleString('pt-BR');pushHist(l,'🔄 '+ant+' → '+et+' (arrastado no funil)');notif('🔄 '+l.nome+' → '+et,'Movido no funil');if(et==='cliente'&&!DB.projetos.some(p=>p.leadId===l.id))criarProjDoLead(l.id);save();}}
 const ORDEM_ETAPAS=['novo','qualificacao','quente','negociacao','cliente'];
@@ -662,25 +805,39 @@ if(l.etapa==='cliente'&&!DB.projetos.some(p=>p.leadId===l.id))criarProjDoLead(l.
 save();}
 // 🤖 AUTOMAÇÃO (robô do GitHub — funciona com tudo fechado)
 async function verificarAutomacao(){const el=document.getElementById('auto-status');try{const j=await buscarJSON('automacao/leads-latest.json');const ac=(j.leads||[]).filter(a=>a.fone);el.innerHTML='✅ Última varredura: <b>'+(j.varredura||'—')+'</b> · <b>'+ac.length+'</b> leads prontos para abordar (com telefone, sem site). <b>'+(j.leads||[]).length+'</b> candidatos no total.';}catch(e){el.textContent='Nenhuma varredura ainda (o robô roda 1x/dia) ou offline — use a Busca manual abaixo.';}}
-async function carregarAutomacao(){try{const j=await buscarJSON('automacao/leads-latest.json');autoLeads=(j.leads||[]).filter(a=>a.fone);try{autoContatados=JSON.parse(localStorage.getItem('autoContatados')||'{}');}catch(e){autoContatados={};}if(!autoLeads.length){alert('Automação sem leads com telefone desta vez.');return;}renderAuto();notif('🤖 '+autoLeads.length+' leads prontos para abordagem','Varredura '+(j.varredura||''));}catch(e){alert('Não achei o arquivo da automação. Abra pelo link público (GitHub Pages) ou rode a busca manual.');}}
+async function carregarAutomacao(){try{const j=await buscarJSON('automacao/leads-latest.json');
+autoLeads=(j.leads||[]).map(normLead).filter(a=>canalDe(a)!=='sem_contato');
+try{autoContatados=JSON.parse(localStorage.getItem('autoContatados')||'{}');}catch(e){autoContatados={};}
+if(!autoLeads.length){alert('Automação sem leads acionáveis desta vez.');return;}
+renderAuto();
+const nZ=autoLeads.filter(a=>canalDe(a).indexOf('whatsapp')===0).length;
+const nS=autoLeads.filter(a=>canalDe(a)==='social').length;
+const nL=autoLeads.filter(a=>canalDe(a)==='ligacao').length;
+notif('🤖 '+autoLeads.length+' leads prontos','WhatsApp: '+nZ+' · rede social: '+nS+' · só fixo: '+nL+' · varredura '+(j.varredura||''));
+}catch(e){alert('Não achei o arquivo da automação. Abra pelo link público (GitHub Pages) ou rode a busca manual.');}}
 // ═══════════════ PROSPECCAO ATIVA (painel de abordagem) ═══════════════
-let autoLeads=[], autoFiltroCidade='', autoFiltroCat='', autoBusca='', autoContatados={};
+let autoLeads=[], autoFiltroCidade='', autoFiltroCat='', autoFiltroCanal='', autoBusca='', autoContatados={}, autoLimite=40;
 
 function renderAuto(){
   const box=document.getElementById('auto-result'); if(!box)return;
-  const cid=autoFiltroCidade, cat=autoFiltroCat, q=autoBusca.toLowerCase();
-  const lista=autoLeads.filter(a=>{
+  const cid=autoFiltroCidade, cat=autoFiltroCat, ch=autoFiltroCanal, q=autoBusca.toLowerCase();
+  const lista=autoLeads.map((a,i)=>({a:a,i:i})).filter(function(x){const a=x.a;
     if(cid && !(a.cidade||'').includes(cid)) return false;
     if(cat && a.categoria!==cat) return false;
+    if(ch && canalDe(a)!==ch) return false;
     if(q && !((a.nome||'')+' '+(a.categoria||'')+' '+(a.endereco||'')).toLowerCase().includes(q)) return false;
     return true;
   });
+  const shown=lista.slice(0,autoLimite);
   if(!lista.length){box.innerHTML='<p class="legend">Nenhum lead com esse filtro.</p>';return;}
   const cidades=[...new Set(autoLeads.map(a=>(a.cidade||'').split(',')[0].trim()))].sort();
   const cats=[...new Set(autoLeads.map(a=>a.categoria).filter(Boolean))].sort();
+  const nZap=autoLeads.filter(a=>canalDe(a).indexOf('whatsapp')===0).length;
+  const nSoc=autoLeads.filter(a=>canalDe(a)==='social').length;
+  const nLig=autoLeads.filter(a=>canalDe(a)==='ligacao').length;
   box.innerHTML=
     '<div style="display:flex;gap:.4rem;flex-wrap:wrap;margin-bottom:.6rem">'+
-      '<input id="auto-busca" placeholder="Buscar lead..." value="'+autoBusca.replace(/"/g,'&quot;')+'" style="flex:1;min-width:160px;padding:.4rem;border:1px solid #ddd;border-radius:8px" oninput="autoBusca=this.value;renderAuto()">'+
+      '<input id="auto-busca" placeholder="Buscar lead..." value="'+autoBusca.replace(/"/g,'&quot;')+'" style="flex:1;min-width:150px;padding:.4rem;border:1px solid #ddd;border-radius:8px" oninput="autoBusca=this.value;renderAuto()">'+
       '<select onchange="autoFiltroCidade=this.value;renderAuto()" style="padding:.4rem;border:1px solid #ddd;border-radius:8px">'+
         '<option value="">Todas as cidades</option>'+
         cidades.map(c=>'<option '+(cid===c?'selected':'')+'>'+c+'</option>').join('')+
@@ -689,38 +846,78 @@ function renderAuto(){
         '<option value="">Todas as categorias</option>'+
         cats.map(c=>'<option '+(cat===c?'selected':'')+'>'+c+'</option>').join('')+
       '</select>'+
+      '<select onchange="autoFiltroCanal=this.value;renderAuto()" style="padding:.4rem;border:1px solid #ddd;border-radius:8px">'+
+        '<option value="">Todos os canais</option>'+
+        ['whatsapp','whatsapp_provavel','social','ligacao'].map(c=>'<option value="'+c+'" '+(ch===c?'selected':'')+'>'+(CANAL_META[c]?CANAL_META[c].rot:c)+'</option>').join('')+
+      '</select>'+
     '</div>'+
-    '<div class="legend" style="margin-bottom:.4rem"><b>'+lista.length+'</b> leads prontos para abordagem ('+autoLeads.length+' no total)</div>'+
-    lista.map(a=>{
+    '<div class="legend" style="margin-bottom:.5rem"><b>'+shown.length+'</b> no filtro'+(lista.length>shown.length?' de '+lista.length:'')+' · base: <b>'+nZap+'</b> com celular/WhatsApp · <b>'+nSoc+'</b> só rede social (direct) · <b>'+nLig+'</b> só fixo (ligar) — total <b>'+autoLeads.length+'</b></div>'+
+    '<div style="display:flex;gap:.4rem;flex-wrap:wrap;margin-bottom:.7rem">'+
+      '<button class="btn btn-v" onclick="verificarWaLote()" title="Confere na Evolution se o numero tem WhatsApp">🔎 Verificar WhatsApp</button>'+
+      '<button class="btn btn-g" style="background:#059669" onclick="addAllAuto()">+ Jogar os '+lista.length+' no funil</button>'+
+      '<button class="btn btn-v" onclick="copiarTodosPitches()">📋 Copiar mensagens</button>'+
+    '</div>'+
+    shown.map(function(x){const a=x.a, i=x.i;
       const k=(a.fone||a.nome);
       const feito=autoContatados[k];
-      const link=a.wa_link||('https://wa.me/'+(a.fone||''));
+      const c=canalDe(a);
+      const link=a.wa_link||a.waLink||((a.fone&&c.indexOf('whatsapp')===0)?('https://wa.me/'+a.fone):'');
       const lp=a.landing?'https://rickdigitalestudio.github.io/profissional-rickdutra/'+a.landing:'';
-      return '<div style="padding:.5rem 0;border-bottom:1px solid #eee">'+
-        '<b>'+a.nome+'</b> '+
-        (a.fone?'<span class="tag" style="background:#D1FAE5">📞 '+a.fone+'</span>':'<span class="tag" style="background:#FEE2E2;color:#991B1B">sem fone</span>')+
-        ' <span class="tag">'+((a.categoria||'').toUpperCase())+'</span>'+
+      const tel=String(a.fone_fixo||a.tel_link&&''||a.fone||'').replace(/\D/g,'');
+      let botoes='';
+      if(c==='whatsapp'||c==='whatsapp_provavel'){
+        botoes='<a class="btn btn-wa" target=_blank rel=noopener href="'+link+'" onclick="marcarContatado('+i+')">📲 WhatsApp</a>'+
+               '<button class="btn btn-v" onclick="copiarMsgAuto('+i+')">📋 Copiar msg</button>';
+      } else if(c==='social'){
+        botoes='<span style="display:inline-flex;gap:.3rem;flex-wrap:wrap">'+linksRedes(a,4)+'</span>'+
+               '<button class="btn btn-v" onclick="copiarMsgAuto('+i+')">📋 Copiar msg</button>';
+      } else if(c==='ligacao'){
+        botoes='<a class="btn btn-v" href="tel:+'+tel+'">☎️ Ligar</a>'+
+               '<button class="btn btn-v" onclick="copiarMsgAuto('+i+')">📋 Copiar script</button>';
+      } else {
+        botoes='<button class="btn btn-v" onclick="copiarMsgAuto('+i+')">📋 Copiar msg</button>';
+      }
+      return '<div style="padding:.55rem 0;border-bottom:1px solid #eee">'+
+        '<b>'+a.nome+'</b> '+badgeCanal(a)+' <span class="tag">'+((a.categoria||'').toUpperCase())+'</span>'+
         (feito?'<span class="tag" style="background:#DBEAFE;color:#1E40AF">✔ contatado</span>':'')+
+        (a.waVerificado===true?'<span class="tag" style="background:#D1FAE5;color:#065F46">📲 zap confirmado</span>':'')+
+        (a.waVerificado===false?'<span class="tag" style="background:#FEE2E2;color:#991B1B">sem zap</span>':'')+
         '<br><small>'+(a.endereco||'')+' · '+((a.cidade||'').split(',')[0])+' · '+
         '<a target=_blank rel=noopener href="https://www.google.com/search?q='+encodeURIComponent(a.nome+' '+((a.cidade||'').split(',')[0]))+'">checar no Google 🔍</a>'+
         (lp?' · <a target=_blank rel=noopener href="'+lp+'">ver exemplo de site ↗</a>':'')+'</small>'+
-        '<div style="display:flex;gap:.4rem;flex-wrap:wrap;margin-top:.35rem">'+
-          '<a class="btn btn-wa" target=_blank rel=noopener href="'+link+'" onclick="marcarContatado(\''+k+'\')">📲 WhatsApp</a>'+
-          '<button class="btn btn-v" onclick="copiarTexto(\''+(a.pitch||'').replace(/'/g,"\\'")+'\')">📋 Copiar pitch</button>'+
-          '<button class="btn btn-v" onclick="addLeadAuto(\''+k+'\')">+ Funil</button>'+
-        '</div>'+
-      '</div>';
+        '<div style="display:flex;gap:.4rem;flex-wrap:wrap;margin-top:.35rem">'+botoes+
+        '<button class="btn btn-v" onclick="addLeadAuto('+i+')">+ Funil</button>'+
+        '</div></div>';
     }).join('')+
     '<div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.8rem">'+
+      (lista.length>shown.length?'<button class="btn btn-p" onclick="autoLimite+=40;renderAuto()">Ver mais ('+(lista.length-shown.length)+' restantes)</button>':'')+
       '<button class="btn-g" style="background:#059669" onclick="addAllAuto()">+ Jogar os '+lista.length+' no funil</button>'+
       '<button class="btn btn-v" onclick="copiarTodosPitches()">📋 Copiar todos os pitches</button>'+
     '</div>';
 }
-function marcarContatado(k){autoContatados[k]=new Date().toLocaleString('pt-BR');try{localStorage.setItem('autoContatados',JSON.stringify(autoContatados));}catch(e){}renderAuto();}
-function copiarTodosPitches(){const l=autoLeads.filter(a=>a.pitch);copiarTexto(l.map(a=>'=== '+a.nome+' ('+a.categoria+') ===\n'+(a.wa_link||'')).join('\n\n'));}
-function addLeadAuto(k){const a=autoLeads.find(x=>(x.fone||x.nome)===k);if(!a)return;DB.leads.unshift({id:Date.now(),nome:a.nome,tel:a.fone||'',origem:'Prospecção 🤖 '+((a.cidade||'').split(',')[0]),servico:a.categoria==='loja'?'Loja Virtual':'Site Institucional',valor:a.categoria==='loja'?2497:997,etapa:'novo',obs:(a.pitch||'')+' | '+(a.endereco||'')+' | varredura '+(a.varredura||''),data:new Date().toLocaleString('pt-BR')});save();acaoReal('Lead da prospecção','+ '+a.nome+' ('+a.categoria+')');}
-
-function addAllAuto(){if(!autoLeads.length)return;let cf=0;autoLeads.filter(a=>a.fone).forEach((a,i)=>{const ok=true;if(ok)cf++;DB.leads.unshift({id:Date.now()+i,nome:a.nome,tel:a.fone||'',origem:'Automação 🤖 '+(a.cidade||'')+(ok?'':' · ⚠️ sem fone'),servico:'Site Institucional',valor:997,etapa:'novo',obs:'Da varredura '+(a.varredura||'')+' — '+(a.fonte||'robô OSM')+'. '+(ok?'Fone do cadastro. Validar antes de abordar.':'SEM fone no cadastro: completar manualmente.'),data:new Date().toLocaleString('pt-BR')});});save();acaoReal('🤖 Automação puxada','+'+autoLeads.length+' candidatos ('+cf+' com fone real) no funil (PC desligado OK)');alert('✅ '+autoLeads.length+' candidatos no funil! '+cf+' com fone real.');}
+function autoLead(i){return autoLeads[i]||{};}
+function copiarMsgAuto(i){const a=autoLead(i);copiarTexto(msgDoLead(a));marcarContatado(i);}
+function marcarContatado(i){const a=autoLeads[i];if(!a)return;const k=(a.fone||a.nome);autoContatados[k]=new Date().toLocaleString('pt-BR');try{localStorage.setItem('autoContatados',JSON.stringify(autoContatados));}catch(e){}renderAuto();}
+function copiarTodosPitches(){const l=autoLeads.filter(a=>a.pitch||a.msg);copiarTexto(l.map(a=>'=== '+a.nome+' ('+canalDe(a)+') ===\n'+msgDoLead(a)).join('\n\n'));}
+function addLeadAuto(i){const a=autoLeads[i];if(!a)return;
+DB.leads.unshift({id:Date.now(),nome:a.nome,tel:a.fone||'',origem:'Prospecção 🤖 '+((a.cidade||'').split(',')[0]),
+servico:a.categoria==='loja'?'Loja Virtual':'Site Institucional',valor:a.categoria==='loja'?2497:997,etapa:'novo',
+canal:a.canal||canalDe(a),redes:a.redes||{},waVerificado:a.waVerificado,msgCanal:msgDoLead(a),
+obs:(a.pitch||'')+' | '+(a.endereco||'')+' | varredura '+(a.varredura||'')+' | canal: '+(a.canal_rotulo||canalDe(a)),
+data:new Date().toLocaleString('pt-BR')});
+save();acaoReal('Lead da prospecção','+ '+a.nome+' ('+a.categoria+' · '+(a.canal_rotulo||canalDe(a))+')');}
+function addAllAuto(){if(!autoLeads.length)return;
+const uteis=autoLeads.filter(a=>canalDe(a)!=='sem_contato');
+let cf=0,cs=0,cl=0;
+uteis.forEach((a,i)=>{const c=canalDe(a);
+ if(c.indexOf('whatsapp')===0)cf++;else if(c==='social')cs++;else cl++;
+ DB.leads.unshift({id:Date.now()+i,nome:a.nome,tel:a.fone||'',origem:'Automação 🤖 '+(a.cidade||'')+' · '+(a.canal_rotulo||c),
+ servico:a.categoria==='loja'?'Loja Virtual':'Site Institucional',valor:a.categoria==='loja'?2497:997,etapa:'novo',
+ canal:c,redes:a.redes||{},waVerificado:a.waVerificado,msgCanal:msgDoLead(a),
+ obs:'Varredura '+(a.varredura||'')+' · canal: '+(a.canal_rotulo||c)+'. '+(a.motivo_fone||''),
+ data:new Date().toLocaleString('pt-BR')});});
+save();acaoReal('🤖 Automação puxada','+'+uteis.length+' no funil ('+cf+' WhatsApp · '+cs+' rede social · '+cl+' só fixo)');
+alert('✅ '+uteis.length+' no funil!\n\n📲 '+cf+' com WhatsApp\n📸 '+cs+' só rede social (vão por direct)\n☎️ '+cl+' só telefone fixo (vão por ligação)');}
 // 🌐 RECEPÇÃO DE LEADS DO SITE (só dados reais digitados no formulário do portfólio)
 let siteTimer=null;
 function pedirNotificacao(){try{if(!('Notification' in window))return alert('Navegador sem popup — use o sino 🔔 aqui do app');Notification.requestPermission().then(p=>alert(p==='granted'?'✅ Avisos ativados neste aparelho!':'⚠️ Negado — libere no cadeado da barra de endereço'));}catch(e){alert('Erro: '+e.message)}}
@@ -882,7 +1079,7 @@ function copiarTexto(t){if(navigator.clipboard&&navigator.clipboard.writeText){n
 function fallbackCopy(t){const ta=document.createElement('textarea');ta.value=t;document.body.appendChild(ta);ta.select();try{document.execCommand('copy');alert('✅ Copiado!');}catch(e){prompt('Copie manualmente:',t);}ta.remove();}
 function copiarCodigo(){const base=location.href.split('?')[0];const form='<form action="'+base+'" method="GET" style="max-width:420px;margin:auto;font-family:Arial">\n<label>Nome<input name="nome" required style="width:100%;padding:10px;margin:4px 0"></label>\n<label>WhatsApp<input name="tel" required style="width:100%;padding:10px;margin:4px 0"></label>\n<input type="hidden" name="origem" value="Site">\n<button style="width:100%;padding:12px;background:#2563EB;color:#fff;border:none;border-radius:8px;font-weight:bold">Quero orçamento grátis</button>\n</form>\n<!-- Ao enviar, o lead cai direto no funil (captura via URL ?nome= &tel=) -->';copiarTexto(form);}
 checarAtualizacao();
-function salvarCfg(){DB.cfg={marca:document.getElementById('cfg-marca').value,wa:document.getElementById('cfg-wa').value,tk:document.getElementById('cfg-tk').value,pf:document.getElementById('cfg-pf').value,num:document.getElementById('cfg-num').value,cloud:document.getElementById('cfg-cloud').value.trim().replace(/\/$/,''),evo:document.getElementById('cfg-evo').value.trim().replace(/\/$/,''),evokey:document.getElementById('cfg-evokey').value.trim(),evoinst:document.getElementById('cfg-evoinst').value.trim()||'rick-digital',evomsq:document.getElementById('cfg-evomsq').value,ttuser:document.getElementById('cfg-ttuser').value,ttagenda:document.getElementById('cfg-ttagenda').value,meta:Number(document.getElementById('cfg-meta').value)||10000,pin:(document.getElementById('cfg-pin').value||'').trim(),perfil:document.getElementById('cfg-perfil').value,modelos:document.getElementById('cfg-modelos').value};save();aplicarPerfil();alert('✅ Salvo! Nuvem: '+(DB.cfg.cloud||'não configurada')+' · WhatsApp auto: '+((DB.cfg.evo&&DB.cfg.evokey)?'ON':'off (manual)'));}
+function salvarCfg(){DB.cfg={marca:document.getElementById('cfg-marca').value,wa:document.getElementById('cfg-wa').value,tk:document.getElementById('cfg-tk').value,pf:document.getElementById('cfg-pf').value,num:document.getElementById('cfg-num').value,cloud:document.getElementById('cfg-cloud').value.trim().replace(/\/$/,''),bridge:document.getElementById('cfg-bridge')?document.getElementById('cfg-bridge').value.trim().replace(/\/$/,''):'',evo:document.getElementById('cfg-evo').value.trim().replace(/\/$/,''),evokey:document.getElementById('cfg-evokey').value.trim(),evoinst:document.getElementById('cfg-evoinst').value.trim()||'rick-digital',evomsq:document.getElementById('cfg-evomsq').value,ttuser:document.getElementById('cfg-ttuser').value,ttagenda:document.getElementById('cfg-ttagenda').value,meta:Number(document.getElementById('cfg-meta').value)||10000,pin:(document.getElementById('cfg-pin').value||'').trim(),perfil:document.getElementById('cfg-perfil').value,modelos:document.getElementById('cfg-modelos').value};save();aplicarPerfil();alert('✅ Salvo! Nuvem: '+(DB.cfg.cloud||'não configurada')+' · WhatsApp auto: '+((DB.cfg.evo&&DB.cfg.evokey)?'ON':'off (manual)'));}
 // CONTROLE TOTAL — WhatsApp via Evolution API + TikTok Business
 function evoCfg(){return {url:(DB.cfg.evo||'').replace(/\/$/,''),key:DB.cfg.evokey||'',inst:DB.cfg.evoinst||'rick-digital'};}
 async function evoSend(tel,msg){const c=evoCfg();if(!c.url||!c.key){window.open(waLink(tel,msg),'_blank');return {modo:'manual'};}
@@ -893,13 +1090,23 @@ async function evoTestar(){const st=document.getElementById('evo-st');try{const 
 const r=await fetch(c.url+'/instance/connectionState/'+encodeURIComponent(c.inst),{headers:{apikey:c.key}});let j={};try{j=await r.json();}catch(e){j={};}
 st.textContent='whatsapp auto: '+(r.ok?'ON ✅ '+(j?.instance?.state||'conectado'):'FALHA '+r.status);document.getElementById('evo-log').textContent=r.ok?'Conexão OK — pode usar Disparo auto.':'Falha — confira URL/Key/instância e QR escaneado.';
 acaoReal('WhatsApp auto testado',st.textContent);}catch(e){alert('Falha: '+e.message);}}
-async function evoDisparoQuentes(){const q=DB.leads.filter(l=>String(l.tel||'').replace(/\D/g,'').length>=8&&(l.etapa==='quente'||l.etapa==='novo')).slice(0,10);if(!q.length)return alert('Sem quentes/novos COM FONE REAL no funil. Complete o telefone primeiro.');
+async function evoDisparoQuentes(){
+const q=DB.leads.filter(l=>foneReal(l)&&(l.etapa==='quente'||l.etapa==='novo'));
+if(!q.length)return alert('Sem quentes/novos com WhatsApp válido no funil. Lead de linha fixa não recebe WhatsApp — abordagem por ligação ou rede social.');
 if(!evoCfg().url)return alert('Sem Evolution configurada — abri manual. Vou abrir 1 por vez.');let ok=0;
-for(const l of q){try{await evoSend(l.tel,'Olá '+l.nome+'! Sobre '+l.servico+' — proposta '+DB.cfg.pf+' Responde aqui que eu fecho pra você hoje.');ok++;l.obs=(l.obs||'')+' [auto-wa '+new Date().toLocaleString('pt-BR')+']';await new Promise(r=>setTimeout(r,2500));}catch(e){window.open(waLink(l.tel,'Olá '+l.nome+'! Sobre '+l.servico),'_blank');}}
+for(const l of q){try{await evoSend(l.tel,msgDoLead(l));ok++;l.obs=(l.obs||'')+' [auto-wa '+new Date().toLocaleString('pt-BR')+']';await new Promise(r=>setTimeout(r,2500));}catch(e){window.open(waLink(l.tel,msgDoLead(l)),'_blank');}}
 save();acaoReal('Disparo WhatsApp',ok+'/'+q.length+' enviados via '+(evoCfg().url?'API auto':'manual'));document.getElementById('evo-log').textContent=ok+' enviados — ver Ações reais.';}
 let evoAutoOn=false;function evoBoasVindas(){evoAutoOn=!evoAutoOn;document.getElementById('evo-st').textContent='whatsapp auto: '+(evoAutoOn?'boas-vindas ON 🤖':'off');
 if(evoAutoOn){const _salvar=salvarLead;alert('Boas-vindas ON: todo Novo Lead vai receber "'+DB.cfg.evomsq.slice(0,60)+'..." via API (ou manual se sem API).');} }
-async function evoSendLead(id){const l=DB.leads.find(x=>x.id===id);if(!l)return;try{const r=await evoSend(l.tel,'Olá '+l.nome+'! Sobre '+l.servico+' — '+DB.cfg.evomsq);acaoReal('WhatsApp enviado',l.nome+' via '+(r.modo==='auto'?'API auto ✅':'manual wa.me'));alert(r.modo==='auto'?'Enviado automático ✅':'Sem API — abri manual. Configure Evolution.');}catch(e){alert('Erro API, abri manual: '+e.message);window.open(waLink(l.tel,'Olá '+l.nome+'!'),'blank');}}
+async function evoSendLead(id){const l=DB.leads.find(x=>x.id===id);if(!l)return;
+const c=canalDe(l);
+if(!foneReal(l)){
+  // sem WhatsApp: manda pro canal que funciona
+  if(c==='social'){const r=Object.values(l.redes||{})[0];if(r)window.open(r,'_blank');return alert('Este lead não tem WhatsApp. Abri a rede social dele — mande a mensagem por lá (copie a msg com 📋 Copiar msg).');}
+  if(c==='ligacao'){window.open('tel:+'+String(l.tel||'').replace(/\D/g,''),'_blank');return alert('Só telefone fixo. Ligação aberta — use o script (📋 Copiar script).');}
+  return alert('Sem WhatsApp e sem rede social. Pesquise o nome no Google e complete o telefone na ficha.');
+}
+try{const r=await evoSend(l.tel,msgDoLead(l));acaoReal('WhatsApp enviado',l.nome+' via '+(r.modo==='auto'?'API auto ✅':'manual wa.me'));alert(r.modo==='auto'?'Enviado automático ✅':'Sem API — abri manual. Configure Evolution.');}catch(e){alert('Erro API, abri manual: '+e.message);window.open(waLink(l.tel,msgDoLead(l)),'blank');}}
 function ttAbrir(){window.open(DB.cfg.tk||'https://www.tiktok.com/@ricklima991','_blank');}
 function ttAgendarHoje(){const linhas=(document.getElementById('cfg-ttagenda').value||'').split('\n').filter(Boolean);
 DB.tarefas.push(...linhas.map((t,i)=>({id:Date.now()+i,tit:'TikTok '+t.trim()+' — baixar banner + postar '+(DB.cfg.ttuser||'@ricklima991'),data:new Date().toISOString().slice(0,16),ok:false})));
@@ -1206,7 +1413,7 @@ if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').catch
 // INIT
 if(!checarPIN())throw new Error('bloqueado');
 document.getElementById('cfg-marca').value=DB.cfg.marca;document.getElementById('cfg-wa').value=DB.cfg.wa;document.getElementById('cfg-tk').value=DB.cfg.tk;document.getElementById('cfg-pf').value=DB.cfg.pf;document.getElementById('cfg-num').value=DB.cfg.num;if(document.getElementById('cfg-cloud'))document.getElementById('cfg-cloud').value=DB.cfg.cloud||'https://rick-digital-default-rtdb.firebaseio.com';
-if(document.getElementById('cfg-evo')){document.getElementById('cfg-evo').value=DB.cfg.evo||'';document.getElementById('cfg-evokey').value=DB.cfg.evokey||'';document.getElementById('cfg-evoinst').value=DB.cfg.evoinst||'rick-digital';document.getElementById('cfg-evomsq').value=DB.cfg.evomsq||'Olá! Aqui é do ESTÚDIO RICK DIGITAL. Vi seu contato e quero te mostrar nosso portfólio: https://rickdigitalestudio.github.io/profissional-rickdutra/criacao-de-sites-profissionais.html — posso te mandar uma proposta?';document.getElementById('cfg-ttuser').value=DB.cfg.ttuser||'@ricklima991';if(DB.cfg.ttagenda)document.getElementById('cfg-ttagenda').value=DB.cfg.ttagenda;if(DB.cfg.evo&&DB.cfg.evokey)document.getElementById('evo-st').textContent='whatsapp auto: configurado ✅ teste a conexão';}
+if(document.getElementById('cfg-evo')){document.getElementById('cfg-evo').value=DB.cfg.evo||'';document.getElementById('cfg-evokey').value=DB.cfg.evokey||'';document.getElementById('cfg-evoinst').value=DB.cfg.evoinst||'rick-digital';if(document.getElementById('cfg-bridge'))document.getElementById('cfg-bridge').value=DB.cfg.bridge||'';document.getElementById('cfg-evomsq').value=DB.cfg.evomsq||'Olá! Aqui é do ESTÚDIO RICK DIGITAL. Vi seu contato e quero te mostrar nosso portfólio: https://rickdigitalestudio.github.io/profissional-rickdutra/criacao-de-sites-profissionais.html — posso te mandar uma proposta?';document.getElementById('cfg-ttuser').value=DB.cfg.ttuser||'@ricklima991';if(DB.cfg.ttagenda)document.getElementById('cfg-ttagenda').value=DB.cfg.ttagenda;if(DB.cfg.evo&&DB.cfg.evokey)document.getElementById('evo-st').textContent='whatsapp auto: configurado ✅ teste a conexão';}
 if(DB.acoes?.length)document.getElementById('acoes-reais').innerHTML=DB.acoes.slice(0,10).map(a=>'<div>✔ '+a.quando+' — <b>'+a.t+'</b><br>'+a.d+'</div>').join('');
 try{document.getElementById('cfg-meta').value=DB.cfg.meta||10000;document.getElementById('cfg-pin').value=DB.cfg.pin||'';document.getElementById('cfg-perfil').value=DB.cfg.perfil||'proprietario';if(DB.cfg.modelos)document.getElementById('cfg-modelos').value=DB.cfg.modelos;}catch(e){}
 try{aplicarPerfil();}catch(e){}

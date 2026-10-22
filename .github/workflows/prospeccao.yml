@@ -1,7 +1,8 @@
 name: prospeccao-diaria
 
 # Turno automático da equipe: varre comércios sem site registrado,
-# com PC desligado e app fechado. Resultado em automacao/leads-latest.json.
+# classifica o canal real de cada um (celular/fixo/rede social) e
+# confere se o número tem WhatsApp. Resultado em automacao/leads-latest.json.
 on:
   schedule:
     - cron: "0 11 * * *" # todo dia 08:00 BRT
@@ -18,12 +19,22 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - name: Varrer comércios sem site
+      - name: Varrer comércios sem site (celular + fixo + rede social)
         run: python automacao/prospectar.py
+      - name: Verificar canal (WhatsApp na Evolution + redes)
+        env:
+          EVO_URL: ${{ secrets.EVO_URL }}
+          EVO_KEY: ${{ secrets.EVO_KEY }}
+          EVO_INST: ${{ secrets.EVO_INST || 'rick-digital' }}
+          GOOGLE_PLACES_KEY: ${{ secrets.GOOGLE_PLACES_KEY }}
+        run: |
+          # --evo e --places só entram em ação se a credencial existir;
+          # sem nenhuma delas o script ainda roda e devolve o diagnóstico.
+          python automacao/verificar_canais.py --evo --places --site
       - name: Salvar resultado no repositório
         run: |
           git config user.name "Equipe Rick Digital (auto)"
           git config user.email "acao@github.com"
-          git add automacao/leads-latest.json automacao/historico/
-          git diff --staged --quiet || git commit -m "auto: varredura $(date -u +%F) — candidatos sem site"
+          git add automacao/leads-latest.json automacao/historico/ automacao/canais-cache.json automacao/rodizio.json
+          git diff --staged --quiet || git commit -m "auto: varredura $(date -u +%F) — candidatos sem site com canal real"
           git push

@@ -23,6 +23,10 @@ import urllib.parse
 import urllib.request
 from datetime import datetime, timezone
 
+from canais import (REDES, T_CELULAR, T_FIXO, T_ANTIGO, T_INVALIDO,
+                    escolhe_canal, ordem_redes, parse_br, presenca,
+                    tag_whatsapp)
+
 BASE = os.path.dirname(os.path.abspath(__file__))
 UA = {"User-Agent": "EstudioRickDigital-Prospeccao/2.0 (contato: portfolio rickdigitalestudio.github.io/profissional-rickdutra)"}
 SITE = "https://rickdigitalestudio.github.io/profissional-rickdutra"
@@ -53,6 +57,29 @@ nwr["shop"~"^(%s)$",i](around:%s,%s,%s);
     LEISURE, "%R%", "%LAT%", "%LON%",
     SHOP, "%R%", "%LAT%", "%LON%",
 )
+
+# Segunda passada: quem tem presenca em REDE SOCIAL (e nao tem site).
+# Medindo a regiao ABC: 634 negocios com rede social em 4 cidades, 202
+# deles com telefone e sem site. Boa parte NAO aparece na busca por
+# categoria (bar/restaurante/etc) porque o OSM nao tem a tag de oficio
+# deles. Quem tem Instagram/Facebook cadastrado e um comercio pequeno
+# de verdade - e o canal de entrada quando nao tem WhatsApp.
+QUERY_SOCIAL = """[out:json][timeout:60];(
+nwr["contact:instagram"](around:%s,%s,%s);
+nwr["contact:facebook"](around:%s,%s,%s);
+nwr["contact:tiktok"](around:%s,%s,%s);
+nwr["contact:whatsapp"](around:%s,%s,%s);
+nwr["contact:youtube"](around:%s,%s,%s);
+nwr["contact:twitter"](around:%s,%s,%s);
+);out center 500;""" % (
+    "%R%", "%LAT%", "%LON%",
+    "%R%", "%LAT%", "%LON%",
+    "%R%", "%LAT%", "%LON%",
+    "%R%", "%LAT%", "%LON%",
+    "%R%", "%LAT%", "%LON%",
+    "%R%", "%LAT%", "%LON%",
+)
+
 
 # --- comercial: categoria -> (pitch, landing page) -----------------------
 PITCH = {
@@ -106,33 +133,82 @@ def get_retry(url, tries=2, espera=12, timeout=75):
     raise ultimo
 
 
+TAGS_FONE = ("contact:mobile", "mobile", "contact:whatsapp", "whatsapp",
+             "contact:phone", "phone", "contact:telephone", "telephone")
+
+
 def fone_bruto(tags):
-    for k in ("contact:phone", "phone", "contact:mobile", "mobile",
-              "contact:whatsapp", "whatsapp"):
+    """Texto do telefone cadastrado (preferindo mobile/whatsapp)."""
+    for k in TAGS_FONE:
         v = (tags.get(k) or "").strip()
         if v:
             return v
     return ""
 
 
+def classifica_fone(tags):
+    """Todos os telefones do cadastro, classificados de verdade.
+
+    O motor antigo aceitava qualquer numero com 8+ digitos e marcava
+    'fone_real': True. Medindo a base real: 120 de 152 leads eram LINHA
+    FIXA. O link wa.me existia, a tela dizia "fone real" e a mensagem nao
+    chegava em ninguem.
+
+    Retorna:
+      bruto -> texto original do telefone escolhido
+      info  -> classificacao (canais.parse_br)
+      fixo  -> (bruto, info) de uma linha fixa, se houver (serve p/ ligar)
+      todos -> lista de (bruto, info) de tudo que foi encontrado
+    """
+    brutos, vistos = [], set()
+    origem = {}
+    for k in TAGS_FONE:
+        v = (tags.get(k) or "").strip()
+        if not v:
+            continue
+        d = re.sub(r"\D", "", v)
+        if len(d) < 8 or d in vistos:
+            continue
+        vistos.add(d)
+        brutos.append(v)
+        origem.setdefault(v, k)
+
+    todos = [(b, parse_br(b)) for b in brutos]
+
+    def peso(i):
+        return {T_CELULAR: 3, T_ANTIGO: 2, T_FIXO: 1}.get(i["tipo"], 0)
+
+    wa, fixo = None, None
+    for b, i in todos:
+        p = peso(i)
+        if p >= 2 and (wa is None or p > peso(wa[1])):
+            wa = (b, i)
+        if i["tipo"] == T_FIXO and fixo is None:
+            fixo = (b, i)
+
+    escolhido = wa or (todos[0] if todos else ("", parse_br("")))
+    bruto, info = escolhido
+    # o proprio negocio cadastrou um link de WhatsApp? entao o numero e
+    # declarado como WhatsApp, mesmo que o formato pareca linha fixa.
+    tag_wa = tag_whatsapp(tags)
+    return {"bruto": bruto, "info": info, "fixo": fixo, "todos": todos,
+            "tag_whatsapp": tag_wa,
+            "origem_tag": origem.get(bruto, "")}
+
+
 def normaliza_fone(bruto):
-    """'Pizzaria Rittorno | +55 11 4822 4352' -> '551148224352' (E.164 BR)."""
-    if not bruto:
+    """E.164 do telefone (BR) ou '' se nao servir para WhatsApp."""
+    info = parse_br(bruto)
+    if info["tipo"] == T_INVALIDO:
         return ""
-    digitos = re.sub(r"\D", "", bruto)
-    if len(digitos) < 8:
-        return ""
-    if digitos.startswith("55"):
-        digitos = digitos[2:]
-    if len(digitos) in (10, 11):
-        return "55" + digitos
-    return ""
+    if info["tipo"] == T_ANTIGO:
+        return info.get("e164_celular") or info["e164"]
+    return info["e164"]
 
 
 def tem_site(tags):
-    v = (tags.get("website") or tags.get("contact:website")
-         or tags.get("url") or tags.get("contact:url") or "").strip()
-    return len(v) > 4
+    return bool(presenca(tags)["site"])
+
 
 
 PUBLICO = (
@@ -250,6 +326,125 @@ def monta_query(raio, lat, lon):
                    .replace("%LAT%", lat).replace("%LON%", lon))
 
 
+def monta_query_social(raio, lat, lon):
+    return (QUERY_SOCIAL.replace("%R%", str(raio))
+                            .replace("%LAT%", lat).replace("%LON%", lon))
+
+
+def overpass(q):
+    return get_retry(OVERPASS + "?data=" + urllib.parse.quote(q)).get("elements") or []
+
+
+def monta_mensagem(nome, pitch, pagina, canal, redes):
+    """Mensagem conforme o canal real do lead.
+
+    Mandar "chama no WhatsApp" para quem so tem linha fixa (ou nao tem
+    WhatsApp) e o jeito mais rapido de queimar a abordagem. Aqui o texto
+    muda sozinho: WhatsApp, direct na rede social, ou roteiro de ligacao.
+    """
+    site = SITE + "/" + pagina
+    if canal in ("whatsapp", "whatsapp_provavel"):
+        return ("Ola! Vi que a {nome} ainda nao tem site. {pitch} "
+                "Posso montar em 10 dias, a partir de R$ 997. "
+                "Meu trabalho: {site}").format(nome=nome, pitch=pitch, site=site)
+    if canal == "social" and redes:
+        chave = ordem_redes(redes)[0]
+        rotulo = REDES.get(chave, (chave, ""))[0]
+        url = redes[chave]["url"]
+        return ("Ola! Vi que a {nome} ainda nao tem site. {pitch} "
+                "Posso montar em 10 dias, a partir de R$ 997. "
+                "Achei voces no {rotulo} e preferi mandar por aqui: {url}. "
+                "Meu trabalho: {site}").format(nome=nome, pitch=pitch,
+                                                rotulo=rotulo, url=url, site=site)
+    if canal == "ligacao":
+        return ("Script de ligacao - {nome}: 'Ola, aqui e do Estudio Rick "
+                "Digital. Vi que voces ainda nao tem site, e a {nome} aparece "
+                "no Google quando alguem procura esse servico na regiao. "
+                "Eu monto site em 10 dias a partir de R$ 997. Quer que eu "
+                "mande o exemplo por e-mail ou WhatsApp?'").format(nome=nome)
+    return ("Ola! Vi que a {nome} ainda nao tem site. {pitch} "
+            "Meu trabalho: {site}").format(nome=nome, pitch=pitch, site=site)
+
+
+def _lead_de(e, alvo):
+    """Monta um lead a partir de um elemento do OSM. None se nao serve."""
+    t = e.get("tags") or {}
+    nome = t.get("name")
+    if not nome or eh_publico(nome):
+        return None
+    p = presenca(t)
+    if p["status"] == "tem_site":
+        return None
+    redes = p["redes"]
+    cf = classifica_fone(t)
+    info = cf["info"]
+    tem_fone = info["tipo"] != T_INVALIDO
+    if not tem_fone:
+        info = parse_br("")
+    canal = escolhe_canal(info, redes, None, tag_wa=bool(cf["tag_whatsapp"]))
+    if canal["canal"] == "sem_contato":
+        return None  # nem telefone nem rede: nao da para abordar
+
+    # o proprio negocio cadastrou um link de WhatsApp (contact:whatsapp).
+    # esse numero e declaracao dele de que TEM WhatsApp - mesmo que o
+    # formato pareca linha fixa. Entra como lead de WhatsApp para ser
+    # checado na Evolution, em vez de descartado como "so ligar".
+    fone_wa_tag = ""
+    if cf["tag_whatsapp"]:
+        d = re.sub(r"\D", "", cf["tag_whatsapp"])
+        if len(d) >= 10:
+            fone_wa_tag = d
+    if fone_wa_tag and canal["canal"] in ("ligacao", "social"):
+        canal = dict(canal, canal="whatsapp_provavel",
+                     rotulo="WhatsApp no cadastro · validar",
+                     confianca="media")
+    cat = categoria_de(t)
+    pitch, pagina = PITCH.get(cat, PITCH["loja"])
+    fone = fone_wa_tag or (normaliza_fone(cf["bruto"]) if tem_fone else "")
+    msg = monta_mensagem(nome, pitch, pagina, canal["canal"], redes)
+    fone_fixo = cf["fixo"][1]["e164"] if cf["fixo"] else ""
+
+    return {
+        "nome": nome,
+        "fone": fone,
+        "fone_bruto": cf["bruto"],
+        "fone_fixo": fone_fixo,
+        # fone_real = tem numero que realmente chega no WhatsApp
+        "fone_real": canal["canal"] in ("whatsapp", "whatsapp_provavel"),
+        "fone_ok": tem_fone,
+        "tipo_fone": info["tipo"],
+        "motivo_fone": info.get("motivo", "") or ("sem telefone cadastrado"
+                                                  if not tem_fone else ""),
+        "canal": canal["canal"],
+        "canal_rotulo": canal["rotulo"],
+        "confianca": canal["confianca"],
+        "alternativas": canal["alternativas"],
+        "status_site": p["status"],
+        "tag_whatsapp": cf["tag_whatsapp"],
+        "redes": {k: v["url"] for k, v in redes.items()},
+        "endereco": endereco(t),
+        "cidade": "%s/%s" % (alvo["cidade"], alvo["pais"]),
+        "bairro": t.get("addr:suburb", ""),
+        "categoria": cat,
+        "semSite": True,
+        "origem": "Maps local · %s · sem site no cadastro" % alvo["cidade"],
+        "landing": pagina,
+        "pitch": pitch,
+        "msg": msg,
+        "wa_link": ("https://wa.me/%s?text=%s" % (fone, urllib.parse.quote(msg))
+                    if canal["canal"] in ("whatsapp", "whatsapp_provavel") else ""),
+        "tel_link": ("tel:+%s" % fone_fixo) if fone_fixo else "",
+        "lat": e.get("lat") or (e.get("center") or {}).get("lat"),
+        "lon": e.get("lon") or (e.get("center") or {}).get("lon"),
+    }
+
+
+# prioridade de abordagem: quem tem WhatsApp primeiro, depois rede social,
+# depois so telefone fixo (que exige ligacao).
+PESO_CANAL = {"whatsapp": 0, "whatsapp_provavel": 1,
+              "social": 2, "ligacao": 3, "sem_contato": 9}
+
+
 def varrer(alvo, raio, limite):
     geo_q = "%s, %s" % (alvo["cidade"], alvo["pais"])
     g = get("https://nominatim.openstreetmap.org/search?format=json&limit=1&q="
@@ -257,50 +452,99 @@ def varrer(alvo, raio, limite):
     if not g:
         return [], "cidade nao localizada: " + geo_q
     lat, lon = g[0]["lat"], g[0]["lon"]
-    q = monta_query(raio, lat, lon)
-    j = get_retry(OVERPASS + "?data=" + urllib.parse.quote(q))
-    achados = [e for e in (j.get("elements") or []) if (e.get("tags") or {}).get("name")]
+
+    # --- passada 1: por categoria (achada pelo oficio) ----------------
+    try:
+        achados = overpass(monta_query(raio, lat, lon))
+    except Exception:
+        achados = []
+    achados = [e for e in achados if (e.get("tags") or {}).get("name")]
+
+    # --- passada 2: por presenca em rede social ------------------------
+    try:
+        achados_soc = overpass(monta_query_social(raio, lat, lon))
+    except Exception:
+        achados_soc = []
+    achados_soc = [e for e in achados_soc if (e.get("tags") or {}).get("name")]
 
     com_site = [e for e in achados if tem_site(e["tags"])]
     com_fone = [e for e in achados if normaliza_fone(fone_bruto(e["tags"]))]
-    # o alvo ideal: tem telefone, NAO tem site
-    alvo_leads = [e for e in achados
-                  if normaliza_fone(fone_bruto(e["tags"])) and not tem_site(e["tags"])]
 
     leads = []
-    for e in alvo_leads:
-        t = e["tags"]
-        fone = normaliza_fone(fone_bruto(t))
-        if eh_publico(t.get("name")):
+    vistos_fone, vistos_nome = set(), set()
+
+    def aceita(l):
+        if not l:
+            return False
+        if l["fone"]:
+            if l["fone"] in vistos_fone:
+                return False
+            vistos_fone.add(l["fone"])
+        chave = l["nome"].lower().strip() + "|" + l["cidade"].lower()
+        if chave in vistos_nome:
+            return False
+        vistos_nome.add(chave)
+        return True
+
+    for e in achados:
+        if not normaliza_fone(fone_bruto(e["tags"])) or tem_site(e["tags"]):
             continue
-        cat = categoria_de(t)
-        pitch, pagina = PITCH.get(cat, PITCH["loja"])
-        nome = t.get("name")
-        msg = ("Ola! Vi que a {nome} ainda nao tem site. "
-               "{pitch} Posso montar em 10 dias, a partir de R$ 997. "
-               "Meu trabalho: {site}").format(
-            nome=nome, pitch=pitch, site=SITE + "/" + pagina)
-        leads.append({
-            "nome": nome,
-            "fone": fone,
-            "fone_real": True,
-            "fone_bruto": fone_bruto(t),
-            "endereco": endereco(t),
-            "cidade": "%s/%s" % (alvo["cidade"], alvo["pais"]),
-            "bairro": t.get("addr:suburb", ""),
-            "categoria": cat,
-            "semSite": True,
-            "origem": "Maps local · %s · sem site no cadastro" % alvo["cidade"],
-            "landing": pagina,
-            "pitch": pitch,
-            "wa_link": "https://wa.me/%s?text=%s" % (
-                fone, urllib.parse.quote(msg)),
-            "lat": e.get("lat") or (e.get("center") or {}).get("lat"),
-            "lon": e.get("lon") or (e.get("center") or {}).get("lon"),
-        })
+        l = _lead_de(e, alvo)
+        if aceita(l):
+            leads.append(l)
+
+    # quem tem rede social e nao tem site entra mesmo sem telefone:
+    # o canal e o direct, e o lead e valido do mesmo jeito
+    for e in achados_soc:
+        if tem_site(e["tags"]):
+            continue
+        l = _lead_de(e, alvo)
+        if aceita(l):
+            leads.append(l)
+
+    n_cel = n_fixo = n_social = 0
+    for l in leads:
+        c = l["canal"]
+        if c in ("whatsapp", "whatsapp_provavel"):
+            n_cel += 1
+        elif c == "ligacao":
+            n_fixo += 1
+        else:
+            n_social += 1
+
+    # ordena pela prioridade de abordagem e corta no limite
+    leads.sort(key=lambda l: (PESO_CANAL.get(l["canal"], 8), l["nome"].lower()))
     leads = leads[:limite]
-    return leads, "%s (raio %sm): %d achados, %d com site, %d com fone, %d ALVOS" % (
-        geo_q, raio, len(achados), len(com_site), len(com_fone), len(leads))
+    return leads, ("%s (raio %sm): %d achados, %d com site, %d com fone | "
+                   "%d ALVOS | %d celular, %d so fixo, %d so rede social" % (
+                       geo_q, raio, len(achados), len(com_site), len(com_fone),
+                       len(leads), n_cel, n_fixo, n_social))
+
+
+def migra_lead(l):
+    """Reclassifica lead salvo no formato antigo.
+
+    A base atual foi gerada com 'fone_real': True em tudo. Na primeira
+    varredura com o motor novo, os leads antigos ainda carregam essa
+    marca falsa. Aqui eles sao reclassificados pelo numero real.
+    """
+    if l.get("canal"):
+        return l  # ja esta no formato novo
+    info = parse_br(l.get("fone_bruto") or l.get("fone"))
+    l["tipo_fone"] = info["tipo"]
+    l["motivo_fone"] = info.get("motivo", "")
+    l["fone_real"] = info["tipo"] in (T_CELULAR, T_ANTIGO)
+    l["fone_ok"] = info["tipo"] != T_INVALIDO
+    l["redes"] = l.get("redes") or {}
+    l["status_site"] = l.get("status_site") or "sem_presenca"
+    canal = escolhe_canal(info, l["redes"], None)
+    l["canal"] = canal["canal"]
+    l["canal_rotulo"] = canal["rotulo"]
+    l["confianca"] = canal["confianca"]
+    l["alternativas"] = canal["alternativas"]
+    if l["canal"] not in ("whatsapp", "whatsapp_provavel"):
+        l["wa_link"] = ""
+    return l
 
 
 def main():
@@ -340,12 +584,14 @@ def main():
         time.sleep(3)
 
     # dedup por telefone (o mesmo negocio com 2 tags cai 2x)
-    vistos, unicos = set(), []
+    vistos, vistos_nome, unicos = set(), set(), []
     for l in todos:
         chave = l.get("fone") or (l["nome"] or "").lower()
-        if chave in vistos:
+        nomecid = (l["nome"] or "").lower().strip() + "|" + (l.get("cidade") or "").lower()
+        if chave in vistos or nomecid in vistos_nome:
             continue
         vistos.add(chave)
+        vistos_nome.add(nomecid)
         unicos.append(l)
 
     # une com a base anterior (o arquivo nunca regride)
@@ -355,10 +601,16 @@ def main():
         for l in antigos:
             if not l.get("fone"):
                 continue  # descarta lead antigo sem telefone
+            l = migra_lead(l)
+            if l.get("canal") == "sem_contato":
+                continue  # sem telefone e sem rede: nao da para abordar
             chave = l.get("fone")
-            if chave not in vistos:
-                vistos.add(chave)
-                unicos.append(l)
+            nomecid = (l["nome"] or "").lower().strip() + "|" + (l.get("cidade") or "").lower()
+            if chave in vistos or nomecid in vistos_nome:
+                continue
+            vistos.add(chave)
+            vistos_nome.add(nomecid)
+            unicos.append(l)
     except Exception:
         pass
 
@@ -366,7 +618,9 @@ def main():
     unicos = [l for l in unicos
               if any(c in (l.get("cidade", "") or "").lower() for c in cidades_alvo)]
 
-    payload = {"varredura": varredura, "total": len(unicos), "leads": unicos[:200]}
+    # ordena por prioridade de abordagem e corta
+    unicos.sort(key=lambda l: (PESO_CANAL.get(l.get("canal"), 8), l.get("nome", "").lower()))
+    payload = {"varredura": varredura, "total": len(unicos), "leads": unicos[:600]}
     with open(os.path.join(BASE, "leads-latest.json"), "w", encoding="utf-8") as f:
         json.dump(payload, f, ensure_ascii=False, indent=1)
     hist = os.path.join(BASE, "historico")
@@ -375,10 +629,20 @@ def main():
     with open(os.path.join(hist, "leads-%s.json" % dia), "w", encoding="utf-8") as f:
         json.dump(payload, f, ensure_ascii=False, indent=1)
 
+    # resumo por canal: e isso que diz quem da para abordar e como
+    canais = {}
+    for l in unicos:
+        c = l.get("canal") or "sem_contato"
+        canais[c] = canais.get(c, 0) + 1
     print("VARREDURA " + varredura)
     for m in resumo:
         print(" - " + m)
-    print("TOTAL ALVOS COM TELEFONE: %d" % len(unicos))
+    print("TOTAL ALVOS: %d" % len(unicos))
+    print("POR CANAL:")
+    for k, v in sorted(canais.items(), key=lambda x: -x[1]):
+        print("   %-18s %d" % (k, v))
+    wa = sum(1 for l in unicos if l.get("fone_real"))
+    print("ALVOS COM WHATSAPP POSSIVEL: %d de %d" % (wa, len(unicos)))
 
 
 if __name__ == "__main__":

@@ -4,3 +4,6 @@ __pycache__/
 .DS_Store
 Thumbs.db
 .app-profile/
+# credenciais da Evolution / Google Places (NUNCA versionar)
+automacao/evo-config.json
+*.env

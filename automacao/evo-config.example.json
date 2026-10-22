@@ -1,0 +1,7 @@
+{
+  "_comentario": "Copie para automacao/evo-config.json e preencha. Nao versione o arquivo com a chave real (ele tem .gitignore do lado do evo-config.json). As variaveis de ambiente EVO_URL / EVO_KEY / EVO_INST / GOOGLE_PLACES_KEY tem prioridade sobre este arquivo.",
+  "url": "https://sua-evo.up.railway.app",
+  "key": "COLE_SUA_API_KEY_AQUI",
+  "inst": "rick-digital",
+  "places": ""
+}

@@ -1,7 +1,7 @@
 {
   "raio_m": 8000,
-  "max_por_alvo": 40,
-  "observacao": "Alvos LOCAIS do ABC paulista. Negocio sem site + com telefone = lead mais quente para quem vende site. Pode visitar a pe e fechar pessoalmente.",
+  "max_por_alvo": 120,
+  "observacao": "Alvos LOCAIS do ABC paulista. Negocio sem site + telefone que ALCANCA (celular) = lead mais quente. Quem so tem linha fixa entra como 'ligacao'; quem tem Instagram/Facebook sem WhatsApp entra como 'direct'. Pode visitar a pe e fechar pessoalmente.",
   "alvos": [
     { "cidade": "Rio Grande da Serra, Sao Paulo", "pais": "Brasil", "raio_m": 9000 },
     { "cidade": "Santo Andre, Sao Paulo", "pais": "Brasil", "raio_m": 8000 },
