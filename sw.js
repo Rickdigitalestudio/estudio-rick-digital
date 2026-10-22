@@ -1,4 +1,4 @@
-const CACHE='rick-digital-v36';
+const CACHE='rick-digital-v37';
 const FILES=['./','./index.html','./manifest.json','./icon.svg','./icon-512.png','./qrcode-celular.html','./fotos/livia.jpg','./fotos/nina.jpg','./fotos/vitoria.jpg'];
 const ABS='https://rickdigitalestudio.github.io/estudio-rick-digital';
 

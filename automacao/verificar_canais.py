@@ -242,6 +242,7 @@ def enriquece(lead: dict, cfg: dict, cache: dict, so_wpp: bool) -> dict:
     redes = dict(lead.get("redes") or {})
     wa_verif = lead.get("wa_verificado")
     origem_ver = lead.get("verificacao") or ""
+    site = lead.get("site") or ""
 
     # ---- 1. Google Places (opcional) ---------------------------------
     if cfg.get("places") and not so_wpp:
@@ -259,6 +260,9 @@ def enriquece(lead: dict, cfg: dict, cache: dict, so_wpp: bool) -> dict:
             if p.get("site") and not site:
                 site = p["site"]
                 lead["site"] = site
+                # achou site no Google: o lead deixa de ser "sem site"
+                lead["status_site"] = "tem_site"
+                lead["statusSite"] = "tem_site"
                 if p.get("rede_do_site") and p["rede_do_site"] != "site":
                     redes.setdefault(p["rede_do_site"], p["site"])
             if p.get("fone"):
@@ -266,12 +270,12 @@ def enriquece(lead: dict, cfg: dict, cache: dict, so_wpp: bool) -> dict:
                 if info["tipo"] in (T_CELULAR, T_ANTIGO) and not fone_atual:
                     fone_atual = info["e164"]
                     lead["fone"] = fone_atual
+                    lead["tel"] = fone_atual
                     lead["fone_origem"] = "Google Places"
                 elif info["tipo"] == T_FIXO and not lead.get("fone_fixo"):
                     lead["fone_fixo"] = info["e164"]
 
     # ---- 2. site do negocio (gratis) ---------------------------------
-    site = lead.get("site") or ""
     if not site and cfg.get("usar_site") and lead.get("status_site") == "tem_site":
         site = ""  # status_site ja garante; o site vem do cadastro
     if site and cfg.get("usar_site"):
@@ -337,6 +341,21 @@ def enriquece(lead: dict, cfg: dict, cache: dict, so_wpp: bool) -> dict:
                            (lead.get("fone", ""), urllib.parse.quote(lead["msg"])))
     else:
         lead["wa_link"] = ""
+    # a obs da ficha acompanha o canal real (o app mostra a obs na ficha)
+    if lead.get("obs"):
+        linhas = [ln for ln in str(lead["obs"]).split("\n")
+                  if not ln.startswith("Fonte: varredura")
+                  and not ln.startswith("SEM SITE no cadastro")
+                  and not ln.startswith("JÁ TEM SITE")]
+        if lead.get("status_site") == "tem_site" or site:
+            linhas.append("JÁ TEM SITE%s — não é alvo de site." %
+                          ((" (" + site + ")") if site else ""))
+        else:
+            linhas.append("SEM SITE no cadastro — é o alvo.")
+        linhas.append("Fonte: varredura %s · %s%s" % (
+            lead.get("varredura") or "automática", canal["rotulo"],
+            (" · WhatsApp CONFIRMADO ✅" if wa_verif is True else "")))
+        lead["obs"] = "\n".join(linhas)
     return lead
 
 

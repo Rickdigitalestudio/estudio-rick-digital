@@ -80,6 +80,26 @@ Abra `index.html` no navegador — **sem servidor, sem build, sem API key**. Fun
   cliente no WhatsApp (se o envio automático estiver ligado)
 - Regra de pagamento: 50% na entrada, 100% na conclusão (o progresso move o dinheiro)
 
+### 🤖 10. Varredura noturna com a ficha já preenchida
+A varredura automática (GitHub Actions, 1x/dia) entrega cada lead **no formato
+da ficha do app**:
+
+| Campo | Origem |
+|---|---|
+| `tel` | telefone em **E.164** (55 + DDD + número) — o wa.me nasce certo |
+| `segmento` | ofício em português ("Restaurante / Lanchonete", "Padaria / Confeitaria"…) |
+| `empresa` | nome do comércio |
+| `origem` | "Google Maps" |
+| `statusSite` | `sem_presenca` / `so_redes` / `tem_site` (achado no Google Places) |
+| `obs` | endereço + bairro + cidade + "SEM SITE no cadastro — é o alvo" + fonte |
+| `servico` / `valor` / `etapa` / `prob` / `tags` | já no padrão do app |
+
+Ao clicar em **"+ Jogar os N no funil"**, o lead entra **completo**: nome,
+WhatsApp, segmento, obs, etiquetas e o selo **✅ sem site** no card. Sem
+digitar nada.
+
+Reformatar a base a qualquer momento: `python automacao/migrar_ficha.py`.
+
 ### ⏰ 7. Tarefas · 📋 8. Relatórios
 - Lembretes 24h automáticos, conclusão, origem principal, conversão, export CSV + impressão PDF
 

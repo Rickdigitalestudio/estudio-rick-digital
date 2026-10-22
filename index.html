@@ -538,7 +538,7 @@ Oi {nome}! Passando pra retomar nossa conversa sobre {servico} — ainda faz sen
 const KEY='crm-estudio-rick-v3';
 
 // ════ ATUALIZACAO / BUILD ════
-const BUILD='2026.10.22-2';
+const BUILD='2026.10.22-3';
 const ABS_BASE='https://rickdigitalestudio.github.io/estudio-rick-digital';
 // Estado da atualizacao (preenchido por checarVersao)
 const UPD={remota:'',nova:false,quando:0,erro:''};
@@ -806,7 +806,7 @@ const bproj=document.getElementById('btn-proj-lead');
 if(id){const l=DB.leads.find(x=>x.id===id);if(!l)return;document.getElementById('m-lead-t').textContent='Editar — '+l.nome;
 document.getElementById('l-id').value=l.id;document.getElementById('l-nome').value=l.nome||'';document.getElementById('l-wa').value=l.tel||'';
 document.getElementById('l-email').value=l.email||'';document.getElementById('l-empresa').value=l.empresa||'';document.getElementById('l-segmento').value=l.segmento||'';
-document.getElementById('l-orig').value=l.origem&&[...document.getElementById('l-orig').options].some(o=>o.text===l.origem||o.value===l.origem)?l.origem:'WhatsApp';document.getElementById('l-serv').value=l.servico||'Site Institucional';
+document.getElementById('l-orig').value=(function(){const ov=document.getElementById('l-orig');const opt=[...ov.options];if(l.origem&&opt.some(o=>o.text===l.origem||o.value===l.origem))return l.origem;const raiz=String(l.origem||'').split(' · ')[0];if(raiz&&opt.some(o=>o.value===raiz))return raiz;return 'WhatsApp';})();document.getElementById('l-serv').value=l.servico||'Site Institucional';
 document.getElementById('l-valor').value=l.valor||'';document.getElementById('l-prob').value=(l.prob!==undefined?l.prob:30);document.getElementById('l-etapa').value=l.etapa||'novo';
 document.getElementById('l-tags').value=(l.tags||[]).join(', ');document.getElementById('l-resp').value=l.resp||'';document.getElementById('l-anexo').value=l.anexo||'';document.getElementById('l-obs').value=l.obs||'';document.getElementById('l-inter').value='';
 document.getElementById('l-hist').innerHTML='<b>📜 Histórico ('+(l.timeline||[]).length+')</b><br>'+((l.timeline||[]).slice(-6).reverse().map(t=>'<div style="border-left:3px solid #2563EB;padding:.2rem .5rem;margin:.3rem 0;background:#EFF6FF;border-radius:0 8px 8px 0"><small>'+t.quando+' — '+t.texto+'</small></div>').join('')||'<small class="legend">Sem interações ainda.</small>')+'<small class="legend">Entrada: '+(l.data||'—')+' · Etapa atual desde: '+(l.etapaDesde||'—')+'</small>';
@@ -900,6 +900,17 @@ function normLead(a){
   if(a.wa_link&&!a.waLink)a.waLink=a.wa_link;
   if(a.tel_link&&!a.telLink)a.telLink=a.tel_link;
   if(a.status_site&&!a.statusSite)a.statusSite=a.status_site;
+  // ── campos da ficha nova: a varredura ja entrega tudo preenchido ──
+  if(!a.tel&&a.fone)a.tel=a.fone;
+  if(!a.empresa)a.empresa=a.nome||'';
+  if(!a.segmento&&a.categoria)a.segmento=catLabel(a.categoria);
+  if(a.sem_site!==undefined&&a.semSite===undefined)a.semSite=a.sem_site;
+  if(!a.servico)a.servico='Site Institucional';
+  if(!a.valor)a.valor=997;
+  if(!a.etapa)a.etapa='novo';
+  if(a.prob===undefined)a.prob=30;
+  if(!a.tags||!a.tags.length)a.tags=['sem site'];
+  if(!a.data)a.data=new Date().toLocaleString('pt-BR');
   return a;
 }
 function foneReal(l){
@@ -1003,7 +1014,7 @@ let acao=zap
   ?'<button class="btn btn-v" onclick="copiarTexto(msgDoLead(thisLead('+l.id+')))" title="Copiar a mensagem de abordagem">📋 Copiar msg</button>'
   :'<button class="btn btn-v" onclick="abrirLead('+l.id+')" title="Complete o WhatsApp na ficha">📞 Completar fone</button>';
 if(!zap&&c==='ligacao'&&l.tel)acao='<a class="btn btn-v" href="tel:+'+String(l.tel).replace(/\D/g,'')+'">☎️ Ligar</a>'+acao;
-return '<div class="lead" draggable="true" ondragstart="event.dataTransfer.setData(\'id\','+l.id+')"><b>'+l.nome+'</b> '+badgeCanal(l)+(l.waVerificado===true?'<span class="tag" style="background:#D1FAE5;color:#065F46">📲 zap confirmado</span>':'')+'<small>'+l.servico+' · '+l.origem+'</small><span class="tag">'+l.origem+'</span>'+(l.valor?'<span class="tag">R$ '+l.valor+'</span>':'')+(tl?'<span class="tag" style="background:#E0E7FF;color:#3730A3">🔗 '+tl+' tarefa(s)</span>':'')+'<div class="la">'+acao+(temRede?'<span style="display:inline-flex;gap:.25rem;flex-wrap:wrap">'+linksRedes(l,3)+'</span>':'')+'<button class="btn btn-v" onclick="abrirLead('+l.id+')">Ver</button><button class="btn btn-p" onclick="abrirProjetoDoLead('+l.id+')" title="Criar projeto — atualiza funil, financeiro e relatórios">📁 Projeto</button><button class="btn btn-v" onclick="analisarLead('+l.id+')" title="Analise local do perfil">🔍 Análise</button><button class="btn btn-p" onclick="avancarEtapa('+l.id+')" title="Avancar etapa">➡️</button><button class="btn btn-x" onclick="delLead('+l.id+')">×</button></div></div>';}
+return '<div class="lead" draggable="true" ondragstart="event.dataTransfer.setData(\'id\','+l.id+')"><b>'+l.nome+'</b> '+badgeCanal(l)+(l.waVerificado===true?'<span class="tag" style="background:#D1FAE5;color:#065F46">📲 zap confirmado</span>':'')+'<small>'+l.servico+' · '+l.origem+'</small>'+(l.segmento?'<span class="tag">'+l.segmento+'</span>':'')+(l.semSite!==false?'<span class="tag" style="background:#D1FAE5;color:#065F46">✅ sem site</span>':'')+(l.valor?'<span class="tag">R$ '+l.valor+'</span>':'')+(tl?'<span class="tag" style="background:#E0E7FF;color:#3730A3">🔗 '+tl+' tarefa(s)</span>':'')+'<div class="la">'+acao+(temRede?'<span style="display:inline-flex;gap:.25rem;flex-wrap:wrap">'+linksRedes(l,3)+'</span>':'')+'<button class="btn btn-v" onclick="abrirLead('+l.id+')">Ver</button><button class="btn btn-p" onclick="abrirProjetoDoLead('+l.id+')" title="Criar projeto — atualiza funil, financeiro e relatórios">📁 Projeto</button><button class="btn btn-v" onclick="analisarLead('+l.id+')" title="Analise local do perfil">🔍 Análise</button><button class="btn btn-p" onclick="avancarEtapa('+l.id+')" title="Avancar etapa">➡️</button><button class="btn btn-x" onclick="delLead('+l.id+')">×</button></div></div>';}
 // Análise LOCAL do perfil (heurística a partir dos dados da ficha — estimativa, não é IA externa)
 function analisarLead(id){const l=DB.leads.find(x=>x.id===id);if(!l)return;
 const reais=DB.leads.filter(x=>x.servico===l.servico&&x.etapa==='cliente').length;
@@ -1028,7 +1039,7 @@ if(l.etapa==='quente'||l.etapa==='negociacao'){novaTarefa('Acompanhar '+l.nome+'
 if(l.etapa==='cliente'&&!DB.projetos.some(p=>p.leadId===l.id))criarProjDoLead(l.id);
 save();}
 // 🤖 AUTOMAÇÃO (robô do GitHub — funciona com tudo fechado)
-async function verificarAutomacao(){const el=document.getElementById('auto-status');try{const j=await buscarJSON('automacao/leads-latest.json');const ac=(j.leads||[]).filter(a=>a.fone);el.innerHTML='✅ Última varredura: <b>'+(j.varredura||'—')+'</b> · <b>'+ac.length+'</b> leads prontos para abordar (com telefone, sem site). <b>'+(j.leads||[]).length+'</b> candidatos no total.';}catch(e){el.textContent='Nenhuma varredura ainda (o robô roda 1x/dia) ou offline — use a Busca manual abaixo.';}}
+async function verificarAutomacao(){const el=document.getElementById('auto-status');try{const j=await buscarJSON('automacao/leads-latest.json');const ls=(j.leads||[]).map(normLead);const ac=ls.filter(a=>a.tel||a.fone);const comSeg=ls.filter(a=>a.segmento).length;const comObs=ls.filter(a=>a.obs).length;el.innerHTML='✅ Última varredura: <b>'+(j.varredura||'—')+'</b> · <b>'+ac.length+'</b> leads prontos para abordar (com telefone, sem site). <b>'+ls.length+'</b> candidatos no total. <br><small>📋 ficha pronta: '+comSeg+' com segmento · '+comObs+' com obs preenchida · WhatsApp possível: '+ls.filter(a=>canalDe(a).indexOf('whatsapp')===0).length+'</small>';}catch(e){el.textContent='Nenhuma varredura ainda (o robô roda 1x/dia) ou offline — use a Busca manual abaixo.';}}
 async function carregarAutomacao(){try{const j=await buscarJSON('automacao/leads-latest.json');
 autoLeads=(j.leads||[]).map(normLead).filter(a=>canalDe(a)!=='sem_contato');
 try{autoContatados=JSON.parse(localStorage.getItem('autoContatados')||'{}');}catch(e){autoContatados={};}
@@ -1123,27 +1134,35 @@ function autoLead(i){return autoLeads[i]||{};}
 function copiarMsgAuto(i){const a=autoLead(i);copiarTexto(msgDoLead(a));marcarContatado(i);}
 function marcarContatado(i){const a=autoLeads[i];if(!a)return;const k=(a.fone||a.nome);autoContatados[k]=new Date().toLocaleString('pt-BR');try{localStorage.setItem('autoContatados',JSON.stringify(autoContatados));}catch(e){}renderAuto();}
 function copiarTodosPitches(){const l=autoLeads.filter(a=>a.pitch||a.msg);copiarTexto(l.map(a=>'=== '+a.nome+' ('+canalDe(a)+') ===\n'+msgDoLead(a)).join('\n\n'));}
+// lead da varredura -> ficha do app (o motor ja entrega preenchido)
+function leadDeAuto(a,c){
+  const seg=a.segmento||catLabel(a.categoria);
+  return {id:Date.now()+Math.random(),nome:a.nome,tel:a.tel||a.fone||'',email:a.email||'',
+    empresa:a.empresa||a.nome||'',segmento:seg,
+    origem:a.origem||('Google Maps · '+(seg||a.categoria||'comércio')),
+    servico:a.servico||(a.categoria==='loja'?'Loja Virtual':'Site Institucional'),
+    valor:Number(a.valor)||(a.categoria==='loja'?2497:997),etapa:'novo',prob:a.prob||30,
+    tags:a.tags&&a.tags.length?a.tags:['sem site'],
+    canal:c||a.canal||canalDe(a),tipoFone:a.tipoFone||a.tipo_fone,
+    redes:a.redes||{},waVerificado:a.waVerificado,msgCanal:msgDoLead(a),
+    semSite:a.semSite!==false,statusSite:a.statusSite||a.status_site||'',
+    obs:a.obs||('Endereço: '+(a.endereco||'—')+'\nSEM SITE no cadastro — é o alvo.\nFonte: varredura '+(a.varredura||'')+' · '+(a.canal_rotulo||canalDe(a))),
+    data:new Date().toLocaleString('pt-BR')};
+}
 function addLeadAuto(i){const a=autoLeads[i];if(!a)return;
-DB.leads.unshift({id:Date.now(),nome:a.nome,tel:a.fone||'',origem:'Prospecção 🤖 '+((a.cidade||'').split(',')[0]),
-servico:a.categoria==='loja'?'Loja Virtual':'Site Institucional',valor:a.categoria==='loja'?2497:997,etapa:'novo',
-canal:a.canal||canalDe(a),redes:a.redes||{},waVerificado:a.waVerificado,msgCanal:msgDoLead(a),
-obs:(a.pitch||'')+' | '+(a.endereco||'')+' | varredura '+(a.varredura||'')+' | canal: '+(a.canal_rotulo||canalDe(a)),
-data:new Date().toLocaleString('pt-BR')});
-save();acaoReal('Lead da prospecção','+ '+a.nome+' ('+a.categoria+' · '+(a.canal_rotulo||canalDe(a))+')');}
+DB.leads.unshift(leadDeAuto(a));
+save();acaoReal('Lead da prospecção','+ '+a.nome+' ('+(a.segmento||a.categoria)+' · '+(a.canal_rotulo||canalDe(a))+')');}
 function addAllAuto(){if(!autoLeads.length)return;
 const uteis=autoLeads.filter(a=>canalDe(a)!=='sem_contato');
 let cf=0,cs=0,cl=0;
 uteis.forEach((a,i)=>{const c=canalDe(a);
  if(c.indexOf('whatsapp')===0)cf++;else if(c==='social')cs++;else cl++;
- DB.leads.unshift({id:Date.now()+i,nome:a.nome,tel:a.fone||'',origem:'Automação 🤖 '+(a.cidade||'')+' · '+(a.canal_rotulo||c),
- servico:a.categoria==='loja'?'Loja Virtual':'Site Institucional',valor:a.categoria==='loja'?2497:997,etapa:'novo',
- canal:c,redes:a.redes||{},waVerificado:a.waVerificado,msgCanal:msgDoLead(a),
- obs:'Varredura '+(a.varredura||'')+' · canal: '+(a.canal_rotulo||c)+'. '+(a.motivo_fone||''),
- data:new Date().toLocaleString('pt-BR')});});
-save();acaoReal('🤖 Automação puxada','+'+uteis.length+' no funil ('+cf+' WhatsApp · '+cs+' rede social · '+cl+' só fixo)');
+ DB.leads.unshift(leadDeAuto(a,c));});
+save();acaoReal('🐖 Automação puxada','+'+uteis.length+' no funil ('+cf+' WhatsApp · '+cs+' rede social · '+cl+' só fixo)');
+toast('✅ '+uteis.length+' leads no funil!','Ver',()=>ir('funil'));
 alert('✅ '+uteis.length+' no funil!\n\n📲 '+cf+' com WhatsApp\n📸 '+cs+' só rede social (vão por direct)\n☎️ '+cl+' só telefone fixo (vão por ligação)');}
+
 // 🌐 RECEPÇÃO DE LEADS DO SITE (só dados reais digitados no formulário do portfólio)
-let siteTimer=null;
 function pedirNotificacao(){try{if(!('Notification' in window))return alert('Navegador sem popup — use o sino 🔔 aqui do app');Notification.requestPermission().then(p=>alert(p==='granted'?'✅ Avisos ativados neste aparelho!':'⚠️ Negado — libere no cadeado da barra de endereço'));}catch(e){alert('Erro: '+e.message)}}
 function apitar(){try{const C=window.AudioContext||window.webkitAudioContext;if(!C)return;const c=new C(),o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.frequency.value=880;g.gain.value=.12;o.start();g.gain.exponentialRampToValueAtTime(.001,c.currentTime+.6);o.stop(c.currentTime+.6);}catch(e){}}
 function avisarSite(t,d){notif(t,d);apitar();try{if('Notification' in window&&Notification.permission==='granted')new Notification(t,{body:String(d||'').slice(0,120)});}catch(e){}}
@@ -1432,14 +1451,25 @@ const comSite=todos.filter(e=>temSite(e.tags)).length;
 let filtrados=todos.filter(e=>soSemSite?!temSite(e.tags):true);
 if(soComFone)filtrados=filtrados.filter(e=>temFone(e.tags));
 const comFone=todos.filter(e=>temFone(e.tags)).length;
-mapsQueue=filtrados.slice(0,20).map((e,i)=>({nome:e.tags?.name||('Comércio '+(i+1)+' · '+cat),tel:(e.tags?.['contact:phone']||e.tags?.phone||e.tags?.['contact:mobile']||e.tags?.mobile||'').replace(/^\+/,'')||'',origem:'Google Maps · '+catLabel+' · '+pais,servico:'Site Institucional',end:e.tags?.['addr:street']||e.tags?.['addr:suburb']||geoQ,lat:e.lat||e.center?.lat,lon:e.lon||e.center?.lon,semSite:true,foneReal:temFone(e.tags)}));
+mapsQueue=filtrados.slice(0,20).map((e,i)=>({nome:e.tags?.name||('Comércio '+(i+1)+' · '+cat),tel:(e.tags?.['contact:phone']||e.tags?.phone||e.tags?.['contact:mobile']||e.tags?.mobile||'').replace(/^\+/,'')||'',categoria:catLabel(e.tags?.shop||e.tags?.amenity||e.tags?.cuisine||e.tags?.office||cat),origem:'Google Maps',servico:'Site Institucional',end:e.tags?.['addr:street']||e.tags?.['addr:suburb']||geoQ,lat:e.lat||e.center?.lat,lon:e.lon||e.center?.lon,semSite:true,foneReal:temFone(e.tags)}));
 if(!mapsQueue.length)throw 1;
 document.getElementById('maps-status').innerHTML='✅ <b>'+mapsQueue.length+' candidatos sem site no cadastro em '+geoQ+'</b> ('+todos.length+' achados · '+comSite+' com site descartados · '+comFone+' com telefone no cadastro) — <b>confira no Google antes de abordar</b>';
 document.getElementById('maps-result').innerHTML=mapsQueue.map((m,i)=>'<div style="padding:.6rem 0;border-bottom:1px solid #eee;display:flex;justify-content:space-between;gap:.5rem;flex-wrap:wrap"><div><b>'+m.nome+'</b> <span class="tag" style="background:#FEF3C7;color:#92400E">⚠️ sem site no cadastro — verificar</span>'+(m.foneReal?'<span class="tag" style="background:#D1FAE5">📞 fone real</span>':'<span class="tag" style="background:#FEE2E2;color:#991B1B">sem fone — completar</span>')+'<br><small>'+m.end+' · '+pais+' · <a target=_blank href="https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(m.nome+' '+geoQ)+'">ver no Maps ↗</a> · <a target=_blank href="https://www.google.com/search?q='+encodeURIComponent(m.nome+' '+geoQ)+'">checar site/fone 🔍</a></small></div><button class="btn btn-p" onclick="addMap('+i+')">+ Funil</button></div>').join('')+'<button class="btn-g" style="margin-top:.8rem" onclick="addAllMap()">+ Adicionar todos ao funil</button>';
 notif('📍 Maps: '+mapsQueue.length+' candidatos',catLabel+' em '+geoQ+' · '+comSite+' com site descartados');
 }catch(e){document.getElementById('maps-status').textContent='⚠️ Nenhum SEM site aqui ou API instável — tente outra categoria ou cidade. Use o botão Google Maps como referência.';}}
-function addMap(i){const m=mapsQueue[i];DB.leads.unshift({id:Date.now()+Math.random(),nome:m.nome,tel:m.tel||'',email:'',origem:m.foneReal?m.origem:(m.origem+' · ⚠️ sem fone'),servico:'Site Institucional',valor:997,etapa:'novo',obs:'Sem site NO CADASTRO — confirmar no Google antes de abordar.'+(m.foneReal?(' Fone do cadastro: '+m.tel):' SEM fone no cadastro: pesquise "'+m.nome+'" no Google/Instagram e complete o WhatsApp na ficha.'),data:new Date().toLocaleString('pt-BR')});save();alert(m.foneReal?('✅ '+m.nome+' no funil com fone real!'):('✅ '+m.nome+' no funil SEM fone — abra a ficha e complete o WhatsApp após checar no Google.'));}
-function addAllMap(){let comFone=0;mapsQueue.forEach((m,i)=>{if(m.foneReal)comFone++;DB.leads.unshift({id:Date.now()+i,nome:m.nome,tel:m.tel||'',origem:m.foneReal?m.origem:(m.origem+' · ⚠️ sem fone'),servico:'Site Institucional',valor:997,etapa:'novo',obs:'Sem site no cadastro — verificar no Google.'+(m.foneReal?'':' Completar WhatsApp manualmente.'),data:new Date().toLocaleString('pt-BR')});});save();acaoReal('📍 Fila cheia via Maps','+'+mapsQueue.length+' candidatos ('+comFone+' com fone real) — prova: '+DB.leads.length+' leads totais');alert('✅ Fila cheia! '+comFone+' com fone real, resto precisa completar o WhatsApp.');}
+function addMap(i){const m=mapsQueue[i];if(!m)return;
+const lead={id:Date.now()+Math.random(),nome:m.nome,tel:telE164(m.tel),telBruto:m.tel||'',email:'',
+empresa:m.nome,segmento:m.categoria||'',origem:'Google Maps',servico:'Site Institucional',valor:997,etapa:'novo',prob:30,
+tags:['sem site'],canal:m.foneReal?'whatsapp_provavel':'ligacao',tipoFone:m.foneReal?'celular':'fixo',
+semSite:true,statusSite:'sem_presenca',
+obs:('Endereço: '+(m.end||'—')+'\nSEM SITE no cadastro — é o alvo.\nFonte: busca no mapa · '+
+(m.foneReal?('celular (WhatsApp provável) · fone do cadastro: '+m.tel):('sem fone no cadastro — pesquise "'+m.nome+'" no Google/Instagram e complete o WhatsApp na ficha.'))),
+data:new Date().toLocaleString('pt-BR')};
+DB.leads.unshift(lead);save();
+acaoReal('📍 Lead do mapa',m.nome+' · '+(m.categoria||'comércio')+' · ficha preenchida');
+toast('✅ '+m.nome+' no funil com a ficha preenchida.',null,null);
+alert(m.foneReal?('✅ '+m.nome+' no funil com fone real!'):('✅ '+m.nome+' no funil SEM fone — abra a ficha e complete o WhatsApp após checar no Google.'));}
+function addAllMap(){let comFone=0;mapsQueue.forEach((m,i)=>{if(m.foneReal)comFone++;DB.leads.unshift({id:Date.now()+i,nome:m.nome,tel:telE164(m.tel),telBruto:m.tel||'',email:'',empresa:m.nome,segmento:m.categoria||'',origem:'Google Maps',servico:'Site Institucional',valor:997,etapa:'novo',prob:30,tags:['sem site'],canal:m.foneReal?'whatsapp_provavel':'ligacao',tipoFone:m.foneReal?'celular':'fixo',semSite:true,statusSite:'sem_presenca',obs:'Endereço: '+(m.end||'—')+'\nSEM SITE no cadastro — é o alvo.\nFonte: busca no mapa · '+(m.foneReal?'celular (WhatsApp provável)':'sem fone no cadastro'),data:new Date().toLocaleString('pt-BR')});});save();acaoReal('📍 Fila cheia via Maps','+'+mapsQueue.length+' candidatos ('+comFone+' com fone real) — ficha preenchida');toast('✅ '+mapsQueue.length+' leads no funil com ficha preenchida!',null,null);}
 // BANNER
 function desenharBanner(){const c=document.getElementById('bannerCanvas'),x=c.getContext('2d');const m=document.getElementById('b-modelo').value;
 let g=x.createLinearGradient(0,0,1080,1080);

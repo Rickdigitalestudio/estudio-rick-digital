@@ -31,6 +31,8 @@ jobs:
           # --evo e --places só entram em ação se a credencial existir;
           # sem nenhuma delas o script ainda roda e devolve o diagnóstico.
           python automacao/verificar_canais.py --evo --places --site
+      - name: Deixar a base no formato da ficha do app
+        run: python automacao/migrar_ficha.py
       - name: Salvar resultado no repositório
         run: |
           git config user.name "Equipe Rick Digital (auto)"

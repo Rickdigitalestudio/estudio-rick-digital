@@ -321,6 +321,90 @@ def endereco(tags):
     return ", ".join([p for p in partes if p])
 
 
+# --- segmento: rotulo bonito do ofício (vai na ficha do lead) -------------
+SEGMENTO_ROT = {
+    "padaria": "Padaria / Confeitaria",
+    "restaurante": "Restaurante / Lanchonete",
+    "barbearia": "Barbearia",
+    "beleza": "Salão de Beleza",
+    "informatica": "Informática / Eletrônicos",
+    "pet": "Pet Shop / Veterinário",
+    "farmacia": "Farmácia",
+    "clinica": "Clínica / Consultório",
+    "dentista": "Dentista",
+    "oficina": "Oficina / Auto Center",
+    "loja": "Loja",
+    "contabil": "Contábil",
+    "imobiliaria": "Imobiliária",
+    "advocacia": "Advocacia",
+    "fitness": "Academia / Fitness",
+    "salao_festa": "Salão de Festas / Eventos",
+    "papelaria": "Papelaria / Livraria",
+    "eletro": "Eletrônicos / Celulares",
+}
+
+
+def segmento_de(cat):
+    """'padaria' -> 'Padaria / Confeitaria' (vai na ficha do lead)."""
+    c = (cat or "").strip().lower()
+    if not c:
+        return ""
+    return SEGMENTO_ROT.get(c, c.capitalize())
+
+
+def formato_app(l):
+    """Preenche os campos que o APP usa na ficha do lead (formato novo).
+
+    O app mostra: nome, whatsapp, empresa, segmento, origem, interesse,
+    valor, etapa, etiquetas, obs e historico. A varredura entrega tudo isso
+    pronto: o usuario so digita a abordagem e envia a proposta.
+
+    Antes a varredura devolvia 'fone' cru e um pitch de texto solto; o app
+    montava a obs na mao. Agora cada lead ja nasce no formato da ficha.
+    """
+    cat = (l.get("categoria") or "").strip().lower()
+    seg = l.get("segmento") or segmento_de(l.get("categoria"))
+    l["segmento"] = seg
+    l["empresa"] = l.get("empresa") or l.get("nome") or ""
+    # telefone em E.164: e o que o app usa para montar o wa.me
+    l["tel"] = l.get("tel") or l.get("fone") or ""
+    email = (l.get("redes") or {}).get("email") or ""
+    if email.startswith("mailto:"):
+        email = email[7:]
+    l["email"] = l.get("email") or email
+    # servico e valor: loja virtual so faz sentido para quem vende produto
+    l["servico"] = l.get("servico") or ("Loja Virtual" if cat == "loja"
+                                        else "Site Institucional")
+    l["valor"] = l.get("valor") or (2497 if cat == "loja" else 997)
+    l["etapa"] = l.get("etapa") or "novo"
+    l["prob"] = l.get("prob") if l.get("prob") is not None else 30
+    tags = list(l.get("tags") or [])
+    if "sem site" not in tags:
+        tags.insert(0, "sem site")
+    l["tags"] = tags
+    l["sem_site"] = True
+    l["semSite"] = True
+    l["statusSite"] = l.get("statusSite") or l.get("status_site") or "sem_presenca"
+    l["site"] = l.get("site") or ""
+    # origem no vocabulario do app (o segmento e a cidade vao em campo proprio)
+    l["origem"] = "Google Maps"
+    # obs no formato novo: endereco / sem site / fonte / data
+    linhas = []
+    if l.get("endereco"):
+        linhas.append("Endereço: " + l["endereco"])
+    if l.get("bairro"):
+        linhas.append("Bairro: " + l["bairro"])
+    if l.get("cidade"):
+        linhas.append("Cidade: " + l["cidade"])
+    linhas.append("SEM SITE no cadastro — é o alvo.")
+    canal_txt = l.get("canal_rotulo") or l.get("canal") or ""
+    linhas.append("Fonte: varredura %s · %s" % (l.get("varredura") or "automática",
+                                                 canal_txt))
+    l["obs"] = "\n".join(linhas)
+    l["data"] = l.get("data") or datetime.now().strftime("%d/%m/%Y %H:%M")
+    return l
+
+
 def monta_query(raio, lat, lon):
     return (QUERY.replace("%R%", str(raio))
                    .replace("%LAT%", lat).replace("%LON%", lon))
@@ -537,6 +621,10 @@ def migra_lead(l):
     l["fone_ok"] = info["tipo"] != T_INVALIDO
     l["redes"] = l.get("redes") or {}
     l["status_site"] = l.get("status_site") or "sem_presenca"
+    # telefone no padrao novo (E.164): e o que o app usa no wa.me
+    tel = normaliza_fone(l.get("fone_bruto") or l.get("fone"))
+    if tel:
+        l["fone"] = tel
     canal = escolhe_canal(info, l["redes"], None)
     l["canal"] = canal["canal"]
     l["canal_rotulo"] = canal["rotulo"]
@@ -577,6 +665,7 @@ def main():
             leads, msg = varrer(alvo, raio, limite)
             for l in leads:
                 l["varredura"] = varredura
+                formato_app(l)
             todos.extend(leads)
             resumo.append(msg)
         except Exception as e:
@@ -602,6 +691,7 @@ def main():
             if not l.get("fone"):
                 continue  # descarta lead antigo sem telefone
             l = migra_lead(l)
+            formato_app(l)
             if l.get("canal") == "sem_contato":
                 continue  # sem telefone e sem rede: nao da para abordar
             chave = l.get("fone")
