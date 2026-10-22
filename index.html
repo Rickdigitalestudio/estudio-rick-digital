@@ -320,10 +320,11 @@ canvas#bannerCanvas{width:100%;max-width:420px;border-radius:16px;border:1px sol
 <div class="topo"><div><h1>📁 Projetos</h1><p class="legend" id="p-resumo">6 criados · 5 concluídos e pagos</p></div></div>
 <div class="panel"><h3>➕ Novo projeto (regra: 50% na entrada, 100% na conclusão)</h3>
 <div class="grid2"><div><label>Projeto</label><input id="p-nome" placeholder="Ex: Site Padaria Pão Dourado"></div>
-<div><label>Cliente</label><input id="p-cli" placeholder="Nome do cliente"></div></div>
+<div><label>Cliente (escolha o lead do funil)</label><select id="p-lead" onchange="preencherProjeto()"><option value="">— escolher lead —</option></select></div></div>
 <div class="grid2" style="margin-top:.6rem"><div><label>Serviço</label><select id="p-serv"><option>Fanpage — R$ 497</option><option>Site Institucional — R$ 997</option><option>Landing Page — R$ 697</option><option>Loja Virtual — R$ 2.497</option><option>Manutenção — R$ 297</option></select></div>
 <div><label>Valor fechado R$</label><input type="number" id="p-valor" value="997"></div></div>
-<div style="margin-top:.6rem"><button class="btn-g" onclick="addProj()">+ Criar projeto (50% recebido)</button></div></div>
+<div style="margin-top:.6rem;display:flex;gap:.5rem;flex-wrap:wrap"><button class="btn-g" onclick="addProj()">+ Criar projeto (50% recebido)</button><button class="btn btn-v" onclick="document.getElementById('p-lead').value='';preencherProjeto()">Limpar seleção</button></div>
+<p class="legend" style="margin-top:.5rem">Com um lead selecionado, o programa move o lead para <b>✅ Cliente</b>, cria a tarefa de entrega, atualiza <b>funil, financeiro, dashboard e relatórios</b> e avisa o cliente no WhatsApp.</p></div>
 <div class="panel"><div id="p-lista"></div></div>
 </div>
 <!-- TAREFAS -->
@@ -421,6 +422,7 @@ canvas#bannerCanvas{width:100%;max-width:420px;border-radius:16px;border:1px sol
 <label>Portfólio</label><input id="cfg-pf" value="https://rickdigitalestudio.github.io/profissional-rickdutra/">
 <label>WhatsApp número (só números p/ mensagem direta)</label><input id="cfg-num" value="5511989426415">
 <label>☁️ Nuvem (mesmo controle PC + celular sem estar conectado) — cole a URL do Firebase Realtime Database</label><input id="cfg-cloud" placeholder="https://seu-projeto-default-rtdb.firebaseio.com">
+<label>🔑 Chave Google Places (opcional) — deixa a busca da ficha usar o Google de verdade. Sem chave, o app usa o OpenStreetMap (também sem chave).</label><input id="cfg-places" placeholder="AIza... (opcional)">
 <p class="legend">Grátis: console.firebase.google.com → criar projeto → Realtime Database → copiar URL. <b>PC e celular com a mesma URL + Auto-sync ON nos dois = tudo igual nos dois.</b> Veja o passo a passo em <b>firebase-passo-a-passo.txt</b>.</p>
 <div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.5rem">
 <button class="btn btn-p" onclick="cloudPush()">☁️⬆️ Enviar p/ nuvem</button>
@@ -503,20 +505,32 @@ Oi {nome}! Passando pra retomar nossa conversa sobre {servico} — ainda faz sen
 </div>
 <!-- MODAL LEAD -->
 <div class="modal-bg" id="m-lead"><div class="modal"><h2 id="m-lead-t">Novo Lead</h2>
-<input type="hidden" id="l-id"><label>Nome *</label><input id="l-nome"><label>WhatsApp (só entra no disparo com fone real — pode completar depois)</label><input id="l-wa" placeholder="11999999999">
-<label>E-mail</label><input id="l-email" placeholder="cliente@email.com">
-<div class="grid2"><div><label>Empresa</label><input id="l-empresa" placeholder="Nome da empresa"></div><div><label>Segmento</label><input id="l-segmento" placeholder="Ex: padaria, salão, loja"></div></div>
+<div style="background:#EFF6FF;border:2px solid #2563EB;border-radius:12px;padding:.7rem;margin-bottom:.7rem">
+<label style="margin-top:0">🔍 Buscar no Google (nome do comércio, endereço ou telefone)</label>
+<div style="display:flex;gap:.4rem;flex-wrap:wrap">
+<input id="g-busca" placeholder="Ex: 603 Pizzerie &amp; Ristorante" onkeydown="if(event.key==='Enter')buscarGoogle()" style="flex:1;min-width:180px">
+<button class="btn btn-p" onclick="buscarGoogle()">🔍 Buscar</button>
+</div>
+<div id="g-status" class="legend" style="margin-top:.4rem">Busque o comércio: o app traz nome, telefone, endereço e se <b>já tem site</b> (só entram os sem site).</div>
+<div id="g-resultados" style="margin-top:.4rem"></div>
+</div>
+<input type="hidden" id="l-id"><label>Nome *</label><input id="l-nome" placeholder="Nome do cliente ou do comércio">
+<label>WhatsApp (com DDD — só entra no disparo se for celular)</label><input id="l-wa" placeholder="11 98888-7777" oninput="dicaTelefone()">
+<div id="l-tel-dica" class="legend" style="margin-top:.2rem"></div>
+<label>E-mail</label><input id="l-email" placeholder="opcional">
+<div class="grid2"><div><label>Empresa</label><input id="l-empresa" placeholder="opcional"></div><div><label>Segmento</label><input id="l-segmento" placeholder="opcional (ex: restaurante)"></div></div>
 <label>Origem</label><select id="l-orig"><option>WhatsApp</option><option>TikTok</option><option>Site</option><option>Instagram</option><option>Facebook</option><option>Google Maps</option><option>Automação 🤖</option><option>Indicação</option></select>
-<label>Interesse</label><select id="l-serv"><option>Fanpage</option><option>Site Institucional</option><option>Landing Page</option><option>Loja Virtual</option><option>Manutenção</option></select>
+<label>Interesse</label><select id="l-serv"><option>Site Institucional</option><option>Landing Page</option><option>Fanpage</option><option>Loja Virtual</option><option>Manutenção</option></select>
 <div class="grid2"><div><label>Valor R$</label><input type="number" id="l-valor" value="997"></div><div><label>Probabilidade %</label><input type="number" id="l-prob" value="30" min="0" max="100"></div></div>
 <label>Etapa</label><select id="l-etapa"><option value="novo">🆕 Novo</option><option value="qualificacao">🔍 Qualificação</option><option value="quente">🔥 Quente</option><option value="negociacao">🤝 Negociação</option><option value="cliente">✅ Cliente</option><option value="perdido">❌ Perdido</option><option value="arquivado">⚫ Arquivado</option></select>
-<label>Etiquetas (separe por vírgula: quente, site, indicação)</label><input id="l-tags" placeholder="quente, site, indicação">
+<label>Etiquetas (separe por vírgula)</label><input id="l-tags" placeholder="ex: sem site, indicação">
 <label>Responsável</label><select id="l-resp"><option value="">— sem responsável —</option></select>
-<label>Anexo (nome do arquivo/proposta — ex: proposta.pdf)</label><input id="l-anexo" placeholder="proposta-cliente.pdf">
-<label>Obs</label><textarea id="l-obs" rows="2"></textarea>
-<label>Nova interação (ligaçao, visita, mensagem — entra no histórico)</label><input id="l-inter" placeholder="Ex: liguei, pediu proposta de site">
+<label>Anexo (nome do arquivo/proposta)</label><input id="l-anexo" placeholder="ex: proposta.pdf">
+<label>Obs</label><textarea id="l-obs" rows="2" placeholder="anotações internas"></textarea>
+<button class="btn btn-v" style="margin:.3rem 0" onclick="modeloObs()">💡 Modelo de obs (sem site)</button>
+<label>Nova interação (ligação, visita, mensagem — entra no histórico)</label><input id="l-inter" placeholder="ex: liguei, pediu proposta de site">
 <div id="l-hist" style="margin:.5rem 0;font-size:.82rem"></div>
-<div style="display:flex;gap:.6rem;justify-content:flex-end;margin-top:1rem;flex-wrap:wrap"><button class="btn btn-v" onclick="fecharLead()">Cancelar</button><button class="btn-g" onclick="salvarLead()">Salvar</button></div>
+<div style="display:flex;gap:.6rem;justify-content:flex-end;margin-top:1rem;flex-wrap:wrap"><button class="btn btn-v" onclick="fecharLead()">Cancelar</button><button id="btn-proj-lead" class="btn btn-p" style="display:none" onclick="abrirProjetoDoLead(document.getElementById('l-id').value)">📁 Criar projeto</button><button class="btn-g" onclick="salvarLead()">Salvar</button></div>
 </div></div>
 <!-- MODAL TAREFA -->
 <div class="modal-bg" id="m-tar"><div class="modal"><h2>Nova Tarefa</h2><label>Título</label><input id="t-tit" placeholder="Ligar para lead X amanhã 14h"><label>Data</label><input type="datetime-local" id="t-data"><div style="display:flex;gap:.6rem;justify-content:flex-end;margin-top:1rem"><button class="btn btn-v" onclick="document.getElementById('m-tar').classList.remove('aberto')">Cancelar</button><button class="btn-g" onclick="salvarTarefa()">Criar</button></div></div></div>
@@ -524,7 +538,7 @@ Oi {nome}! Passando pra retomar nossa conversa sobre {servico} — ainda faz sen
 const KEY='crm-estudio-rick-v3';
 
 // ════ ATUALIZACAO / BUILD ════
-const BUILD='2026.10.22-1';
+const BUILD='2026.10.22-2';
 const ABS_BASE='https://rickdigitalestudio.github.io/estudio-rick-digital';
 // Estado da atualizacao (preenchido por checarVersao)
 const UPD={remota:'',nova:false,quando:0,erro:''};
@@ -657,7 +671,7 @@ if(DB.acoes?.length){const l7=Date.now()-7*86400000;DB.acoes=DB.acoes.filter(a=>
 localStorage.setItem(KEY,JSON.stringify(DB));}catch(e){}}
 function save(){DB.ultSave=Date.now();snapshotDia();localStorage.setItem(KEY,JSON.stringify(DB));render();}
 function num(){return (DB.cfg.num||'5511989426415').replace(/\D/g,'');}
-function waLink(tel,msg){return 'https://wa.me/'+tel.replace(/\D/g,'')+'?text='+encodeURIComponent(msg);}
+function waLink(tel,msg){return 'https://wa.me/'+telE164(tel)+'?text='+encodeURIComponent(msg);}
 // NAV
 document.querySelectorAll('aside nav a').forEach(a=>a.onclick=e=>{e.preventDefault();ir(a.dataset.aba);});
 function ir(n){document.querySelectorAll('.aba').forEach(x=>x.classList.remove('ativa'));document.getElementById('aba-'+n).classList.add('ativa');document.querySelectorAll('aside nav a').forEach(a=>a.classList.toggle('ativo',a.dataset.aba===n));}
@@ -691,8 +705,104 @@ function fotoIA(f){const k=f.id||slug(f.n);const r=RETRATOS[k];if(!r)return '';r
 function iniEq(){EQUIPE.forEach(e=>{if(!e.id)e.id=slug(e.n);delete e.robo;});if(!DB.eq)DB.eq=EQUIPE.map(e=>({...e,feitos:0}));else EQUIPE.forEach(e=>{const x=DB.eq.find(y=>y.n===e.n);if(!x)DB.eq.push({...e,feitos:0});else{if(e.foto)x.foto=e.foto;if(e.fotoLocal)x.fotoLocal=e.fotoLocal;delete x.robo;x.s=e.s;if(!x.id)x.id=e.id;}});(DB.eq||[]).forEach(x=>delete x.robo);}
 function neq(){return (DB.eq&&DB.eq.length)||EQUIPE.length;}
 // LEADS — ficha completa + anti-duplicata + histórico + follow-up 24h/48h/7d
+// ─── BUSCA REAL DE DADOS (Google Places + OpenStreetMap) ────────────────
+// O lead entra com tudo preenchido: nome, telefone, endereco, segmento e
+// se JA TEM SITE (que e exatamente o que a gente vende). Se a busca nao
+// achar, o cadastro manual abaixo continua valendo.
+let gResultados=[];
+function gKey(){return String((DB.cfg&&DB.cfg.places)||'').trim();}
+function escRe(s){return String(s).replace(/[.*+?^${}()|[\]\\]/g,'\\$&');}
+const CAT_ROT={amenity:'comércio / serviço',shop:'loja',tourism:'turismo',leisure:'lazer',office:'escritório',craft:'ateliê',restaurant:'restaurante',cuisine:'culinária',hotel:'pousada / hotel',cafe:'café / lanchonete',bar:'bar',pharmacy:'farmácia',clinic:'clínica',hairdresser:'salão de beleza',dentist:'dentista',school:'escola',church:'igreja',bank:'banco',supermarket:'supermercado'};
+function catLabel(c){const k=String(c||'').trim().toLowerCase();if(!k)return '';return CAT_ROT[k]||k.replace(/_/g,' ');}
+function normTel(tel){return String(tel||'').replace(/\D/g,'');}
+function telE164(tel){
+  let d=normTel(tel);
+  if(!d)return '';
+  const c=classificaTel(d);
+  if(c.e164)return c.e164;
+  if(c.e164Celular)return c.e164Celular;
+  return d;
+}
+function dicaTelHTML(tel){
+  if(!String(tel||'').trim())return '';
+  const c=classificaTel(tel);
+  if(c.tipo==='celular')return '<span style="color:#065F46">📱 Celular — dá pra mandar WhatsApp ✅</span>';
+  if(c.tipo==='antigo')return '<span style="color:#92400E">📱 Celular antigo (falta o 9) — corrija para 11 dígitos</span>';
+  if(c.tipo==='fixo')return '<span style="color:#991B1B">☎️ Linha fixa — <b>não tem WhatsApp</b>: use ligação ou ache o celular no Google.</span>';
+  return '<span style="color:#991B1B">⚠️ Número inválido — confira DDD e dígitos.</span>';
+}
+function dicaTelefone(){const el=document.getElementById('l-tel-dica');if(el)el.innerHTML=dicaTelHTML(document.getElementById('l-wa').value);}
+function modeloObs(){
+  const el=document.getElementById('l-obs');if(!el)return;
+  const n=(document.getElementById('l-nome').value||'').trim();
+  el.value=(n?n+': ':'')+'Aparece no Google Maps e não tem site próprio.\nAchado em '+new Date().toLocaleDateString('pt-BR')+' — oportunidade: site + fanpage.';
+}
+async function buscarGoogle(){
+  const q=(document.getElementById('g-busca').value||'').trim();
+  const st=document.getElementById('g-status'),rs=document.getElementById('g-resultados');
+  if(!q){st.innerHTML='⚠️ Digite o nome do comércio (ou o telefone) para buscar.';return;}
+  st.innerHTML='⏳ Buscando "'+q+'"...';rs.innerHTML='';gResultados=[];
+  try{
+    if(gKey()){
+      const r=await fetch('https://places.googleapis.com/v1/places:searchText',{method:'POST',
+        headers:{'Content-Type':'application/json','X-Goog-Api-Key':gKey(),'X-Goog-FieldMask':'places.id,places.displayName,places.formattedAddress,places.nationalPhoneNumber,places.internationalPhoneNumber,places.websiteUri,places.primaryType,places.types,places.googleMapsUri'},
+        body:JSON.stringify({textQuery:q,languageCode:'pt-BR',regionCode:'BR',maxResultCount:8})});
+      if(!r.ok)throw new Error('Places HTTP '+r.status);
+      const j=await r.json();
+      gResultados=(j.places||[]).map(p=>({nome:(p.displayName&&p.displayName.text)||p.id,telefone:p.nationalPhoneNumber||p.internationalPhoneNumber||'',email:'',site:p.websiteUri||'',endereco:p.formattedAddress||'',categoria:String(p.primaryType||(p.types||[])[0]||'').replace(/_/g,' '),lat:'',lon:'',fonte:'Google Places',maps:p.googleMapsUri||''}));
+    }
+    if(!gResultados.length){
+      const r=await fetch('https://nominatim.openstreetmap.org/search?format=jsonv2&addressdetails=1&extratags=1&namedetails=1&limit=10&q='+encodeURIComponent(q));
+      const j=await r.json();
+      gResultados=(j||[]).map(e=>{const x=e.extratags||{};
+        return {nome:(e.namedetails&&e.namedetails.name)||e.name||String(e.display_name||'').split(',')[0],
+          telefone:x.phone||x['contact:phone']||x['contact:mobile']||'',email:x.email||x['contact:email']||'',
+          site:x.website||x['contact:website']||x.url||'',endereco:e.display_name||'',
+          categoria:String(e.category||'').split(';')[0]||'',lat:e.lat,lon:e.lon,fonte:'OpenStreetMap',
+          maps:'https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(e.display_name||'')};});
+      const semTel=gResultados.filter(x=>!x.telefone&&x.lat).slice(0,8);
+      if(semTel.length){try{
+        const nomes=semTel.map(x=>escRe(x.nome)).join('|');
+        const centros=semTel.map(x=>x.lat+','+x.lon).join(',');
+        const q2='[out:json][timeout:25];(nwr(around:120,'+centros+')["name"~"^('+nomes+')$",i];);out center tags;';
+        const ov=await(await fetch('https://overpass-api.de/api/interpreter?data='+encodeURIComponent(q2))).json();
+        const tags=(ov.elements||[]).map(e=>e.tags||{});
+        semTel.forEach(x=>{const t=tags.find(t=>t.name&&String(t.name).toLowerCase()===String(x.nome).toLowerCase())||{};
+          if(!x.telefone)x.telefone=t.phone||t['contact:phone']||t['contact:mobile']||'';
+          if(!x.site)x.site=t.website||t['contact:website']||t.url||'';
+          if(!x.email)x.email=t.email||t['contact:email']||'';
+          if(t.shop||t.cuisine||t.office||t.craft||t.tourism)x.categoria=t.shop||t.cuisine||t.office||t.craft||t.tourism;});
+      }catch(e){}}
+    }
+    if(!gResultados.length){st.innerHTML='❌ Nada encontrado para "'+q+'". <b>Cadastre manualmente</b> abaixo (ou tente só o nome, sem a rua).';return;}
+    st.innerHTML='✅ '+gResultados.length+' resultado(s) — clique em <b>Usar</b> para preencher a ficha. <small>⚠️ O cadastro aberto nem sempre tem o site registrado: confirme no Google (botão Maps ↗) antes de abordar.</small>';
+    rs.innerHTML=gResultados.map((g,i)=>'<div style="padding:.5rem 0;border-bottom:1px solid #E5E7EB;display:flex;justify-content:space-between;gap:.5rem;flex-wrap:wrap"><div><b>'+g.nome+'</b>'+(catLabel(g.categoria)?' <span class="tag">'+catLabel(g.categoria)+'</span>':'')+(g.site?' <span class="tag" style="background:#FEE2E2;color:#991B1B">🌐 já tem site</span>':' <span class="tag" style="background:#D1FAE5;color:#065F46">✅ sem site no cadastro — alvo</span>')+'<br><small>'+(g.telefone?'📞 '+g.telefone:'☎️ sem telefone no cadastro')+(g.endereco?' · '+g.endereco:'')+' · '+g.fonte+'</small></div><div style="display:flex;gap:.3rem"><button class="btn btn-p" onclick="usarGoogle('+i+')">Usar</button>'+(g.maps?'<a class="btn btn-v" target="_blank rel=noopener" href="'+g.maps+'">Maps ↗</a>':'')+'</div></div>').join('');
+  }catch(e){
+    st.innerHTML='⚠️ Busca falhou ('+(e.message||'erro')+'). <b>Cadastre manualmente</b> — o resto do app funciona.';
+  }
+}
+function usarGoogle(i){
+  const g=gResultados[i];if(!g)return;
+  const set=(id,v)=>{const el=document.getElementById(id);if(el)el.value=v||'';};
+  set('l-nome',g.nome);set('l-empresa',g.nome);set('l-segmento',catLabel(g.categoria));set('l-wa',g.telefone);set('l-email',g.email);
+  const orig=document.getElementById('l-orig');
+  if(orig&&[...orig.options].some(o=>o.value==='Google Maps'))orig.value='Google Maps';
+  const tg=document.getElementById('l-tags');
+  if(tg&&!tg.value.trim())tg.value=g.site?'tem site':'sem site';
+  const obs=[];
+  if(g.endereco)obs.push('Endereço: '+g.endereco);
+  if(g.site)obs.push('Já tem site ('+g.site+') — não é alvo de site.');else obs.push('SEM SITE no cadastro — é o alvo.');
+if(!g.site){const sv=document.getElementById('l-serv');if(sv)sv.value='Site Institucional';}
+  if(g.telefone)obs.push('Fonte: '+g.fonte+' · telefone '+(telWhats(g.telefone)?'celular (WhatsApp provável)':'fixo — só ligação'));
+  obs.push('Verificado em '+new Date().toLocaleDateString('pt-BR'));
+  set('l-obs',obs.join('\n'));
+  const d=document.getElementById('l-tel-dica');if(d)d.innerHTML=dicaTelHTML(g.telefone);
+  document.getElementById('g-status').innerHTML='✅ Dados de <b>'+g.nome+'</b> copiados para a ficha. <b>Confira e complete</b> o que faltar (ex.: telefone).';
+  if(!g.telefone)document.getElementById('l-wa').focus();
+}
 function preencherResp(){const s=document.getElementById('l-resp');if(!s)return;const atual=s.value;s.innerHTML='<option value="">— sem responsável —</option>'+(DB.eq||EQUIPE).map(f=>'<option value="'+f.n+'">'+f.n+'</option>').join('');if(atual)s.value=atual;}
 function abrirLead(id){document.getElementById('m-lead').classList.add('aberto');preencherResp();
+const bproj=document.getElementById('btn-proj-lead');
 if(id){const l=DB.leads.find(x=>x.id===id);if(!l)return;document.getElementById('m-lead-t').textContent='Editar — '+l.nome;
 document.getElementById('l-id').value=l.id;document.getElementById('l-nome').value=l.nome||'';document.getElementById('l-wa').value=l.tel||'';
 document.getElementById('l-email').value=l.email||'';document.getElementById('l-empresa').value=l.empresa||'';document.getElementById('l-segmento').value=l.segmento||'';
@@ -700,23 +810,37 @@ document.getElementById('l-orig').value=l.origem&&[...document.getElementById('l
 document.getElementById('l-valor').value=l.valor||'';document.getElementById('l-prob').value=(l.prob!==undefined?l.prob:30);document.getElementById('l-etapa').value=l.etapa||'novo';
 document.getElementById('l-tags').value=(l.tags||[]).join(', ');document.getElementById('l-resp').value=l.resp||'';document.getElementById('l-anexo').value=l.anexo||'';document.getElementById('l-obs').value=l.obs||'';document.getElementById('l-inter').value='';
 document.getElementById('l-hist').innerHTML='<b>📜 Histórico ('+(l.timeline||[]).length+')</b><br>'+((l.timeline||[]).slice(-6).reverse().map(t=>'<div style="border-left:3px solid #2563EB;padding:.2rem .5rem;margin:.3rem 0;background:#EFF6FF;border-radius:0 8px 8px 0"><small>'+t.quando+' — '+t.texto+'</small></div>').join('')||'<small class="legend">Sem interações ainda.</small>')+'<small class="legend">Entrada: '+(l.data||'—')+' · Etapa atual desde: '+(l.etapaDesde||'—')+'</small>';
-}else{document.getElementById('m-lead-t').textContent='Novo Lead';['l-id','l-nome','l-wa','l-email','l-empresa','l-segmento','l-tags','l-anexo','l-obs','l-inter'].forEach(i=>document.getElementById(i).value='');document.getElementById('l-valor').value='997';document.getElementById('l-prob').value='30';document.getElementById('l-hist').innerHTML='';}}
+if(bproj)bproj.style.display=(l.etapa==='negociacao'||l.etapa==='cliente')?'inline-block':'none';
+dicaTelefone();
+}else{document.getElementById('m-lead-t').textContent='Novo Lead';['l-id','l-nome','l-wa','l-email','l-empresa','l-segmento','l-tags','l-anexo','l-obs','l-inter'].forEach(i=>document.getElementById(i).value='');document.getElementById('l-valor').value='997';document.getElementById('l-prob').value='30';document.getElementById('l-hist').innerHTML='';
+if(bproj)bproj.style.display='none';
+const gb=document.getElementById('g-busca'),gs=document.getElementById('g-status'),gr=document.getElementById('g-resultados');
+if(gb)gb.value='';if(gr)gr.innerHTML='';if(gs)gs.innerHTML='Busque o comércio: o app traz nome, telefone, endereço e se <b>já tem site</b> (só entram os sem site).';
+document.getElementById('l-tel-dica').innerHTML='';}}
 function fecharLead(){document.getElementById('m-lead').classList.remove('aberto');}
 function pushHist(l,txt){if(!l.timeline)l.timeline=[];l.timeline.push({quando:new Date().toLocaleString('pt-BR'),texto:txt});l.timeline=l.timeline.slice(-50);}
-function salvarLead(){const id=document.getElementById('l-id').value;const nome=document.getElementById('l-nome').value.trim();const tel=document.getElementById('l-wa').value.trim();
+function salvarLead(){const id=document.getElementById('l-id').value;const nome=document.getElementById('l-nome').value.trim();const telBruto=document.getElementById('l-wa').value.trim();
 if(!nome){alert('Preencha o nome');return;}
-const foneOk=tel.replace(/\D/g,'').length>=8;
+const email=document.getElementById('l-email').value.trim();
+if(email&&!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)){if(!confirm('⚠️ E-mail parece inválido ("'+email+'"). Salvar mesmo assim?'))return;}
+const cls=classificaTel(telBruto);
+const temFone=normTel(telBruto).length>=8;
+const tel=telE164(telBruto);
+if(temFone&&cls.tipo==='fixo'&&!confirm('☎️ "'+telBruto+'" é LINHA FIXA (não tem WhatsApp).\n\nSalvar assim? O lead fica marcado como ligação — o disparo de WhatsApp fica desligado.'))return;
 const tags=document.getElementById('l-tags').value.split(',').map(s=>s.trim()).filter(Boolean);
-const d={nome,tel:tel,email:document.getElementById('l-email').value.trim(),empresa:document.getElementById('l-empresa').value.trim(),segmento:document.getElementById('l-segmento').value.trim(),origem:document.getElementById('l-orig').value+(foneOk?'':' · ⚠️ sem fone'),servico:document.getElementById('l-serv').value,valor:Number(document.getElementById('l-valor').value)||0,prob:Math.max(0,Math.min(100,Number(document.getElementById('l-prob').value)||0)),etapa:document.getElementById('l-etapa').value,tags,resp:document.getElementById('l-resp').value,anexo:document.getElementById('l-anexo').value.trim(),obs:document.getElementById('l-obs').value,data:new Date().toLocaleString('pt-BR')};
+const d={nome,tel:tel,telBruto:telBruto,email,empresa:document.getElementById('l-empresa').value.trim(),segmento:document.getElementById('l-segmento').value.trim(),origem:document.getElementById('l-orig').value+(temFone?'':' · ⚠️ sem fone'),servico:document.getElementById('l-serv').value,valor:Number(document.getElementById('l-valor').value)||0,prob:Math.max(0,Math.min(100,Number(document.getElementById('l-prob').value)||0)),etapa:document.getElementById('l-etapa').value,tags,resp:document.getElementById('l-resp').value,anexo:document.getElementById('l-anexo').value.trim(),obs:document.getElementById('l-obs').value,data:new Date().toLocaleString('pt-BR')};
+// telefone classificado de verdade: o canal decide se entra no disparo
+d.tipoFone=cls.tipo;
+if(!id||!DB.leads.find(x=>x.id==id&&x.waVerificado!==undefined))d.canal=temFone?(telWhats(telBruto)?'whatsapp_provavel':'ligacao'):'sem_contato';
 // anti-duplicata de verdade: mesmo telefone ou mesmo nome+origem
-if(!id){const telN=tel.replace(/\D/g,'');const dup=DB.leads.find(x=>(telN&&String(x.tel||'').replace(/\D/g,'')===telN)||(x.nome.toLowerCase()===nome.toLowerCase()&&telN&&String(x.tel||'').replace(/\D/g,'')));
+if(!id){const telN=normTel(tel);const dup=DB.leads.find(x=>(telN&&normTel(x.tel)===telN)||(x.nome.toLowerCase()===nome.toLowerCase()&&telN&&normTel(x.tel)===telN));
 if(dup){if(!confirm('⚠️ Possível duplicata: "'+dup.nome+'" ('+dup.origem+') já existe. Salvar mesmo assim?'))return;}}
-if(id){const l=DB.leads.find(x=>x.id==id);const etapaAnt=l.etapa;Object.assign(l,d);l.data=l.data||d.data;
+if(id){const l=DB.leads.find(x=>x.id==id);const etapaAnt=l.etapa;const verifAnt=l.waVerificado;Object.assign(l,d);l.waVerificado=verifAnt;l.data=l.data||d.data;
 const inter=document.getElementById('l-inter').value.trim();if(inter)pushHist(l,'💬 '+inter);
 if(etapaAnt!==d.etapa){l.etapaDesde=new Date().toLocaleString('pt-BR');pushHist(l,'🔄 '+etapaAnt+' → '+d.etapa);notif('🔄 '+l.nome+' → '+d.etapa,'Movido no funil');}
 else pushHist(l,'✏️ Ficha atualizada');
-}else{const nl={id:Date.now(),...d,etapaDesde:new Date().toLocaleString('pt-BR'),timeline:[{quando:new Date().toLocaleString('pt-BR'),texto:'🎉 Lead criado via '+(d.origem||'manual')}],data:new Date().toLocaleString('pt-BR')};DB.leads.unshift(nl);notif('🎉 Novo lead: '+nome,d.origem+' · '+d.servico);pushHist(nl,'🎉 Boas-vindas: proposta enviada');autoLembrete(nome);if(evoAutoOn&&typeof evoSend==='function'){evoSend(tel,(DB.cfg.evomsq||'')+' ('+nome+')').then(()=>acaoReal('Boas-vindas auto',nome+' recebeu msg automática')).catch(()=>{});}}
-save();fecharLead();}
+}else{const nl={id:Date.now(),...d,etapaDesde:new Date().toLocaleString('pt-BR'),timeline:[{quando:new Date().toLocaleString('pt-BR'),texto:'🎉 Lead criado via '+(d.origem||'manual')}],data:new Date().toLocaleString('pt-BR')};DB.leads.unshift(nl);notif('🎉 Novo lead: '+nome,d.origem+' · '+d.servico);pushHist(nl,'🎉 Boas-vindas: proposta enviada');autoLembrete(nome);if(evoAutoOn&&typeof evoSend==='function'&&telWhats(telBruto)){evoSend(tel,(DB.cfg.evomsq||'')+' ('+nome+')').then(()=>acaoReal('Boas-vindas auto',nome+' recebeu msg automática')).catch(()=>{});}}
+save();fecharLead();toast('✅ Lead salvo: '+nome,'Abrir',()=>abrirLead(DB.leads[0]&&DB.leads[0].nome===nome?DB.leads[0].id:null));}
 function delLead(id){if(confirm('Excluir?')){DB.leads=DB.leads.filter(x=>x.id!==id);save();}}
 function autoLembrete(nome){const l=DB.leads.find(x=>x.nome===nome);if(!l)return;const regras=[['24h',24],['48h',48],['7 dias',168]];
 regras.forEach(r=>{const a=new Date();a.setHours(a.getHours()+r[1]);const tit='Retornar p/ '+nome+' ('+r[0]+')';if(!DB.tarefas.find(t=>!t.ok&&t.tit===tit))novaTarefa(tit,a.toISOString().slice(0,16),{leadId:l?l.id:null});});}
@@ -879,7 +1003,7 @@ let acao=zap
   ?'<button class="btn btn-v" onclick="copiarTexto(msgDoLead(thisLead('+l.id+')))" title="Copiar a mensagem de abordagem">📋 Copiar msg</button>'
   :'<button class="btn btn-v" onclick="abrirLead('+l.id+')" title="Complete o WhatsApp na ficha">📞 Completar fone</button>';
 if(!zap&&c==='ligacao'&&l.tel)acao='<a class="btn btn-v" href="tel:+'+String(l.tel).replace(/\D/g,'')+'">☎️ Ligar</a>'+acao;
-return '<div class="lead" draggable="true" ondragstart="event.dataTransfer.setData(\'id\','+l.id+')"><b>'+l.nome+'</b> '+badgeCanal(l)+(l.waVerificado===true?'<span class="tag" style="background:#D1FAE5;color:#065F46">📲 zap confirmado</span>':'')+'<small>'+l.servico+' · '+l.origem+'</small><span class="tag">'+l.origem+'</span>'+(l.valor?'<span class="tag">R$ '+l.valor+'</span>':'')+(tl?'<span class="tag" style="background:#E0E7FF;color:#3730A3">🔗 '+tl+' tarefa(s)</span>':'')+'<div class="la">'+acao+(temRede?'<span style="display:inline-flex;gap:.25rem;flex-wrap:wrap">'+linksRedes(l,3)+'</span>':'')+'<button class="btn btn-v" onclick="abrirLead('+l.id+')">Ver</button><button class="btn btn-v" onclick="analisarLead('+l.id+')" title="Analise local do perfil">🔍 Análise</button><button class="btn btn-p" onclick="avancarEtapa('+l.id+')" title="Avancar etapa">➡️</button><button class="btn btn-x" onclick="delLead('+l.id+')">×</button></div></div>';}
+return '<div class="lead" draggable="true" ondragstart="event.dataTransfer.setData(\'id\','+l.id+')"><b>'+l.nome+'</b> '+badgeCanal(l)+(l.waVerificado===true?'<span class="tag" style="background:#D1FAE5;color:#065F46">📲 zap confirmado</span>':'')+'<small>'+l.servico+' · '+l.origem+'</small><span class="tag">'+l.origem+'</span>'+(l.valor?'<span class="tag">R$ '+l.valor+'</span>':'')+(tl?'<span class="tag" style="background:#E0E7FF;color:#3730A3">🔗 '+tl+' tarefa(s)</span>':'')+'<div class="la">'+acao+(temRede?'<span style="display:inline-flex;gap:.25rem;flex-wrap:wrap">'+linksRedes(l,3)+'</span>':'')+'<button class="btn btn-v" onclick="abrirLead('+l.id+')">Ver</button><button class="btn btn-p" onclick="abrirProjetoDoLead('+l.id+')" title="Criar projeto — atualiza funil, financeiro e relatórios">📁 Projeto</button><button class="btn btn-v" onclick="analisarLead('+l.id+')" title="Analise local do perfil">🔍 Análise</button><button class="btn btn-p" onclick="avancarEtapa('+l.id+')" title="Avancar etapa">➡️</button><button class="btn btn-x" onclick="delLead('+l.id+')">×</button></div></div>';}
 // Análise LOCAL do perfil (heurística a partir dos dados da ficha — estimativa, não é IA externa)
 function analisarLead(id){const l=DB.leads.find(x=>x.id===id);if(!l)return;
 const reais=DB.leads.filter(x=>x.servico===l.servico&&x.etapa==='cliente').length;
@@ -1062,9 +1186,66 @@ function pagarConta(id){DB.contas.find(c=>c.id===id).paga=true;save();}
 function delConta(id){if(confirm('Excluir conta?')){DB.contas=DB.contas.filter(c=>c.id!==id);save();}}
 function renderProj(){iniFin();const tot=DB.projetos.length,ok=DB.projetos.filter(p=>p.status==='concluido'&&p.pago100).length;
 document.getElementById('p-resumo').textContent=tot+' criados · '+ok+' concluídos e pagos';
+// seletor de lead: negociação e clientes primeiro, depois os mais recentes
+const sel=document.getElementById('p-lead');
+if(sel){const atual=sel.value;const at=DB.leads.filter(l=>l.etapa!=='arquivado');
+ const pri=at.filter(l=>l.etapa==='negociacao'||l.etapa==='cliente'),resto=at.filter(l=>l.etapa!=='negociacao'&&l.etapa!=='cliente');
+ const opt=(l)=>'<option value="'+l.id+'">'+l.nome+(l.etapa==='cliente'?' · ✅ cliente':' · '+l.etapa)+' — '+brl(l.valor)+'</option>';
+ sel.innerHTML='<option value="">— escolher lead —</option>'+pri.map(opt).join('')+(pri.length&&resto.length?'<optgroup label="Outros leads">':'')+resto.slice(0,40).map(opt).join('')+(pri.length&&resto.length?'</optgroup>':'');
+ if(atual&&DB.leads.some(l=>String(l.id)===String(atual)))sel.value=atual;}
 document.getElementById('p-lista').innerHTML=DB.projetos.map(p=>{const v=Number(p.valor||0);
 return '<div style="padding:.7rem 0;border-bottom:1px solid #eee"><div style="display:flex;justify-content:space-between;gap:.5rem;flex-wrap:wrap"><div style="flex:1;min-width:200px"><b>'+(p.status==='concluido'?'✅ ':'🚧 ')+p.nome+'</b><br><small>'+p.servico+' · '+brl(v)+' · 50%: '+(p.pago50?'✅ recebido ('+brl(v/2)+')':'⏳')+' · 100%: '+(p.pago100?'✅ recebido ('+brl(v/2)+')':'⏳')+(p.cliente?' · 👤 '+p.cliente:'')+((p.leadId&&leadPorId(p.leadId))?' · 🔗 <a href="#" onclick="abrirLead('+p.leadId+');return false">ver lead</a>':'')+((DB.tarefas.filter(t=>!t.ok&&t.projId===p.id).length)?' · 🔗 '+DB.tarefas.filter(t=>!t.ok&&t.projId===p.id).length+' tarefa(s)':'')+'</small><div style="background:#E5E7EB;border-radius:8px;height:10px;overflow:hidden;margin:.35rem 0;max-width:320px"><div style="height:100%;width:'+(p.prog||0)+'%;background:'+((p.prog||0)>=100?'#10B981':'#F59E0B')+'"></div></div><small><b>🚧 '+(p.prog||0)+'% pronto</b></small></div><div style="display:flex;gap:.35rem;flex-wrap:wrap;align-items:flex-start">'+(p.prog>=50?'':'<button class="btn btn-p" onclick="projProgresso('+p.id+',50)">▶️ 50%</button>')+(p.prog>=100?'<button class="btn btn-v" onclick="projReabrir('+p.id+')">Reabrir</button>':'<button class="btn btn-wa" onclick="projProgresso('+p.id+',100)">✅ 100%</button>')+'<button class="btn btn-x" onclick="delProj('+p.id+')">×</button></div></div></div>';}).join('')||'<p class="legend">Nenhum projeto. Crie o primeiro acima.</p>';}
-function addProj(){const n=document.getElementById('p-nome').value.trim();const v=Number(document.getElementById('p-valor').value)||0;if(!n||!v)return alert('Nome e valor obrigatórios');DB.projetos.unshift({id:Date.now(),nome:n,cliente:document.getElementById('p-cli').value.trim(),servico:document.getElementById('p-serv').value.split(' — ')[0],valor:v,status:'andamento',pago50:true,pago100:false,data:new Date().toLocaleString('pt-BR')});notif('📁 Projeto criado: '+n,'50% recebido ('+brl(v/2)+')');save();acaoReal('📁 Projeto criado',n+' — 50% recebido '+brl(v/2));}
+// ── Projeto criado a partir do lead: atualiza TUDO (funil, financeiro,
+// dashboard, relatórios, tarefas e o WhatsApp do cliente) ──────────────
+function preencherProjeto(){
+  const sel=document.getElementById('p-lead');if(!sel)return;
+  const id=sel.value;const l=id?leadPorId(Number(id)):null;
+  const nome=document.getElementById('p-nome'),serv=document.getElementById('p-serv'),val=document.getElementById('p-valor');
+  if(!l)return;
+  if(nome&&(!nome.value.trim()||nome.dataset.auto==='1')){nome.value=(l.servico||'Site Institucional')+' — '+l.nome;nome.dataset.auto='1';}
+  if(val&&(!val.value||val.dataset.auto==='1')){val.value=Number(l.valor)||997;val.dataset.auto='1';}
+  if(serv){const alvo=[...serv.options].find(o=>o.text.startsWith(l.servico||''));if(alvo)serv.value=alvo.value;}
+}
+function abrirProjetoDoLead(id){
+  const l=leadPorId(Number(id));if(!l)return;
+  fecharLead();ir('proj');
+  const sel=document.getElementById('p-lead');
+  if(sel){sel.value=String(l.id);preencherProjeto();}
+  const nome=document.getElementById('p-nome'),val=document.getElementById('p-valor');
+  if(nome){nome.value=(l.servico||'Site Institucional')+' — '+l.nome;nome.dataset.auto='1';}
+  if(val){val.value=Number(l.valor)||997;val.dataset.auto='1';}
+  toast('📁 Projeto de "'+l.nome+'" pronto — confirme o valor e clique em Criar projeto.',null,null);
+  const btn=document.querySelector('#aba-proj .btn-g');if(btn)btn.scrollIntoView({behavior:'smooth',block:'center'});
+}
+function addProj(){
+  const sel=document.getElementById('p-lead');
+  const l=(sel&&sel.value)?leadPorId(Number(sel.value)):null;
+  const nomeEl=document.getElementById('p-nome'),valEl=document.getElementById('p-valor');
+  const n=(nomeEl.value||'').trim()||(l?(l.servico||'Site Institucional')+' — '+l.nome:'');
+  const v=Number(valEl.value)||(l?Number(l.valor)||997:0);
+  if(!n||!v)return alert('Escolha o lead do funil (ou digite o nome) e o valor');
+  const cli=l?l.nome:'';
+  const serv=((document.getElementById('p-serv').value||'').split(' — ')[0])||(l?l.servico:'Site Institucional');
+  const p={id:Date.now(),nome:n,cliente:cli,leadId:l?l.id:null,servico:serv,valor:v,status:'andamento',pago50:true,pago100:false,prog:50,data:new Date().toLocaleString('pt-BR')};
+  DB.projetos.unshift(p);
+  let atualizou=[];
+  if(l){
+    l.projeto=p.id;
+    if(l.etapa!=='cliente'){const ant=l.etapa;l.etapa='cliente';l.etapaDesde=new Date().toLocaleString('pt-BR');pushHist(l,'🤝 Virou cliente — projeto "'+n+'"');notif('🤝 '+l.nome+' virou cliente','Projeto: '+n);atualizou.push('funil');}
+    else{pushHist(l,'📁 Projeto: '+n+' — '+brl(v));atualizou.push('projeto');}
+    const d=new Date(Date.now()+3*86400000).toISOString().slice(0,16);
+    novaTarefa('Iniciar '+serv+' — '+l.nome,d,{leadId:l.id,projId:p.id});
+    atualizou.push('tarefa');
+    if(evoAutoOn&&typeof evoSend==='function'&&telWhats(l.tel)){evoSend(l.tel,'Olá '+l.nome+'! Fechamos: '+serv+' ('+brl(v)+'). Começo agora!').then(()=>acaoReal('✅ Aviso de projeto enviado',l.nome+' · '+serv)).catch(()=>{});atualizou.push('WhatsApp');}
+  }
+  notif('📁 Projeto criado: '+n,'50% recebido ('+brl(v/2)+')');
+  save();atualizou.push('financeiro');atualizou.push('dashboard');atualizou.push('relatórios');
+  acaoReal('📁 Projeto criado',n+' — 50% recebido '+brl(v/2)+(l?' · lead movido para CLIENTE':''));
+  toast('✅ Projeto criado! Atualizei: '+atualizou.join(', ')+'.','Ver',()=>ir('proj'));
+  if(nomeEl){nomeEl.value='';nomeEl.dataset.auto='0';}
+  if(valEl){valEl.value='';valEl.dataset.auto='0';}
+  if(sel)sel.value='';
+}
 function projPagar(id,q){const p=DB.projetos.find(x=>x.id===id);if(!p)return;if(q===50){p.pago50=true;if((p.prog||0)<50)p.prog=50;}else{p.pago100=true;if((p.prog||0)<100)p.prog=100;}save();acaoReal('💰 Recebido projeto',p.nome+' — '+(q===50?'50% '+brl(p.valor/2):'100% '+brl(p.valor/2)));}
 // Progresso move o dinheiro sozinho: 50% = entrada recebida, 100% = concluído e pago.
 function projProgresso(id,pct){const p=DB.projetos.find(x=>x.id===id);if(!p)return;p.prog=Math.max(0,Math.min(100,Number(pct)||0));
@@ -1179,7 +1360,7 @@ function copiarTexto(t){if(navigator.clipboard&&navigator.clipboard.writeText){n
 function fallbackCopy(t){const ta=document.createElement('textarea');ta.value=t;document.body.appendChild(ta);ta.select();try{document.execCommand('copy');alert('✅ Copiado!');}catch(e){prompt('Copie manualmente:',t);}ta.remove();}
 function copiarCodigo(){const base=location.href.split('?')[0];const form='<form action="'+base+'" method="GET" style="max-width:420px;margin:auto;font-family:Arial">\n<label>Nome<input name="nome" required style="width:100%;padding:10px;margin:4px 0"></label>\n<label>WhatsApp<input name="tel" required style="width:100%;padding:10px;margin:4px 0"></label>\n<input type="hidden" name="origem" value="Site">\n<button style="width:100%;padding:12px;background:#2563EB;color:#fff;border:none;border-radius:8px;font-weight:bold">Quero orçamento grátis</button>\n</form>\n<!-- Ao enviar, o lead cai direto no funil (captura via URL ?nome= &tel=) -->';copiarTexto(form);}
 iniciarMonitorUpdate();
-function salvarCfg(){DB.cfg={marca:document.getElementById('cfg-marca').value,wa:document.getElementById('cfg-wa').value,tk:document.getElementById('cfg-tk').value,pf:document.getElementById('cfg-pf').value,num:document.getElementById('cfg-num').value,cloud:document.getElementById('cfg-cloud').value.trim().replace(/\/$/,''),bridge:document.getElementById('cfg-bridge')?document.getElementById('cfg-bridge').value.trim().replace(/\/$/,''):'',evo:document.getElementById('cfg-evo').value.trim().replace(/\/$/,''),evokey:document.getElementById('cfg-evokey').value.trim(),evoinst:document.getElementById('cfg-evoinst').value.trim()||'rick-digital',evomsq:document.getElementById('cfg-evomsq').value,ttuser:document.getElementById('cfg-ttuser').value,ttagenda:document.getElementById('cfg-ttagenda').value,meta:Number(document.getElementById('cfg-meta').value)||10000,pin:(document.getElementById('cfg-pin').value||'').trim(),perfil:document.getElementById('cfg-perfil').value,modelos:document.getElementById('cfg-modelos').value};save();aplicarPerfil();alert('✅ Salvo! Nuvem: '+(DB.cfg.cloud||'não configurada')+' · WhatsApp auto: '+((DB.cfg.evo&&DB.cfg.evokey)?'ON':'off (manual)'));}
+function salvarCfg(){DB.cfg={marca:document.getElementById('cfg-marca').value,wa:document.getElementById('cfg-wa').value,tk:document.getElementById('cfg-tk').value,pf:document.getElementById('cfg-pf').value,num:document.getElementById('cfg-num').value,cloud:document.getElementById('cfg-cloud').value.trim().replace(/\/$/,''),places:document.getElementById('cfg-places')?document.getElementById('cfg-places').value.trim():'',bridge:document.getElementById('cfg-bridge')?document.getElementById('cfg-bridge').value.trim().replace(/\/$/,''):'',evo:document.getElementById('cfg-evo').value.trim().replace(/\/$/,''),evokey:document.getElementById('cfg-evokey').value.trim(),evoinst:document.getElementById('cfg-evoinst').value.trim()||'rick-digital',evomsq:document.getElementById('cfg-evomsq').value,ttuser:document.getElementById('cfg-ttuser').value,ttagenda:document.getElementById('cfg-ttagenda').value,meta:Number(document.getElementById('cfg-meta').value)||10000,pin:(document.getElementById('cfg-pin').value||'').trim(),perfil:document.getElementById('cfg-perfil').value,modelos:document.getElementById('cfg-modelos').value};save();aplicarPerfil();alert('✅ Salvo! Nuvem: '+(DB.cfg.cloud||'não configurada')+' · WhatsApp auto: '+((DB.cfg.evo&&DB.cfg.evokey)?'ON':'off (manual)'));}
 // CONTROLE TOTAL — WhatsApp via Evolution API + TikTok Business
 function evoCfg(){return {url:(DB.cfg.evo||'').replace(/\/$/,''),key:DB.cfg.evokey||'',inst:DB.cfg.evoinst||'rick-digital'};}
 async function evoSend(tel,msg){const c=evoCfg();if(!c.url||!c.key){window.open(waLink(tel,msg),'_blank');return {modo:'manual'};}
@@ -1483,7 +1664,13 @@ return (rows.map(r=>'<tr><td><b>'+esc(r.cli)+'</b></td><td>'+esc(r.nome)+'</td><
 function leadsSemProjeto(){const sem=DB.leads.filter(l=>l.etapa==='cliente'&&!DB.projetos.some(p=>p.leadId===l.id||(p.cliente&&l.nome&&p.cliente.toLowerCase()===l.nome.toLowerCase())));
 if(!sem.length)return '<small class="legend">Todos os clientes têm projeto vinculado ✅</small>';
 return '<b>⚠️ Clientes sem projeto (valor ainda não conta no caixa):</b>'+sem.map(l=>'<div style="padding:.5rem 0;border-bottom:1px solid #eee;display:flex;justify-content:space-between;gap:.5rem;flex-wrap:wrap"><div><b>'+esc(l.nome)+'</b> <small>· '+esc(l.servico)+' · '+brl(l.valor)+'</small></div><button class="btn btn-p" onclick="criarProjDoLead('+l.id+')">📁 Criar projeto (50% recebido)</button></div>').join('');}
-function criarProjDoLead(id){const l=DB.leads.find(x=>x.id===id);if(!l)return;iniFin();DB.projetos.unshift({id:Date.now(),nome:l.servico+' — '+l.nome,cliente:l.nome,leadId:l.id,servico:l.servico,valor:Number(l.valor)||997,status:'andamento',pago50:true,pago100:false,prog:50,data:new Date().toLocaleString('pt-BR')});pushHist(l,'📁 Projeto criado a partir do cliente (50% recebido)');notif('📁 Projeto criado: '+l.nome,'50% recebido');save();acaoReal('📁 Projeto criado do cliente',l.nome+' — 50% recebido');}
+function criarProjDoLead(id){const l=DB.leads.find(x=>x.id===id);if(!l)return;iniFin();
+const p={id:Date.now(),nome:(l.servico||'Site Institucional')+' — '+l.nome,cliente:l.nome,leadId:l.id,servico:l.servico||'Site Institucional',valor:Number(l.valor)||997,status:'andamento',pago50:true,pago100:false,prog:50,data:new Date().toLocaleString('pt-BR')};
+DB.projetos.unshift(p);l.projeto=p.id;
+pushHist(l,'📁 Projeto criado a partir do cliente (50% recebido)');notif('📁 Projeto criado: '+l.nome,'50% recebido');
+const d=new Date(Date.now()+3*86400000).toISOString().slice(0,16);
+if(!DB.tarefas.find(t=>!t.ok&&t.projId===p.id))novaTarefa('Iniciar '+(l.servico||'projeto')+' — '+l.nome,d,{leadId:l.id,projId:p.id});
+save();acaoReal('📁 Projeto criado do cliente',l.nome+' — 50% recebido');}
 // 🔴 TEMPO REAL — Relatórios vivos: ticker, sincronia entre abas e releitura periódica
 function tickRel(){const el=document.getElementById('liveRel');if(!el)return;const s=Math.max(0,Math.round(((Date.now()-(DB.ultSave||Date.now()))/1000)));el.textContent=s<8?'🟢 AO VIVO · atualizado agora':'🟢 AO VIVO · atualizado há '+s+'s';}
 setInterval(tickRel,5000);
@@ -1515,7 +1702,7 @@ if('serviceWorker' in navigator){
 }
 // INIT
 if(!checarPIN())throw new Error('bloqueado');
-document.getElementById('cfg-marca').value=DB.cfg.marca;document.getElementById('cfg-wa').value=DB.cfg.wa;document.getElementById('cfg-tk').value=DB.cfg.tk;document.getElementById('cfg-pf').value=DB.cfg.pf;document.getElementById('cfg-num').value=DB.cfg.num;if(document.getElementById('cfg-cloud'))document.getElementById('cfg-cloud').value=DB.cfg.cloud||'https://rick-digital-default-rtdb.firebaseio.com';
+document.getElementById('cfg-marca').value=DB.cfg.marca;document.getElementById('cfg-wa').value=DB.cfg.wa;document.getElementById('cfg-tk').value=DB.cfg.tk;document.getElementById('cfg-pf').value=DB.cfg.pf;document.getElementById('cfg-num').value=DB.cfg.num;if(document.getElementById('cfg-cloud'))document.getElementById('cfg-cloud').value=DB.cfg.cloud||'https://rick-digital-default-rtdb.firebaseio.com';if(document.getElementById('cfg-places'))document.getElementById('cfg-places').value=DB.cfg.places||'';
 if(document.getElementById('cfg-evo')){document.getElementById('cfg-evo').value=DB.cfg.evo||'';document.getElementById('cfg-evokey').value=DB.cfg.evokey||'';document.getElementById('cfg-evoinst').value=DB.cfg.evoinst||'rick-digital';if(document.getElementById('cfg-bridge'))document.getElementById('cfg-bridge').value=DB.cfg.bridge||'';document.getElementById('cfg-evomsq').value=DB.cfg.evomsq||'Olá! Aqui é do ESTÚDIO RICK DIGITAL. Vi seu contato e quero te mostrar nosso portfólio: https://rickdigitalestudio.github.io/profissional-rickdutra/criacao-de-sites-profissionais.html — posso te mandar uma proposta?';document.getElementById('cfg-ttuser').value=DB.cfg.ttuser||'@ricklima991';if(DB.cfg.ttagenda)document.getElementById('cfg-ttagenda').value=DB.cfg.ttagenda;if(DB.cfg.evo&&DB.cfg.evokey)document.getElementById('evo-st').textContent='whatsapp auto: configurado ✅ teste a conexão';}
 if(DB.acoes?.length)document.getElementById('acoes-reais').innerHTML=DB.acoes.slice(0,10).map(a=>'<div>✔ '+a.quando+' — <b>'+a.t+'</b><br>'+a.d+'</div>').join('');
 try{document.getElementById('cfg-meta').value=DB.cfg.meta||10000;document.getElementById('cfg-pin').value=DB.cfg.pin||'';document.getElementById('cfg-perfil').value=DB.cfg.perfil||'proprietario';if(DB.cfg.modelos)document.getElementById('cfg-modelos').value=DB.cfg.modelos;}catch(e){}

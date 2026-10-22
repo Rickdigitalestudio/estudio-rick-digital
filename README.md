@@ -30,6 +30,10 @@ Abra `index.html` no navegador — **sem servidor, sem build, sem API key**. Fun
 
 ### 🎣 3. Gerador de Leads — só SEM site
 - **Google Maps + OSM/Overpass por categoria** (sem API key)
+- **🔍 Busca dentro da ficha do lead**: digita o nome do comércio → o app traz
+  **nome, telefone, endereço, segmento e se já tem site** (o alvo é quem **não**
+  tem site). Usa o Google Places se houver chave em Config; sem chave, usa o
+  OpenStreetMap (também sem chave) e avisa para conferir no Maps
 - Filtros automáticos:
   - ✅ `website / contact:website / url` → descartado
   - ✅ Selo `🚫 SEM SITE` + link `checar se tem site`
@@ -68,6 +72,13 @@ Abra `index.html` no navegador — **sem servidor, sem build, sem API key**. Fun
 
 **Extras (a partir de):** Domínio+Hospedagem +480 · Logo +200 · WhatsApp auto +300 · TikTok/vídeos +400 · Maps+SEO +350
 - Gera proposta em texto + envio direto p/ WhatsApp
+
+### 📁 Projetos (aba Projetos)
+- Escolha o **lead do funil** e o projeto nasce preenchido (serviço + valor)
+- **📁 Criar projeto atualiza tudo**: move o lead para ✅ Cliente, cria a tarefa
+  de entrega, recalcula **funil, financeiro, dashboard e relatórios** e avisa o
+  cliente no WhatsApp (se o envio automático estiver ligado)
+- Regra de pagamento: 50% na entrada, 100% na conclusão (o progresso move o dinheiro)
 
 ### ⏰ 7. Tarefas · 📋 8. Relatórios
 - Lembretes 24h automáticos, conclusão, origem principal, conversão, export CSV + impressão PDF
