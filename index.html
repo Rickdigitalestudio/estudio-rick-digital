@@ -7,7 +7,6 @@
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#2563EB">
 <link rel="icon" href="icon.svg">
-<link rel="stylesheet" href="vendor/leaflet/leaflet.css">
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',Roboto,Arial,sans-serif}
 :root{--p:#2563EB;--s:#10B981;--a:#F59E0B;--d:#EF4444;--e:#1F2937;--c:#F3F4F6;--bg:#EEF2FF;--roxo:#7C3AED;--rosa:#EC4899;--sombra:0 10px 30px rgba(37,99,235,.14)}
@@ -235,39 +234,11 @@ canvas#bannerCanvas{width:100%;max-width:420px;border-radius:16px;border:1px sol
 <button class="btn-g" onclick="buscaLocal()">📍 Ir até lá</button>
 </div>
 <div id="maps-busca-res" style="margin-top:.4rem"></div>
-<div id="maps-frame" style="width:100%;height:320px;border:1px solid #ddd;border-radius:10px;background:#E5E7EB"></div>
-<iframe id="maps-frame-fb" title="mapa da busca" style="display:none;width:100%;height:280px;border:1px solid #ddd;border-radius:10px" loading="lazy" src="https://www.google.com/maps?q=S%C3%A3o%20Paulo%20SP%2C%20Brasil&output=embed"></iframe>
-<p class="legend">Mapa da região pesquisada — use a <b>🔎 busca de local</b> acima (nome do lugar ou link do Google Maps colado) ou <b>clique em qualquer ponto</b> para ver a <b>prévia do local</b> e escolher a mensagem automática (o nome da empresa e o que ela precisa entram sozinhos).</p>
+<iframe id="maps-frame-fb" title="Google Maps da busca" style="width:100%;height:340px;border:1px solid #ddd;border-radius:10px" loading="lazy" src="https://www.google.com/maps?q=S%C3%A3o%20Paulo%20SP%2C%20Brasil&output=embed"></iframe>
+<p class="legend">🗺️ <b>Google Maps</b> da região pesquisada — use a <b>🔎 busca de local</b> acima (nome do lugar ou link do Google Maps colado). Cada resultado abaixo vem com <b>ver no Maps ↗</b>, <b>checar site/fone 🔍</b> e <b>+ Funil</b>.</p>
 </div>
 <p class="legend" style="margin-top:.5rem">🎯 Filtro: remove quem tem site <b>registrado</b> no cadastro aberto (OSM). O cadastro nem sempre sabe o site real — por isso cada resultado vem com <b>“checar no Google”</b>: confirme em 10 segundos antes de abordar.</p>
 <div id="maps-status" style="margin:.7rem 0"></div>
-<div id="maps-preview" class="panel" style="display:none;border:2px solid #7C3AED">
-<h3>📍 Prévia do local <span class="legend">— clique noutro ponto do mapa p/ trocar</span></h3>
-<div id="prev-info" class="legend" style="margin-bottom:.5rem"></div>
-<div id="prev-picks" style="margin-bottom:.5rem"></div>
-<div class="grid2">
-<div><label>Nome da empresa <span class="legend">(entra sozinho)</span></label><input id="prev-empresa" placeholder="Ex: Buffet Hero Kids" oninput="gerarMsgPrev()"></div>
-<div><label>O que ela precisa <span class="legend">(muda a mensagem)</span></label><select id="prev-need" onchange="gerarMsgPrev()">
-<option value="site" selected>🌐 Site institucional — R$ 997</option>
-<option value="loja">🛒 Loja virtual — R$ 2.497</option>
-<option value="landing">🎯 Landing page — R$ 697</option>
-<option value="fanpage">📱 Fanpage profissional — R$ 497</option>
-<option value="seo">📍 Google Maps + SEO local — R$ 350</option>
-<option value="manut">🔧 Manutenção mensal — R$ 297</option>
-<option value="exemplo">✨ Exemplo (Buffet Hero Kids — o seu texto)</option>
-</select></div>
-</div>
-<label>Mensagem automática pronta p/ enviar <span class="legend">(edite se quiser)</span></label>
-<textarea id="prev-msg" rows="5"></textarea>
-<div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.6rem;align-items:center">
-<button class="btn-g" onclick="enviarMsgPrev()">💬 Mandar mensagem automática</button>
-<button class="btn btn-v" onclick="copiarTexto(document.getElementById('prev-msg').value)">📋 Copiar mensagem</button>
-<button class="btn btn-p" onclick="addPrevFunil()">+ Adicionar ao funil</button>
-<button class="btn btn-v" onclick="copiarLinkLocal()">📍 Link Google</button>
-<span class="legend" id="prev-fone-st"></span>
-</div>
-<p class="legend" style="margin-top:.4rem">A mensagem muda conforme <b>o que ela precisa</b> — troque o item acima. Exemplo: <i>“Olá! Vi que a Buffet Hero Kids ainda não tem site…”</i></p>
-</div>
 <div id="maps-result"></div>
 </div>
 <div class="grid2">
@@ -559,12 +530,11 @@ Oi {nome}! Passando pra retomar nossa conversa sobre {servico} — ainda faz sen
 </div></div>
 <!-- MODAL TAREFA -->
 <div class="modal-bg" id="m-tar"><div class="modal"><h2>Nova Tarefa</h2><label>Título</label><input id="t-tit" placeholder="Ligar para lead X amanhã 14h"><label>Data</label><input type="datetime-local" id="t-data"><div style="display:flex;gap:.6rem;justify-content:flex-end;margin-top:1rem"><button class="btn btn-v" onclick="document.getElementById('m-tar').classList.remove('aberto')">Cancelar</button><button class="btn-g" onclick="salvarTarefa()">Criar</button></div></div></div>
-<script src="vendor/leaflet/leaflet.js" defer></script>
 <script>
 const KEY='crm-estudio-rick-v3';
 
 // ════ ATUALIZACAO / BUILD ════
-const BUILD='2026.10.30-3';
+const BUILD='2026.10.30-4';
 const ABS_BASE='https://rickdigitalestudio.github.io/estudio-rick-digital';
 // Estado da atualizacao (preenchido por checarVersao)
 const UPD={remota:'',nova:false,quando:0,erro:''};
@@ -700,7 +670,7 @@ function num(){return (DB.cfg.num||'5511989426415').replace(/\D/g,'');}
 function waLink(tel,msg){return 'https://wa.me/'+telE164(tel)+'?text='+encodeURIComponent(msg);}
 // NAV
 document.querySelectorAll('aside nav a').forEach(a=>a.onclick=e=>{e.preventDefault();ir(a.dataset.aba);});
-function ir(n){document.querySelectorAll('.aba').forEach(x=>x.classList.remove('ativa'));document.getElementById('aba-'+n).classList.add('ativa');document.querySelectorAll('aside nav a').forEach(a=>a.classList.toggle('ativo',a.dataset.aba===n));if(n==='leads'){try{paisMudou();}catch(e){}try{mapL?mapL.invalidateSize():initMaps();}catch(e){}}}
+function ir(n){document.querySelectorAll('.aba').forEach(x=>x.classList.remove('ativa'));document.getElementById('aba-'+n).classList.add('ativa');document.querySelectorAll('aside nav a').forEach(a=>a.classList.toggle('ativo',a.dataset.aba===n));if(n==='leads'){try{paisMudou();}catch(e){}}}
 // EQUIPE 19 — rostos 100% humanos (foto local > retrato real > iniciais)
 const EQUIPE=[
 {n:'Camila Torres',s:'Designer de Banners',c:'#EC4899',g:'F',fotoLocal:'fotos/camila.jpg',foto:'https://randomuser.me/api/portraits/women/44.jpg'},
@@ -1528,7 +1498,7 @@ const comFone=todos.filter(e=>temFone(e.tags)).length;
 mapsQueue=filtrados.slice(0,20).map((e,i)=>({nome:e.tags?.name||('Comércio '+(i+1)+' · '+cat),tel:(e.tags?.['contact:phone']||e.tags?.phone||e.tags?.['contact:mobile']||e.tags?.mobile||'').replace(/^\+/,'')||'',categoria:(e.tags?.shop||e.tags?.amenity||e.tags?.cuisine||e.tags?.office||catLabel),origem:'Google Maps',servico:'Site Institucional',end:e.tags?.['addr:street']||e.tags?.['addr:suburb']||geoQ,lat:e.lat||e.center?.lat,lon:e.lon||e.center?.lon,semSite:true,foneReal:temFone(e.tags)}));
 if(!mapsQueue.length)throw 1;
 document.getElementById('maps-status').innerHTML='✅ <b>'+mapsQueue.length+' candidatos sem site no cadastro em '+geoQ+'</b> ('+todos.length+' achados · '+comSite+' com site descartados · '+comFone+' com telefone no cadastro) — <b>confira no Google antes de abordar</b>';
-document.getElementById('maps-result').innerHTML=mapsQueue.map((m,i)=>'<div style="padding:.6rem 0;border-bottom:1px solid #eee;display:flex;justify-content:space-between;gap:.5rem;flex-wrap:wrap"><div><b>'+m.nome+'</b> <span class="tag" style="background:#FEF3C7;color:#92400E">⚠️ sem site no cadastro — verificar</span>'+(m.foneReal?'<span class="tag" style="background:#D1FAE5">📞 fone real</span>':'<span class="tag" style="background:#FEE2E2;color:#991B1B">sem fone — completar</span>')+'<br><small>'+m.end+' · '+pais+' · <a target=_blank href="https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(m.nome+' '+geoQ)+'">ver no Maps ↗</a> · <a target=_blank href="https://www.google.com/search?q='+encodeURIComponent(m.nome+' '+geoQ)+'">checar site/fone 🔍</a></small><div style="display:flex;gap:.3rem;flex-wrap:wrap"><button class="btn btn-v" onclick="prevNegocio('+i+')">📍 Prévia</button><button class="btn btn-p" onclick="addMap('+i+')">+ Funil</button></div></div>').join('')+'<button class="btn-g" style="margin-top:.8rem" onclick="addAllMap()">+ Adicionar todos ao funil</button>';
+document.getElementById('maps-result').innerHTML=mapsQueue.map((m,i)=>'<div style="padding:.6rem 0;border-bottom:1px solid #eee;display:flex;justify-content:space-between;gap:.5rem;flex-wrap:wrap"><div><b>'+m.nome+'</b> <span class="tag" style="background:#FEF3C7;color:#92400E">⚠️ sem site no cadastro — verificar</span>'+(m.foneReal?'<span class="tag" style="background:#D1FAE5">📞 fone real</span>':'<span class="tag" style="background:#FEE2E2;color:#991B1B">sem fone — completar</span>')+'<br><small>'+m.end+' · '+pais+' · <a target=_blank href="https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(m.nome+' '+geoQ)+'">ver no Maps ↗</a> · <a target=_blank href="https://www.google.com/search?q='+encodeURIComponent(m.nome+' '+geoQ)+'">checar site/fone 🔍</a></small><div style="display:flex;gap:.3rem;flex-wrap:wrap"><button class="btn btn-p" onclick="addMap('+i+')">+ Funil</button></div></div>').join('')+'<button class="btn-g" style="margin-top:.8rem" onclick="addAllMap()">+ Adicionar todos ao funil</button>';
 notif('📍 Maps: '+mapsQueue.length+' candidatos',catLabel+' em '+geoQ+' · '+comSite+' com site descartados');
 }catch(e){document.getElementById('maps-status').textContent='⚠️ Nenhum SEM site aqui ou API instável — tente outra categoria ou cidade. Use o botão Google Maps como referência.';}}
 function addMap(i){const m=mapsQueue[i];if(!m)return;
@@ -1544,27 +1514,11 @@ acaoReal('📍 Lead do mapa',m.nome+' · '+(m.categoria||'comércio')+' · ficha
 toast('✅ '+m.nome+' no funil com a ficha preenchida.',null,null);
 alert(m.foneReal?('✅ '+m.nome+' no funil com fone real!'):('✅ '+m.nome+' no funil SEM fone — abra a ficha e complete o WhatsApp após checar no Google.'));}
 function addAllMap(){let comFone=0;mapsQueue.forEach((m,i)=>{if(m.foneReal)comFone++;DB.leads.unshift({id:Date.now()+i,nome:m.nome,tel:telE164(m.tel),telBruto:m.tel||'',email:'',empresa:m.nome,segmento:m.categoria||'',origem:'Google Maps',servico:'Site Institucional',valor:997,etapa:'novo',prob:30,tags:['sem site'],canal:m.foneReal?'whatsapp_provavel':'ligacao',tipoFone:m.foneReal?'celular':'fixo',semSite:true,statusSite:'sem_presenca',obs:'Endereço: '+(m.end||'—')+'\nSEM SITE no cadastro — é o alvo.\nFonte: busca no mapa · '+(m.foneReal?'celular (WhatsApp provável)':'sem fone no cadastro'),data:new Date().toLocaleString('pt-BR')});});save();acaoReal('📍 Fila cheia via Maps','+'+mapsQueue.length+' candidatos ('+comFone+' com fone real) — ficha preenchida');toast('✅ '+mapsQueue.length+' leads no funil com ficha preenchida!',null,null);}
-// ════ MAPA INTERATIVO (Leaflet) + PRÉVIA DO LOCAL + MENSAGEM AUTOMÁTICA ════
-// Clicou num ponto do mapa → prévia do local (endereço + comércios por perto),
-// escolhe a empresa e o que ela precisa → mensagem pronta p/ WhatsApp.
-let mapL=null,mPrev=null,mArcs=[],prevFone='',prevEnd='',prevLat=0,prevLon=0,MAPA_PERTO=[];
-// Tiles: se o provedor negar ("Access Blocked"/403), troca sozinho p/ o próximo.
-const TILES=[
- {u:'https://tile.openstreetmap.org/{z}/{x}/{y}.png',a:'© OpenStreetMap'},
- {u:'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',s:['a','b','c','d'],a:'© OpenStreetMap · © CARTO'},
- {u:'https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}',a:'© Esri'}
-];
-let tileIdx=0,tileLayer=null,tileErrs=0;
-function tileMonta(){
- if(!mapL)return;
- if(tileLayer){try{mapL.removeLayer(tileLayer);}catch(e){}}
- const t=TILES[tileIdx];tileErrs=0;
- tileLayer=L.tileLayer(t.u,Object.assign({maxZoom:19,attribution:t.a},t.s?{subdomains:t.s}:{}));
- tileLayer.on('tileerror',()=>{tileErrs++;if(tileErrs>=4&&tileIdx<TILES.length-1){tileIdx++;tileMonta();}});
- tileLayer.addTo(mapL);
-}
+// ════ MAPA DA BUSCA — GOOGLE MAPS (embed) ════
+// Sem Leaflet/OSM: o mapa é o embed do Google Maps. A busca por categoria, a
+// busca de local e o link colado atualizam o embed da região/ponto.
 // ════ BUSCA DE LOCAL NO MAPA — 100% GOOGLE MAPS ════
-// Cola o link do Google Maps → o mapa voa até o ponto (as coordenadas vêm do
+// Cola o link do Google Maps → o embed mostra o ponto (as coordenadas vêm do
 // próprio link). Escreveu o nome (ou veio link sem coordenadas) → o lugar abre
 // no embed do Google Maps + link p/ abrir no Maps completo.
 let buscaBusy=false;
@@ -1585,150 +1539,28 @@ async function buscaLocal(){
  try{
   const ehLink=/^https?:\/\//i.test(txt);
   const lc=ehLink?linkCoords(txt):null;
-  // 1) link do Google Maps com coordenadas → voa até lá + prévia
-  if(lc&&Array.isArray(lc)){await localIr(lc[0],lc[1],'ponto do link colado');if(st)st.innerHTML='';return;}
+  // 1) link do Google Maps com coordenadas → ponto no embed + link p/ abrir
+  if(lc&&Array.isArray(lc)){await localIr(lc[0],lc[1],'ponto do link colado');return;}
   // 2) link que não dá para ler (ex: curto maps.app.goo.gl) → orienta
   if(ehLink&&!lc){if(st)st.innerHTML='<span class="legend">Esse link não traz o ponto. Link curto (maps.app.goo.gl): abra no navegador e copie o link completo (google.com/maps/…), ou simplesmente escreva o nome do lugar.</span>';return;}
   // 3) nome (ou link /place/) → mostra no Google Maps (embed)
   const q=(lc&&lc.nome)||txt;
   const fb=document.getElementById('maps-frame-fb');
   if(fb){fb.src='https://www.google.com/maps?q='+encodeURIComponent(q)+'&output=embed';fb.style.display='block';}
-  if(st)st.innerHTML='<b>📍 No Google Maps:</b> <a class="btn btn-v" target="_blank" href="https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(q)+'">abrir “'+esc(String(q).slice(0,60))+'” ↗</a> <span class="legend">— clique num ponto do mapa acima p/ a prévia. Para o mapa voar direto no lugar, copie o link dele no Maps (Compartilhar → copiar link) e cole aqui.</span>';
+  if(st)st.innerHTML='<b>📍 No Google Maps:</b> <a class="btn btn-v" target="_blank" href="https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(q)+'">abrir “'+esc(String(q).slice(0,60))+'” ↗</a> <span class="legend">— o embed acima mostra o lugar. Para ver um ponto exato no embed, copie o link dele no Maps (Compartilhar → copiar link) e cole aqui.</span>';
  }catch(e){if(st)st.innerHTML='<span class="legend">Não consegui abrir agora — tente de novo em instantes.</span>';}
  finally{buscaBusy=false;}
 }
-// voa até o ponto e abre a prévia + comércios por perto (mesmo fluxo do clique)
+// mostra o ponto do link colado no embed do Google Maps
 async function localIr(lat,lon,nome){
- mapaIr(lat,lon,nome||'local');
- await cliqueMapa(lat,lon,nome);
- const st=document.getElementById('maps-busca-res');if(st)st.innerHTML='<span class="legend">📍 Em <b>'+esc(String(nome||'').slice(0,90))+'</b> — prévia abaixo ↓</span>';
+ mapaIr(lat,lon,lat+','+lon);
+ const st=document.getElementById('maps-busca-res');
+ if(st)st.innerHTML='<b>📍 '+(nome?esc(nome):'Ponto do link')+'</b> — <a target="_blank" href="https://www.google.com/maps/@'+lat+','+lon+',17z">abrir no Google Maps ↗</a> <span class="legend">(o mapa acima mostra o ponto)</span>';
 }
-// gera o link Google Maps do ponto que está na prévia
-function copiarLinkLocal(){
- if(!prevLat&&!prevLon)return alert('Clique num ponto do mapa (ou cole um link do Google Maps) primeiro.');
- copiarTexto('https://www.google.com/maps/@'+prevLat+','+prevLon+',17z');
-}
-function initMaps(){
- const el=document.getElementById('maps-frame');if(!el)return;
- if(!window.L){const fb=document.getElementById('maps-frame-fb');if(fb){fb.style.display='block';el.style.display='none';}return;}
- if(mapL){setTimeout(()=>{try{mapL.invalidateSize();}catch(e){}},250);return;}
- try{
-  // nomes simples: o Leaflet 1.9 já resolve relativo à pasta do CSS (vendor/leaflet/images/)
-  L.Icon.Default.mergeOptions({iconUrl:'marker-icon.png',iconRetinaUrl:'marker-icon-2x.png',shadowUrl:'marker-shadow.png'});
-  mapL=L.map('maps-frame',{scrollWheelZoom:true}).setView([-23.5505,-46.6333],12);
-  tileMonta();
-  mapL.on('click',ev=>cliqueMapa(ev.latlng.lat,ev.latlng.lng));
-  setTimeout(()=>{try{mapL&&mapL.invalidateSize();}catch(e){}},350);
- }catch(e){const fb=document.getElementById('maps-frame-fb');if(fb){fb.style.display='block';el.style.display='none';}}
-}
+// aponta o embed do Google Maps para o ponto/texto pedido
 function mapaIr(lat,lon,q){
- const fb=document.getElementById('maps-frame-fb');if(fb)fb.src='https://www.google.com/maps?q='+encodeURIComponent(q)+'&output=embed';
- if(!mapL)return;
- try{
-  mapL.setView([lat,lon],13);
-  mArcs.forEach(m=>{try{mapL.removeLayer(m);}catch(e){}});mArcs=[];
-  const c=L.circle([lat,lon],{radius:5000,color:'#2563EB',weight:1,fillColor:'#2563EB',fillOpacity:.05}).addTo(mapL);mArcs.push(c);
-  mapsQueue.forEach((m,i)=>{if(!m.lat||!m.lon)return;const mk=L.marker([m.lat,m.lon]).addTo(mapL).bindTooltip(m.nome,{direction:'top',opacity:.95});mk.on('click',()=>prevNegocio(i));mArcs.push(mk);});
- }catch(e){}
-}
-function osmFone(t){if(!t)return '';return String(t['contact:phone']||t.phone||t['contact:mobile']||t.mobile||'').trim();}
-function prevAbrir(){const p=document.getElementById('maps-preview');if(!p)return;p.style.display='block';try{p.scrollIntoView({behavior:'smooth',block:'nearest'});}catch(e){}}
-function prevFoneSt(){const s=document.getElementById('prev-fone-st');if(s)s.textContent=prevFone?('📞 '+prevFone):'⚠️ sem telefone no cadastro — pesquise no Google';}
-// prévia de um resultado/marcador da busca
-function prevNegocio(i){
- const m=mapsQueue[i];if(!m)return;
- prevFone=m.tel||'';prevEnd=m.end||'';prevLat=m.lat||0;prevLon=m.lon||0;
- prevAbrir();
- const inf=document.getElementById('prev-info');
- if(inf)inf.innerHTML='<b>🏪 '+esc(m.nome)+'</b><br><small>📍 '+esc(m.end||'—')+(paisLido()?' · '+esc(paisLido()):'')+'</small> '+(m.foneReal?'<span class="tag" style="background:#D1FAE5">📞 fone real</span>':'<span class="tag" style="background:#FEE2E2;color:#991B1B">sem fone</span>');
- const pk=document.getElementById('prev-picks');if(pk)pk.innerHTML='';
- const em=document.getElementById('prev-empresa');if(em)em.value=m.nome;
- prevFoneSt();gerarMsgPrev();
-}
-// clique num ponto vazio do mapa → endereço + comércios por perto
-async function cliqueMapa(lat,lon,nome){
- prevLat=lat;prevLon=lon;prevFone='';prevEnd='';MAPA_PERTO=[];
- prevAbrir();
- if(mapL){try{if(mPrev)mapL.removeLayer(mPrev);mPrev=L.marker([lat,lon]).addTo(mapL);}catch(e){}}
- const cat=document.getElementById('maps-cat').value;
- const catLabel=document.getElementById('maps-cat').selectedOptions[0].text;
- const inf=document.getElementById('prev-info');
- if(inf)inf.innerHTML='<b>📍 '+(nome?esc(nome):'Prévia do local')+'</b> — <span class="legend">clique noutro ponto p/ trocar</span><br><span class="legend" id="prev-end">🔎 lat '+lat.toFixed(4)+' · lon '+lon.toFixed(4)+' — buscando o endereço…</span>';
- const pk=document.getElementById('prev-picks');if(pk)pk.innerHTML='<span class="legend">🔎 Procurando '+esc(catLabel)+' por perto…</span>';
- const em=document.getElementById('prev-empresa');if(em)em.value='';
- const fs=document.getElementById('prev-fone-st');if(fs)fs.textContent='';
- gerarMsgPrev();
- try{
-  const r=await(await fetch('https://nominatim.openstreetmap.org/reverse?format=json&zoom=18&accept-language=pt-BR&lat='+lat+'&lon='+lon)).json();
-  prevEnd=r.display_name||'';
-  const pe=document.getElementById('prev-end');if(pe)pe.innerHTML='📍 <b>'+esc(prevEnd)+'</b>';
-  const tipo=((r.type||'')+' '+(r.category||'')).toLowerCase().split(/\s+/);
-  const ehNegocio=tipo.some(t=>/^(shop|amenity|office|tourism|leisure|craft|cafe|bar|restaurant|hotel|supermarket|pharmacy|bank|clinic|hairdresser|beauty)$/.test(t));
-  const nomeLocal=String(r.name||'').trim();
-  if(ehNegocio&&nomeLocal&&em){em.value=nomeLocal;gerarMsgPrev();}
- }catch(e){}
- try{
-  const tags=OSM[cat]||['name~'+cat];
-  const q=tags.map(t=>{const kv=t.split('=');return 'nwr["'+kv[0]+'"~"'+kv[1]+'",i](around:1500,'+lat+','+lon+');';}).join('');
-  const j=await overpass('[out:json][timeout:20];('+q+');out center 25;');
-  const perto=(j.elements||[]).filter(e=>e.tags&&e.tags.name).slice(0,8);
-  MAPA_PERTO=perto.map(e=>({nome:e.tags.name,tel:osmFone(e.tags).replace(/^\+/,''),end:(e.tags['addr:street']||'')}));
-  const box=document.getElementById('prev-picks');
-  if(box)box.innerHTML=perto.length?('<b>🏪 '+esc(catLabel)+' por perto — clique p/ escolher quem conversar:</b><br>'+perto.map((e,i)=>'<button class="btn btn-v" style="margin:.2rem .2rem 0 0" onclick="escolherPerto('+i+')">'+esc(e.tags.name)+(osmFone(e.tags)?' 📞':'')+'</button>').join('')):'<span class="legend">Nenhum '+esc(catLabel)+' catalogado aqui — digite o nome da empresa na mão.</span>';
- }catch(e){const box=document.getElementById('prev-picks');if(box)box.innerHTML='<span class="legend">O mapa aberto não respondeu agora — digite o nome da empresa na mão.</span>';}
-}
-function escolherPerto(i){
- const m=(MAPA_PERTO||[])[i];if(!m)return;
- prevFone=m.tel||'';
- if(m.end)prevEnd=m.end+(prevEnd?' · '+prevEnd:'');
- const em=document.getElementById('prev-empresa');if(em)em.value=m.nome;
- prevFoneSt();gerarMsgPrev();
-}
-// ── mensagem automática: muda conforme o que a empresa precisa ──
-const LOJA_LINK='https://rickdigitalestudio.github.io/profissional-rickdutra/loja-virtual-completa.html';
-const NECESSIDADES={
- site:{t:'Site Institucional',f:'Um site profissional que apresenta a empresa e capta cliente no Google, com WhatsApp direto.',p:'R$ 997'},
- loja:{t:'Loja Virtual',f:'Loja virtual que vende de madrugada, para todo o Brasil, sem depender de aplicativo de delivery.',p:'R$ 2.497',l:LOJA_LINK},
- landing:{t:'Landing Page',f:'Página única focada em converter visitante em cliente na hora, com formulário e WhatsApp.',p:'R$ 697'},
- fanpage:{t:'Fanpage Profissional',f:'Fanpage que dá credibilidade e vende no Instagram e no WhatsApp com posts profissionais.',p:'R$ 497'},
- seo:{t:'Google Maps + SEO local',f:'Aparecer no Google Maps da sua cidade quando o cliente busca seu tipo de negócio.',p:'R$ 350'},
- manut:{t:'Manutenção Mensal',f:'Atualizações, suporte e melhorias todo mês para o site nunca ficar parado.',p:'R$ 297'},
- exemplo:{t:'Site Institucional',f:'Loja virtual vende de madrugada, para todo o Brasil, sem depender de aplicativo de delivery.',p:'R$ 997',l:LOJA_LINK}
-};
-function gerarMsgPrev(){
- const el=document.getElementById('prev-msg');if(!el)return;
- const em=(document.getElementById('prev-empresa')||{}).value||'';
- const emp=String(em).trim()||'sua empresa';
- const k=(document.getElementById('prev-need')||{}).value||'site';
- const n=NECESSIDADES[k]||NECESSIDADES.site;
- const pf=(DB.cfg&&DB.cfg.pf)||'https://rickdigitalestudio.github.io/profissional-rickdutra/';
- el.value='Olá! Vi que a '+emp+' ainda não tem site. '+n.f+' Posso montar em 10 dias, a partir de '+n.p+'. Meu trabalho: '+(n.l||pf);
-}
-async function enviarMsgPrev(){
- const msg=String(((document.getElementById('prev-msg')||{}).value)||'').trim();
- if(!msg)return alert('Gere a mensagem primeiro.');
- const bruto=String(prevFone||'').replace(/\D/g,'');
- const quem=((document.getElementById('prev-empresa')||{}).value||'o local').trim();
- if(bruto.length<8){copiarTextoSilent(msg);return alert('⚠️ Este local não tem telefone no cadastro.\n\nA mensagem foi copiada — pesquise o número do negócio no Google, complete na ficha e cole a mensagem. (Ou use 📋 Copiar mensagem.)');}
- const c=evoCfg();
- if(c.url&&c.key){try{await evoSend(bruto,msg);acaoReal('💬 Mensagem automática',quem+' · enviada via API');return alert('✅ Mensagem enviada automática para '+quem+'!');}catch(e){}}
- window.open(waLink(bruto,msg),'_blank');
- acaoReal('💬 Mensagem automática',quem+' · WhatsApp aberto com a mensagem pronta ('+n_titulo()+')');
-}
-function n_titulo(){const k=(document.getElementById('prev-need')||{}).value||'site';return (NECESSIDADES[k]||NECESSIDADES.site).t;}
-function addPrevFunil(){
- const em=String(((document.getElementById('prev-empresa')||{}).value)||'').trim();
- const k=(document.getElementById('prev-need')||{}).value||'site';
- const n=NECESSIDADES[k]||NECESSIDADES.site;
- const cat=document.getElementById('maps-cat').selectedOptions[0].text;
- const msg=String(((document.getElementById('prev-msg')||{}).value)||'');
- const nome=em||String(prevEnd||'Local').split(',')[0].trim()||'Novo local';
- const lead={id:Date.now()+Math.random(),nome,tel:telE164(prevFone),telBruto:prevFone||'',email:'',empresa:nome,segmento:cat,origem:'Google Maps',servico:n.t,valor:Number(String(n.p).replace(/\D/g,''))||997,etapa:'novo',prob:30,tags:['sem site'],canal:prevFone?'whatsapp_provavel':'ligacao',tipoFone:prevFone?'celular':'fixo',semSite:true,statusSite:'sem_presenca',
- obs:'Endereço: '+(prevEnd||'—')+'\nNecessidade: '+n.t+'\nMensagem pronta: '+msg,
- data:new Date().toLocaleString('pt-BR')};
- DB.leads.unshift(lead);save();
- acaoReal('📍 Lead da prévia do mapa',nome+' · '+n.t+' · ficha preenchida');
- toast('✅ '+nome+' no funil com a ficha preenchida.',null,null);
+ const fb=document.getElementById('maps-frame-fb');
+ if(fb)fb.src='https://www.google.com/maps?q='+encodeURIComponent(q||((lat||'')+','+lon))+'&output=embed';
 }
 // BANNER
 function desenharBanner(){const c=document.getElementById('bannerCanvas'),x=c.getContext('2d');const m=document.getElementById('b-modelo').value;

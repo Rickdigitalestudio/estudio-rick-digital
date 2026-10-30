@@ -51,24 +51,15 @@ Abra `index.html` no navegador — **sem servidor, sem build, sem API key**. Fun
     Orlando) — o país do campo acima entra na busca junto (sem duplicar se
     você já escreveu o país na cidade)
   - Ordem do formulário: **País → Cidade / Bairro → Categoria**
-- 🗺️ **Mapa interativo + prévia do local** (Leaflet + OSM, sem chave e
-  **sem CDN — os arquivos do Leaflet ficam no próprio projeto** em
-  `vendor/leaflet/`, então o mapa não quebra se o CDN estiver bloqueado)
-  - **Clique em qualquer ponto**: mostra a **prévia** (endereço) e os comércios
-    da categoria **por perto** em 1,5 km — clique no deles para escolher
-  - Cada resultado/marcador tem botão **📍 Prévia**
-  - A prévia já vem com **nome da empresa** (auto) + **“O que ela precisa”** e
-    monta a **mensagem automática** — troque a necessidade e a mensagem muda
-  - Botões: **💬 Mandar mensagem automática** (wa.me ou Evolution API) ·
-    📋 Copiar · **+ Adicionar ao funil** (ficha já preenchida)
-  - Sem telefone no cadastro: copia a mensagem e avisa para completar o número
+- 🗺️ **Mapa só com Google Maps** (embed, sem chave e **sem Leaflet/OSM**)
   - 🔎 **Busca de local (100% Google Maps)** — **cole o link do lugar no
-    Google Maps** (Compartilhar → copiar link): o mapa voa até lá e abre a
-    prévia com a mensagem pronta; ou **escreva o nome** (ex: Praça da Sé,
-    São Paulo) e o lugar abre no embed do Google Maps com link p/ abrir no
-    Maps completo. Links curtos (`maps.app.goo.gl`) orientam a copiar o link
-    completo
-  - 📍 **Gerar link do ponto**: botão **Link Google** na prévia
+    Google Maps** (Compartilhar → copiar link): o embed mostra o ponto com
+    link p/ abrir no Maps completo; ou **escreva o nome** (ex: Praça da Sé,
+    São Paulo) e o lugar abre no embed. Links curtos (`maps.app.goo.gl`)
+    orientam a copiar o link completo
+  - A busca por categoria atualiza o embed para a **região pesquisada**
+  - Cada resultado traz **ver no Maps ↗** · **checar site/fone 🔍** ·
+    **+ Funil** (ficha já preenchida) · **+ Adicionar todos ao funil**
 - **🇧🇷 Modo brasileiros no exterior**: filtra por `cuisine=brazilian` + nome (brasil, churrasco, picanha, feijoada, açaí, coxinha…)
 - Botões **Buscar / 🔄 Atualizar / + Funil / + Todos**
 - Importação CSV (`nome,telefone,origem`) + links de captura p/ site, WhatsApp e TikTok
@@ -224,18 +215,16 @@ Mensagens diretas usam `wa.me/55+DDD+numero` com texto pré-preenchido por lead/
    (WhatsApp / direct na rede / roteiro de ligação)
 7. Se modo BR ligado, mantém só `isBR()` (regex + cuisine)
 8. Exibe as oportunidades com selo de canal + prova + ação em 1 clique
-9. **Mapa da região**: clique em qualquer ponto → prévia do local (Nominatim
-   reverse) + comércios da categoria por perto (Overpass) → escolha da empresa
-   e do que ela precisa → **mensagem automática pronta** p/ WhatsApp
+9. **Mapa da região**: o embed do **Google Maps** acompanha a busca e cada
+   resultado abre no Maps com um clique (**ver no Maps ↗**)
 
 > 📖 Detalhes e ativação da checagem real de WhatsApp: [`automacao/GUIA-CANAIS.md`](automacao/GUIA-CANAIS.md)
 
 > Limites gratuitos do OSM se aplicam. Se instável, use o botão `Abrir referência no Google Maps`.
 
-> 🗺️ O mapa interativo usa **Leaflet** (dentro do projeto, em `vendor/leaflet/`).
-> Os tiles têm **3 provedores com troca automática**: OpenStreetMap → CARTO →
-> Esri — se um negar o carregamento (**"Access Blocked"/403**), o mapa sozinho
-> passa p/ o próximo. Se todos falharem, cai no embed do Google Maps.
+> 🗺️ O mapa é o **embed do Google Maps** (sem chave). O Leaflet/OSM saiu do
+> projeto — os dados dos leads (categoria, telefone, endereço) continuam vindo
+> do cadastro aberto do OpenStreetMap via Overpass.
 
 ## 🤝 Contribuindo
 
