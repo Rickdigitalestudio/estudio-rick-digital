@@ -1,5 +1,5 @@
 {
-  "build": "2026.10.28-3",
-  "data": "2026-10-28T00:00:00Z",
-  "nota": "Gerador de Leads: Cidade/Bairro com TODAS as cidades de todos os paises num select so (agrupadas por pais), busca no pais certo da cidade, mapa com tiles que trocam sozinhos se o provedor bloquear (Access Blocked) e Overpass com mirrors + timeout."
+  "build": "2026.10.30-1",
+  "data": "2026-10-30T00:00:00Z",
+  "nota": "Integracao OSM de busca de locais (Nominatim): caixa 'Ir ate la' com busca por endereco e link colado do Google/OSM, resultados em botoes, previa + mensagem automatica, e botoes de gerar Link OSM / Link Google do ponto."
 }

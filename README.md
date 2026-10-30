@@ -63,6 +63,11 @@ Abra `index.html` no navegador — **sem servidor, sem build, sem API key**. Fun
   - Botões: **💬 Mandar mensagem automática** (wa.me ou Evolution API) ·
     📋 Copiar · **+ Adicionar ao funil** (ficha já preenchida)
   - Sem telefone no cadastro: copia a mensagem e avisa para completar o número
+  - 🔎 **Busca de local (integração OSM · Nominatim)** — digite endereço,
+    bairro ou cidade, **ou cole um link do Google Maps/OpenStreetMap**: o mapa
+    voa até lá e abre a prévia com a mensagem pronta (até 5 resultados em
+    botões para escolher)
+  - 📍 **Gerar link do ponto**: botões **Link OSM** e **Link Google** na prévia
 - **🇧🇷 Modo brasileiros no exterior**: filtra por `cuisine=brazilian` + nome (brasil, churrasco, picanha, feijoada, açaí, coxinha…)
 - Botões **Buscar / 🔄 Atualizar / + Funil / + Todos**
 - Importação CSV (`nome,telefone,origem`) + links de captura p/ site, WhatsApp e TikTok
