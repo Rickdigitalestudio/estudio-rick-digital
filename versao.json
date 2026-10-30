@@ -1,5 +1,5 @@
 {
-  "build": "2026.10.22-3",
-  "data": "2026-10-22T05:18:59Z",
-  "nota": "Atualizacao do app: o celular confere este arquivo, avisa quando ha versao nova e o botao Atualizar limpa o cache."
+  "build": "2026.10.28-3",
+  "data": "2026-10-28T00:00:00Z",
+  "nota": "Gerador de Leads: Cidade/Bairro com TODAS as cidades de todos os paises num select so (agrupadas por pais), busca no pais certo da cidade, mapa com tiles que trocam sozinhos se o provedor bloquear (Access Blocked) e Overpass com mirrors + timeout."
 }

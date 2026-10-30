@@ -7,6 +7,7 @@
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#2563EB">
 <link rel="icon" href="icon.svg">
+<link rel="stylesheet" href="vendor/leaflet/leaflet.css">
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',Roboto,Arial,sans-serif}
 :root{--p:#2563EB;--s:#10B981;--a:#F59E0B;--d:#EF4444;--e:#1F2937;--c:#F3F4F6;--bg:#EEF2FF;--roxo:#7C3AED;--rosa:#EC4899;--sombra:0 10px 30px rgba(37,99,235,.14)}
@@ -191,7 +192,10 @@ canvas#bannerCanvas{width:100%;max-width:420px;border-radius:16px;border:1px sol
 </div>
 <div class="panel"><h3>📍 Prospecção Google Maps por categoria <span class="legend">(referência Maps + OSM)</span></h3>
 <div class="grid2">
-<div><label>Cidade / Bairro</label><input id="maps-cidade" value="São Paulo SP" placeholder="Ex: Vila Ema, Lisboa, Orlando"></div>
+<div><label>🌍 País (funciona no mundo todo) <span id="pais-flag" style="font-size:1.1rem"></span></label><select id="maps-pais" onchange="paisMudou()"><option value="">— Escolha o país na lista —</option></select></div>
+<div><label>📍 Cidade / Bairro</label><select id="maps-cidade"><option value="todas">🏙️ Todas as cidades</option></select></div>
+</div>
+<div class="grid2" style="margin-top:.6rem">
 <div><label>Categoria p/ buscar seu lead</label><select id="maps-cat">
 <option value="fitness">Academia / Fitness</option>
 <option value="academia_luta">Academia de Luta / Artes Marciais</option>
@@ -215,20 +219,10 @@ canvas#bannerCanvas{width:100%;max-width:420px;border-radius:16px;border:1px sol
 <option value="informatica">Informática / Assistência</option>
 <option value="eletro">Eletrônicos / Celulares</option>
 </select></div>
+<div style="display:flex;flex-direction:column;justify-content:flex-end;padding-bottom:.3rem">
+<label style="display:flex;gap:.5rem;align-items:center;cursor:pointer;margin:0 0 .5rem"><input type="checkbox" id="maps-semsite" checked style="width:auto"> <b>Somente SEM site (ideal p/ vender sites/lojas)</b></label>
+<label style="display:flex;gap:.5rem;align-items:center;cursor:pointer;margin:0"><input type="checkbox" id="maps-comfone" style="width:auto"> <b>📞 Somente com telefone listado no cadastro</b></label>
 </div>
-<div class="grid2" style="margin-top:.6rem">
-<div><label>País (funciona no mundo todo)</label><input id="maps-pais" value="Brasil" placeholder="Ex: Brasil, Portugal, Estados Unidos, Espanha"></div>
-<div><label>Exemplos rápidos</label><select id="maps-ex" onchange="if(this.value){const v=this.value.split('|');document.getElementById('maps-cidade').value=v[0];document.getElementById('maps-pais').value=v[1];}">
-<option value="">— Escolher destino —</option>
-<option value="São Paulo SP|Brasil">São Paulo · Brasil</option>
-<option value="Lisboa|Portugal">Lisboa · Portugal</option>
-<option value="Porto|Portugal">Porto · Portugal</option>
-<option value="Orlando|Estados Unidos">Orlando · EUA</option>
-<option value="Miami|Estados Unidos">Miami · EUA</option>
-<option value="Madrid|Espanha">Madrid · Espanha</option>
-<option value="Londres|Reino Unido">Londres · UK</option>
-<option value="Dublin|Irlanda">Dublin · Irlanda</option>
-</select></div>
 </div>
 <div style="display:flex;gap:.6rem;margin-top:.9rem;flex-wrap:wrap">
 <button class="btn-g" onclick="buscarMaps()">🔍 Buscar Leads</button>
@@ -236,13 +230,38 @@ canvas#bannerCanvas{width:100%;max-width:420px;border-radius:16px;border:1px sol
 <a class="btn btn-v" id="link-gmaps" target="_blank" href="#">Abrir referência no Google Maps ↗</a>
 </div>
 <div style="margin-top:.8rem">
-<iframe id="maps-frame" title="mapa da busca" style="width:100%;height:280px;border:1px solid #ddd;border-radius:10px" loading="lazy" src="https://www.google.com/maps?q=S%C3%A3o%20Paulo%20SP%2C%20Brasil&output=embed"></iframe>
-<p class="legend">Mapa da região pesquisada — confira visualmente os comércios antes de abordar.</p>
+<div id="maps-frame" style="width:100%;height:320px;border:1px solid #ddd;border-radius:10px;background:#E5E7EB"></div>
+<iframe id="maps-frame-fb" title="mapa da busca" style="display:none;width:100%;height:280px;border:1px solid #ddd;border-radius:10px" loading="lazy" src="https://www.google.com/maps?q=S%C3%A3o%20Paulo%20SP%2C%20Brasil&output=embed"></iframe>
+<p class="legend">Mapa da região pesquisada — <b>clique em qualquer ponto</b> para ver a <b>prévia do local</b> e escolher a mensagem automática (o nome da empresa e o que ela precisa entram sozinhos).</p>
 </div>
 <p class="legend" style="margin-top:.5rem">🎯 Filtro: remove quem tem site <b>registrado</b> no cadastro aberto (OSM). O cadastro nem sempre sabe o site real — por isso cada resultado vem com <b>“checar no Google”</b>: confirme em 10 segundos antes de abordar.</p>
-<label style="display:flex;gap:.5rem;align-items:center;margin-top:.6rem;cursor:pointer"><input type="checkbox" id="maps-semsite" checked style="width:auto"> <b>Somente SEM site (ideal p/ vender sites/lojas)</b></label>
-<label style="display:flex;gap:.5rem;align-items:center;margin-top:.4rem;cursor:pointer"><input type="checkbox" id="maps-comfone" style="width:auto"> <b>📞 Somente com telefone listado no cadastro</b></label>
 <div id="maps-status" style="margin:.7rem 0"></div>
+<div id="maps-preview" class="panel" style="display:none;border:2px solid #7C3AED">
+<h3>📍 Prévia do local <span class="legend">— clique noutro ponto do mapa p/ trocar</span></h3>
+<div id="prev-info" class="legend" style="margin-bottom:.5rem"></div>
+<div id="prev-picks" style="margin-bottom:.5rem"></div>
+<div class="grid2">
+<div><label>Nome da empresa <span class="legend">(entra sozinho)</span></label><input id="prev-empresa" placeholder="Ex: Buffet Hero Kids" oninput="gerarMsgPrev()"></div>
+<div><label>O que ela precisa <span class="legend">(muda a mensagem)</span></label><select id="prev-need" onchange="gerarMsgPrev()">
+<option value="site" selected>🌐 Site institucional — R$ 997</option>
+<option value="loja">🛒 Loja virtual — R$ 2.497</option>
+<option value="landing">🎯 Landing page — R$ 697</option>
+<option value="fanpage">📱 Fanpage profissional — R$ 497</option>
+<option value="seo">📍 Google Maps + SEO local — R$ 350</option>
+<option value="manut">🔧 Manutenção mensal — R$ 297</option>
+<option value="exemplo">✨ Exemplo (Buffet Hero Kids — o seu texto)</option>
+</select></div>
+</div>
+<label>Mensagem automática pronta p/ enviar <span class="legend">(edite se quiser)</span></label>
+<textarea id="prev-msg" rows="5"></textarea>
+<div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.6rem;align-items:center">
+<button class="btn-g" onclick="enviarMsgPrev()">💬 Mandar mensagem automática</button>
+<button class="btn btn-v" onclick="copiarTexto(document.getElementById('prev-msg').value)">📋 Copiar mensagem</button>
+<button class="btn btn-p" onclick="addPrevFunil()">+ Adicionar ao funil</button>
+<span class="legend" id="prev-fone-st"></span>
+</div>
+<p class="legend" style="margin-top:.4rem">A mensagem muda conforme <b>o que ela precisa</b> — troque o item acima. Exemplo: <i>“Olá! Vi que a Buffet Hero Kids ainda não tem site…”</i></p>
+</div>
 <div id="maps-result"></div>
 </div>
 <div class="grid2">
@@ -534,11 +553,12 @@ Oi {nome}! Passando pra retomar nossa conversa sobre {servico} — ainda faz sen
 </div></div>
 <!-- MODAL TAREFA -->
 <div class="modal-bg" id="m-tar"><div class="modal"><h2>Nova Tarefa</h2><label>Título</label><input id="t-tit" placeholder="Ligar para lead X amanhã 14h"><label>Data</label><input type="datetime-local" id="t-data"><div style="display:flex;gap:.6rem;justify-content:flex-end;margin-top:1rem"><button class="btn btn-v" onclick="document.getElementById('m-tar').classList.remove('aberto')">Cancelar</button><button class="btn-g" onclick="salvarTarefa()">Criar</button></div></div></div>
+<script src="vendor/leaflet/leaflet.js" defer></script>
 <script>
 const KEY='crm-estudio-rick-v3';
 
 // ════ ATUALIZACAO / BUILD ════
-const BUILD='2026.10.22-3';
+const BUILD='2026.10.28-3';
 const ABS_BASE='https://rickdigitalestudio.github.io/estudio-rick-digital';
 // Estado da atualizacao (preenchido por checarVersao)
 const UPD={remota:'',nova:false,quando:0,erro:''};
@@ -674,7 +694,7 @@ function num(){return (DB.cfg.num||'5511989426415').replace(/\D/g,'');}
 function waLink(tel,msg){return 'https://wa.me/'+telE164(tel)+'?text='+encodeURIComponent(msg);}
 // NAV
 document.querySelectorAll('aside nav a').forEach(a=>a.onclick=e=>{e.preventDefault();ir(a.dataset.aba);});
-function ir(n){document.querySelectorAll('.aba').forEach(x=>x.classList.remove('ativa'));document.getElementById('aba-'+n).classList.add('ativa');document.querySelectorAll('aside nav a').forEach(a=>a.classList.toggle('ativo',a.dataset.aba===n));}
+function ir(n){document.querySelectorAll('.aba').forEach(x=>x.classList.remove('ativa'));document.getElementById('aba-'+n).classList.add('ativa');document.querySelectorAll('aside nav a').forEach(a=>a.classList.toggle('ativo',a.dataset.aba===n));if(n==='leads'){try{paisMudou();}catch(e){}try{mapL?mapL.invalidateSize():initMaps();}catch(e){}}}
 // EQUIPE 19 — rostos 100% humanos (foto local > retrato real > iniciais)
 const EQUIPE=[
 {n:'Camila Torres',s:'Designer de Banners',c:'#EC4899',g:'F',fotoLocal:'fotos/camila.jpg',foto:'https://randomuser.me/api/portraits/women/44.jpg'},
@@ -765,7 +785,7 @@ async function buscarGoogle(){
         const nomes=semTel.map(x=>escRe(x.nome)).join('|');
         const centros=semTel.map(x=>x.lat+','+x.lon).join(',');
         const q2='[out:json][timeout:25];(nwr(around:120,'+centros+')["name"~"^('+nomes+')$",i];);out center tags;';
-        const ov=await(await fetch('https://overpass-api.de/api/interpreter?data='+encodeURIComponent(q2))).json();
+        const ov=await overpass(q2);
         const tags=(ov.elements||[]).map(e=>e.tags||{});
         semTel.forEach(x=>{const t=tags.find(t=>t.name&&String(t.name).toLowerCase()===String(x.nome).toLowerCase())||{};
           if(!x.telefone)x.telefone=t.phone||t['contact:phone']||t['contact:mobile']||'';
@@ -1423,27 +1443,278 @@ const dias=Object.keys(h).sort().reverse().slice(0,7);
 el.innerHTML=dias.map(k=>{const m=h[k];const top=Object.entries(m.origem||{}).sort((a,b)=>b[1]-a[1]).slice(0,4).map(o=>o[0]+' ('+o[1]+')').join(' · ')||'—';
 return '<div style="padding:.6rem 0;border-bottom:1px solid #eee"><b>📅 '+k.split('-').reverse().join('/')+'</b> — '+m.leads+' leads · '+m.clientes+' clientes · R$ '+m.valor.toFixed(0)+' · '+m.conv+'% conv.<br><small>Origens: '+top+'</small></div>';}).join('')||'<p class="legend">Ainda sem histórico — use o app hoje que amanhã aparece aqui. Detalhado some após 7 dias, métrica após 30.</p>';}
 function importCSV(){const f=document.getElementById('csv').files[0];if(!f)return alert('Escolha o CSV');const r=new FileReader();r.onload=()=>{r.result.split('\n').slice(1).forEach(l=>{const c=l.split(/[;,]/);if(c[0])DB.leads.unshift({id:Date.now()+Math.random(),nome:c[0].trim(),tel:(c[1]||'').trim(),origem:c[2]||'CSV',servico:'Site Institucional',valor:997,etapa:'novo',data:new Date().toLocaleString('pt-BR')});});save();alert('✅ Importado!');};r.readAsText(f);}
+// ════ PAÍSES COM BANDEIRA (escreva ou escolha) + CIDADES POR PAÍS ════
+// Bandeira gerada do código ISO do país (sem depender de emoji pronto).
+const PAISES=[
+['Albânia','AL'],['Alemanha','DE'],['Andorra','AD'],['Arábia Saudita','SA'],['Argélia','DZ'],['Argentina','AR'],['Armênia','AM'],['Austrália','AU'],['Áustria','AT'],['Azerbaijão','AZ'],
+['Bahamas','BS'],['Bangladesh','BD'],['Barbados','BB'],['Barein','BH'],['Belarus','BY'],['Bélgica','BE'],['Belize','BZ'],['Benin','BJ'],['Bolívia','BO'],['Bósnia','BA'],['Botsuana','BW'],['Brasil','BR'],['Brunei','BN'],['Bulgária','BG'],['Burkina Faso','BF'],['Burundi','BI'],['Butão','BT'],
+['Cabo Verde','CV'],['Camarões','CM'],['Camboja','KH'],['Canadá','CA'],['Catar','QA'],['Cazaquistão','KZ'],['Chade','TD'],['Chile','CL'],['China','CN'],['Chipre','CY'],['Colômbia','CO'],['Comores','KM'],['Coreia do Sul','KR'],['Costa Rica','CR'],['Croácia','HR'],['Dinamarca','DK'],['Djibouti','DJ'],['Dominica','DM'],
+['Egito','EG'],['El Salvador','SV'],['Emirados Árabes Unidos','AE'],['Equador','EC'],['Eritreia','ER'],['Eslováquia','SK'],['Eslovênia','SI'],['Espanha','ES'],['Estados Unidos da América','US'],['Estônia','EE'],['Eswatini','SZ'],['Etiópia','ET'],
+['Federação da Rússia','RU'],['Fiji','FJ'],['Filipinas','PH'],['Finlândia','FI'],['França','FR'],['Gabão','GA'],['Gâmbia','GM'],['Gana','GH'],['Geórgia','GE'],['Granada','GD'],['Grécia','GR'],['Guatemala','GT'],['Guiana','GY'],['Guiné','GN'],['Guiné-Bissau','GW'],['Guiné Equatorial','GQ'],['Haiti','HT'],['Holanda (Países Baixos)','NL'],['Honduras','HN'],['Hungria','HU'],['Iêmen','YE'],['Ilhas Marshall','MH'],['Ilhas Salomão','SB'],['Índia','IN'],['Indonésia','ID'],['Irã','IR'],['Iraque','IQ'],['Irlanda','IE'],['Islândia','IS'],['Israel','IL'],['Itália','IT'],
+['Jamaica','JM'],['Japão','JP'],['Jordânia','JO'],['Kiribati','KI'],['Kuwait','KW'],['Lesoto','LS'],['Letônia','LV'],['Líbano','LB'],['Libéria','LR'],['Líbia','LY'],['Liechtenstein','LI'],['Lituânia','LT'],['Luxemburgo','LU'],['Macedônia do Norte','MK'],['Madagascar','MG'],['Malásia','MY'],['Malauí','MW'],['Maldivas','MV'],['Mali','ML'],['Malta','MT'],['Marrocos','MA'],['Maurício','MU'],['Mauritânia','MR'],['México','MX'],['Micronésia (Estados Federados da)','FM'],['Moçambique','MZ'],['Moldávia','MD'],['Mônaco','MC'],['Mongólia','MN'],['Montenegro','ME'],
+['Namíbia','NA'],['Nauru','NR'],['Nepal','NP'],['Nicarágua','NI'],['Níger','NE'],['Noruega','NO'],['Nova Zelândia','NZ'],['Omã','OM'],['Palestina (observador)','PS'],['Panamá','PA'],['Papua-Nova Guiné','PG'],['Paquistão','PK'],['Paraguai','PY'],['Peru','PE'],['Polônia','PL'],['Portugal','PT'],['Quênia','KE'],['Quirguistão','KG'],['Reino Unido','GB'],['República Centro-Africana','CF'],['República Democrática do Congo','CD'],['República Dominicana','DO'],['Romênia','RO'],['Ruanda','RW'],
+['Samoa','WS'],['Santa Sé (Vaticano - observador)','VA'],['Santa Lúcia','LC'],['São Cristóvão e Neves','KN'],['São Marinho','SM'],['São Tomé e Príncipe','ST'],['São Vicente e Granadinas','VC'],['Senegal','SN'],['Serra Leoa','SL'],['Sérvia','RS'],['Seychelles','SC'],['Singapura','SG'],['Síria','SY'],['Somália','SO'],['Sri Lanka','LK'],['Sudão','SD'],['Sudão do Sul','SS'],['Suécia','SE'],['Suíça','CH'],['Tailândia','TH'],['Tajiquistão','TJ'],['Tanzânia','TZ'],['Tchequia','CZ'],['Timor-Leste','TL'],['Trinidad e Tobago','TT'],['Tunísia','TN'],['Turcomenistão','TM'],['Turquia','TR'],['Tuvalu','TV'],
+['Ucrânia','UA'],['Uruguai','UY'],['Uzbequistão','UZ'],['Vanuatu','VU'],['Venezuela','VE'],['Vietnã','VN']
+];
+function bandeira(uf){try{return String.fromCodePoint.apply(null,[...String(uf||'')].map(c=>0x1F1E6+c.charCodeAt(0)-65));}catch(e){return '🏳️';}}
+function montarPaises(){const s=document.getElementById('maps-pais');if(!s)return;
+ s.innerHTML='<option value="">— Escolha o país na lista —</option>'+PAISES.map(p=>'<option value="'+p[0]+'"'+(p[0]==='Brasil'?' selected':'')+'>'+p[0]+'</option>').join('');}
+// Cidade/Bairro: UM select só, com as cidades de TODOS os países (agrupadas por
+// país). O valor guarda a cidade e o país ("Lisboa|portugal") — assim a busca
+// sabe o país certo da cidade mesmo se o select de país estiver em outro.
+function montarCidades(){
+ const cs=document.getElementById('maps-cidade');if(!cs)return;
+ let h='<option value="todas">🏙️ Todas as cidades</option>';
+ PAISES.forEach(p=>{const c=CIDADES[chavePais(p[0])];if(!c)return;
+  h+='<optgroup label="'+p[0]+'">'+c.split(',').map(x=>{const t=x.trim();return t?'<option value="'+t+'|'+chavePais(p[0])+'">'+t+'</option>':'';}).join('')+'</optgroup>';});
+ cs.innerHTML=h;
+}
+// lê a cidade escolhida: null = "Todas as cidades"
+function cidadeEscolhida(){
+ const cs=document.getElementById('maps-cidade');const v=cs?cs.value:'';
+ if(!v||v==='todas')return null;
+ const i=v.lastIndexOf('|');
+ if(i<0)return {cid:v,pais:paisLido()};
+ const k=v.slice(i+1);
+ const p=PAISES.find(x=>chavePais(x[0])===k);
+ return {cid:v.slice(0,i),pais:p?p[0]:paisLido()};
+}
+// mantido p/ compat: o país agora vem de um select (sem bandeira no valor)
+function limpaPais(v){return String(v||'').replace(/^[^\p{L}\p{N}]+/u,'').trim();}
+function chavePais(v){return String(v||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]/g,'');}
+function paisLido(){return (document.getElementById('maps-pais')||{}).value||'Brasil';}
+// Cidades/bairros sugeridos por país — o campo Cidade / Bairro vira lista
+// assim que o país é escolhido (continua aceitando qualquer texto digitado).
+const CIDADES={
+'albania':'Tirana,Durrës,Vlorë,Elbasan',
+'alemanha':'Berlim,Munique,Hamburgo,Colônia,Frankfurt,Stuttgart,Dortmund,Essen,Lipsia,Bremen',
+'andorra':'Andorra a Vella,Encamp,Pas de la Casa,La Massana',
+'arabiasaudita':'Riade,Jeddah,Dammam,Meca,Medina',
+'argelia':'Argel,Oran,Constantine,Annaba,Blida',
+'argentina':'Buenos Aires,Córdoba,Rosário,Mendoza,La Plata,Santa Fe,Mar del Plata',
+'armenia':'Yerevan,Gyumri,Vanadzor',
+'australia':'Sydney,Melbourne,Brisbane,Perth,Adelaide,Gold Coast,Canberra,Hobart',
+'austria':'Viena,Graz,Salzburgo,Linz,Innsbruck',
+'azerbaijao':'Bacu,Ganja,Sumqayit,Mingachevir',
+'bahamas':'Nassau,Freeport,West End',
+'bangladesh':'Daca,Chittagong,Rangpur,Khulna,Sylhet',
+'barbados':'Bridgetown,Speightstown,Oistins',
+'barein':'Manama,Muharraq,Riffa',
+'belarus':'Minsko,Gomel,Mogilev,Vitebsk,Brest',
+'belgica':'Bruxelas,Antuérpia,Gante,Bruges,Liège,Mons',
+'belize':'Belmopan,San Ignacio,Belize City,Dangriga',
+'benin':'Porto-Novo,Cotonou,Parakou,Abomey',
+'bolivia':'La Paz,Santa Cruz de la Sierra,Cochabamba,El Alto,Sucre,Tarija',
+'bosnia':'Sarajevo,Banja Luka,Tuzla,Mostar,Zenica',
+'botsuana':'Gaborone,Francistown,Maun,Serowe',
+'brasil':'São Paulo SP,Rio de Janeiro RJ,Belo Horizonte MG,Salvador BA,Fortaleza CE,Curitiba PR,Recife PE,Porto Alegre RS,Brasília DF,Goiânia GO,Manaus AM,Belém PA,Vitória ES,Florianópolis SC,Natal RN,João Pessoa PB,Maceió AL,Aracaju SE,Teresina PI,Campo Grande MS,Cuiabá MT,Palmas TO,Boa Vista RR,Macapá AP,Porto Velho RO,Rio Branco AC,São Luís MA,Santos SP,Campinas SP,Guarulhos SP,São Bernardo do Campo SP,Osasco SP,Niterói RJ,Duque de Caxias RJ,Uberlândia MG,Contagem MG,Juiz de Fora MG,Londrina PR,Maringá PR,Joinville SC,Blumenau SC,Caxias do Sul RS,Pelotas RS,Feira de Santana BA,Petrolina PE,Caruaru PE,Ananindeua PA,Cariacica ES,Vila Velha ES',
+'brunei':'Bandar Seri Begawan,Tutong,Muara,Bangar',
+'bulgaria':'Sófia,Plovdiv,Varna,Burgas,Ruse,Pleven',
+'burkinafaso':'Ouagadougou,Bobo-Dioulasso,Koudougou,Banfora',
+'burundi':'Bujumbura,Gitega,Ngozi,Ruyigi',
+'butao':'Timbu,Paro,Punakha,Phuntsholing',
+'caboverde':'Praia,Mindelo,Porto Novo,Santa Maria',
+'camaroes':'Iaundé,Duala,Bamenda,Bafoussam,Garoua',
+'camboja':'Nom Pen,Siem Reap,Sihanoukville,Battambang',
+'canada':'Toronto,Vancouver,Montreal,Calgary,Ottawa,Edmonton,Winnipeg,Quebec,Halifax,Victoria',
+'catar':'Doha,Al Rayyan,Al Wakrah,Umm Salal',
+'cazaquistao':'Astana,Almaty,Shymkent,Karaganda,Aktobe',
+'chade':"N'Djamena,Moundou,Sarh,Abeche",
+'chile':'Santiago,Valparaíso,Concepción,Antofagasta,Viña del Mar,Temuco',
+'china':'Pequim,Xangai,Guangzhou,Shenzhen,Chengdu,Hangzhou,Wuhan,Xian,Chongqing,Tianjin,Suzhou,Qingdao',
+'chipre':'Nicósia,Limassol,Larnaca,Pafos,Famagusta',
+'colombia':'Bogotá,Medellín,Cali,Barranquilla,Bucaramanga,Cartagena,Santa Marta',
+'comores':'Moroni,Mutsamudu,Fomboni',
+'coreiadosul':'Seul,Busan,Incheon,Daejeon,Daegu,Gwangju,Jeju,Changwon',
+'costarica':'San José,Alajuela,Cartago,Heredia,Liberia,Limón',
+'croacia':'Zagreb,Split,Rijeka,Osijek,Dubrovnik,Zadar',
+'dinamarca':'Copenhague,Aarhus,Odense,Aalborg,Esbjerg,Roskilde',
+'djibouti':'Djibouti,Ali Sabieh,Dikhil,Obock',
+'dominica':'Roseau,Portsmouth,Marigot,Castle Bruce',
+'egito':'Cairo,Alexandria,Giza,Luxor,Aswan,Sharm El Sheikh,Mansoura',
+'elsalvador':'San Salvador,Santa Ana,San Miguel,Ahuachapán',
+'emiradosarabesunidos':'Abu Dabi,Dubai,Sharjah,Ajman,Ras al-Khaimah,Fujairah',
+'equador':'Quito,Guayaquil,Cuenca,Portoviejo,Machala,Loja',
+'eritreia':'Asmara,Massawa,Keren,Assab',
+'eslovaquia':'Bratislava,Košice,Prešov,Nitra,Žilina',
+'eslovenia':'Liubliana,Maribor,Celje,Koper,Ptuj',
+'espanha':'Madrid,Barcelona,Valencia,Sevilla,Zaragoza,Málaga,Bilbao,Palma,Alicante,Murcia,Granada,Vigo,A Coruña',
+'estadosunidosdaamerica':'Nova York,Los Angeles,Miami,Orlando,Chicago,Houston,Phoenix,Filadélfia,San Antonio,San Diego,Dallas,San Francisco,Las Vegas,Boston,Atlanta,Washington,Seattle,Denver,Detroit,Portland,Honolulu,Anchorage,Minneapolis',
+'estonia':'Tallinn,Tartu,Pärnu,Narva',
+'eswatini':'Mbabane,Manzini,Big Bend,Malkerns',
+'etiopia':'Adis Abeba,Dire Dawa,Mekelle,Bahir Dar,Hawassa',
+'federacaodarussia':'Moscou,São Petersburgo,Novosibirsk,Ecaterimburgo,Kazan,Sochi,Vladivostok,Krasnoyarsk,Nijni Novgorod,Samara',
+'fiji':'Suva,Nadi,Lautoka,Labasa',
+'filipinas':'Manila,Cebu,Quezon City,Davao,Makati,Taguig,Caloocan,Iloilo',
+'finlandia':'Helsinque,Espoo,Tampere,Vantaa,Oulu,Turku',
+'franca':'Paris,Marselha,Lyon,Toulouse,Nice,Nantes,Bordeaux,Lille,Strasburgo,Rennes,Reims',
+'gabao':'Libreville,Port-Gentil,Franceville,Oyem',
+'gambia':'Banjul,Serekunda,Bakau,Kanifing',
+'gana':'Acra,Kumasi,Tamale,Takoradi,Abengourou',
+'georgia':'Tiflis,Batumi,Kutaisi,Rustavi',
+'granada':'Saint George,Gouyave,Saint David',
+'grecia':'Atenas,Tessalônica,Patras,Heraklio,Rodos,Volos',
+'guatemala':'Cidade da Guatemala,Antigua Guatemala,Quetzaltenango,Cobán,Petén',
+'guiana':'Georgetown,Linden,New Amsterdam,Anna Regina',
+'guine':'Conacri,Kankan,Nzérékoré,Kindia',
+'guinebissau':'Bissau,Bafatá,Gabú,Bambada',
+'guineequatorial':'Malabo,Bata,Ebebiyin,Mongomo',
+'haiti':'Porto Príncipe,Cap-Haïtien,Carrefour,Delmas',
+'holandapaisesbaixos':'Amsterdã,Roterdã,Haia,Utrecht,Eindhoven,Maastricht,Groningen,Breda',
+'honduras':'Tegucigalpa,San Pedro Sula,La Ceiba,Choloma',
+'hungria':'Budapeste,Debrecen,Szeged,Miskolc,Pécs,Győr',
+'iemen':'Sana,Aden,Taiz,Hodeidah',
+'ilhasmarshall':'Majuro,Ebeye,Arno,Jaluit',
+'ilhassalomao':'Honiara,Auki,Gizo,San Isabel',
+'india':'Nova Délhi,Mumbai,Bangalore,Calcuta,Chennai,Hyderabad,Ahmedabad,Pune,Jaipur,Lucknow,Goa,Indore',
+'indonesia':'Jacarta,Surabaya,Bandung,Medan,Semarang,Denpasar,Yogyakarta,Makassar',
+'ira':'Teerã,Isfahan,Mashad,Shiraz,Tabriz,Karaj',
+'iraque':'Bagdade,Basra,Mossul,Erbil,Najaf,Kerbala',
+'irlanda':'Dublin,Cork,Limerick,Galway,Waterford,Kilkenny',
+'islandia':'Reykjavík,Kópavogur,Hafnarfjörður,Akureyri',
+'israel':'Tel Aviv,Jerusalém,Haifa,Eilat,Beersheba',
+'italia':'Roma,Milão,Nápoles,Turim,Veneza,Florença,Gênova,Bolonha,Palermo,Catânia,Verona',
+'jamaica':'Kingston,Montego Bay,Spanish Town,Portmore',
+'japao':'Tóquio,Osaka,Nagoya,Sapporo,Fukuoka,Kyoto,Yokohama,Kobe,Hiroshima,Sendai,Okinawa',
+'jordania':'Amã,Aqaba,Irbid,Zarqa,Ajloun',
+'kiribati':'Tarawa,Betio,Butaritari,Kiritimati',
+'kuwait':'Cidade do Kuwait,Al Ahmadi,Al Jahra,Hawalli',
+'lesoto':'Maseru,Teyateyaneng,Mafeteng,Butha-Buthe',
+'letonia':'Riga,Daugavpils,Liepaja,Jelgava,Ogre',
+'libano':'Beirute,Tripoli,Saida,Zahlé,Baalbek',
+'liberia':'Monróvia,Gbarnga,Buchanan,Kakata',
+'libia':'Trípoli,Bengasi,Misrata,Sabha,Sirte',
+'liechtenstein':'Vaduz,Schaan,Balzers,Eschen',
+'lituania':'Vilnius,Kaunas,Klaipeda,Siauliai,Panevezys',
+'luxemburgo':'Luxemburgo,Esch-sur-Alzette,Differdange,Vianden',
+'macedoniadonorte':'Skopje,Ohrid,Prilep,Bitola,Tetovo',
+'madagascar':'Antananarivo,Toamasina,Antsirabe,Fianarantsoa',
+'malasia':'Kuala Lumpur,Penang,Johor Bahru,Ipoh,Malaca,Kota Kinabalu,Kuching,Shah Alam',
+'malaui':'Lilongwe,Blantyre,Mzuzu,Zomba',
+'maldivas':'Malé,Addu,Hulhume,North Malé',
+'mali':'Bamako,Sikasso,Mopti,Ségou,Tombouctou',
+'malta':'Valeta,Birkirkara,Mosta,Sliema,Gozo',
+'marrocos':'Rabat,Casablanca,Marrakech,Fez,Tânger,Agadir,Oujda,Meknès',
+'mauricio':'Port Louis,Curepipe,Quatre Bornes,Vacoas',
+'mauritania':'Nouakchott,Nouadhibou,Rosso,Kiffa',
+'mexico':'Cidade do México,Guadalajara,Monterrey,Cancún,Puebla,Tijuana,Mérida,Querétaro,León,Acapulco,Toluca',
+'micronesiaestadosfederadosda':'Palikir,Weno,Kolonia,Colonia',
+'mocambique':'Maputo,Beira,Nampula,Matola,Chimoio,Nacala',
+'moldavia':'Chisinau,Balti,Tiraspol,Bender',
+'monaco':'Mônaco,Monte Carlo,La Condamine,Fontvieille',
+'mongolia':'Ulan Bator,Erdenet,Darhan,Choibalsan',
+'montenegro':'Podgorica,Budva,Kotor,Niksic,Herceg Novi',
+'namibia':'Windhoek,Walvis Bay,Swakopmund,Oshakati',
+'nauru':'Yaren,Anibare,Aiwo,Denigomodu',
+'nepal':'Catmandu,Pokhara,Lalitpur,Biratnagar,Bhaktapur',
+'nicaragua':'Managua,León,Granada,Masaya,Chinandega,Estelí',
+'niger':'Niamey,Zinder,Agadez,Tahoua',
+'noruega':'Oslo,Bergen,Trondheim,Stavanger,Tromsø,Kristiansand',
+'novazelandia':'Auckland,Wellington,Christchurch,Hamilton,Dunedin,Queenstown,Tauranga',
+'oma':'Mascate,Salalah,Sohar,Sur',
+'palestinaobservador':'Ramala,Gaza,Nablus,Hebron,Betléem',
+'panama':'Cidade do Panamá,Colón,David,San Miguelito,Chitré',
+'papuanovaguine':'Port Moresby,Lae,Madang,Kokopo',
+'paquistao':'Islamabad,Karachi,Lahore,Faisalabad,Rawalpindi,Multan,Peshawar,Quetta',
+'paraguai':'Assunção,Ciudad del Este,San Lorenzo,Luque,Filadélfia',
+'peru':'Lima,Arequipa,Trujillo,Cusco,Chiclayo,Piura,Iquitos',
+'polonia':'Varsóvia,Cracóvia,Lodz,Gdansk,Breslávia,Poznan,Katowice,Wroclaw',
+'portugal':'Lisboa,Porto,Braga,Coimbra,Faro,Funchal,Aveiro,Guimarães,Setúbal,Évora,Leiria,Viseu',
+'quenia':'Nairobi,Mombasa,Kisumu,Nakuru,Eldoret,Thika',
+'quirguistao':'Bishkek,Osh,Jalal-Abad,Karakol',
+'reinounido':'Londres,Manchester,Birmingham,Glasgow,Liverpool,Leeds,Bristol,Edimburgo,Cardiff,Belfast,Sheffield,Nottingham',
+'republicacentroafricana':'Bangui,Bimbo,Berbérati,Bambari',
+'republicademocraticadocongo':'Kinshasa,Lubumbashi,Goma,Matadi,Kisangani,Bukavu',
+'republicadominicana':'Santo Domingo,Santiago de los Caballeros,Punta Cana,La Romana,Puerto Plata',
+'romenia':'Bucareste,Cluj-Napoca,Timisoara,Iasi,Constanta,Brasov,Sibiu',
+'ruanda':'Kigali,Butare,Musanze,Huye',
+'samoa':'Apia,Vaitele,Safata,Manono',
+'santasevaticanoobservador':'Cidade do Vaticano,Borgo Romano',
+'santalucia':'Castries,Gros Islet,Vieux Fort,Anse La Raye',
+'saocristovaoeneves':'Basseterre,Charlestown,Sandy Point,Dieppe Bay',
+'saomarinho':'São Marinho,Borgo Maggiore,Serravalle,Dominante',
+'saotomeeprincipe':'São Tomé,Santo Amaro,Neves,Trindade',
+'saovicenteegranadinas':'Kingstown,Port Elizabeth,Georgetown,Chateaubelair',
+'senegal':'Dakar,Saint-Louis,Touba,Thiès,Diamniadio,Ziguinchor',
+'serraleoa':'Freetown,Bo,Makeni,Kenema,Port Loko',
+'servia':'Belgrado,Novi Sad,Nis,Kragujevac,Subotica',
+'seychelles':'Victoria,Anse Royale,Port Glaud,Takamaka',
+'singapura':'Singapura,Jurong,Tampines,Bedok,Woodlands',
+'siria':'Damasco,Alepo,Latakia,Homs,Hama',
+'somalia':'Mogadishu,Hargeisa,Bosaso,Kismayo',
+'srilanka':'Colombo,Kandy,Galle,Jaffna,Negombo,Kurunegala',
+'sudao':'Cartum,Omdurman,Port Sudan,Kassala,El Obeid',
+'sudaodosul':'Juba,Wau,Rumbek,Yei',
+'suecia':'Estocolmo,Gotemburgo,Malmö,Uppsala,Linköping,Västerås',
+'suica':'Berno,Zurique,Genebra,Basileia,Lucerna,Lausanne,St. Gallen',
+'tailandia':'Bangkok,Chiang Mai,Phuket,Pattaya,Hat Yai,Nakhon Ratchasima,Udon Thani',
+'tajiquistao':'Dushanbe,Khujand,Bokhtar,Kulob',
+'tanzania':'Dar es Salaam,Dodoma,Arusha,Zanzibar,Mwanza,Mbeya',
+'tchequia':'Praga,Brno,Ostrava,Plzen,Pardubice,Usti nad Labem',
+'timorleste':'Dili,Baucau,Lospalos,Ainaro',
+'trinidadetobago':'Port of Spain,San Fernando,Chaguanas,Arima',
+'tunisia':'Tunes,Sfax,Sousse,Nabeul,Bizerte',
+'turcomenistao':'Asgabat,Turkmenabat,Dashoguz,Balkanabat',
+'turquia':'Ancara,Istambul,Esmirna,Antalya,Bursa,Adana,Gaziantep,Konya,Trabzon',
+'tuvalu':'Funafuti,Nanumea,Nukufetau,Niutao',
+'ucrania':'Kiev,Lviv,Odessa,Kharkiv,Dnipro,Zaporozhie,Vinnytsia',
+'uruguai':'Montevidéu,Punta del Este,Salto,Maldonado,Tacuarembó',
+'uzbequistao':'Tashkent,Samarkand,Bukhara,Andijan,Namangan',
+'vanuatu':'Port Vila,Luganville,Efate,Santo',
+'venezuela':'Caracas,Maracaibo,Valencia,Barquisimeto,Maracay,Barcelona',
+'vietna':'Hanói,Cidade de Ho Chi Minh,Da Nang,Haiphong,Can Tho,Nha Trang'
+};
+function paisMudou(){
+ const s=document.getElementById('maps-pais');if(!s)return;
+ const sel=s.value||'Brasil';
+ const p=PAISES.find(x=>x[0]===sel);
+ const fl=document.getElementById('pais-flag');if(fl)fl.textContent=p?bandeira(p[1]):'';
+ // a lista de cidades é única (todos os países); ela não muda aqui.
+ // o país do select vale quando a cidade está em "Todas as cidades".
+}
 // MAPS
 const OSM={fitness:['leisure=fitness_centre','sport=fitness'],beleza:['shop=beauty','shop=hairdresser','shop=nail'],barbearia:['shop=hairdresser','craft=barber'],restaurante:['amenity=restaurant','amenity=fast_food'],lanchonete:['amenity=fast_food','amenity=cafe'],padaria:['shop=bakery','shop=pastry'],roupas:['shop=clothes','shop=shoes'],pet:['shop=pet','amenity=veterinary'],farmacia:['amenity=pharmacy'],dentista:['amenity=dentist','healthcare=dentist'],clinica:['amenity=clinic','amenity=doctors'],advocacia:['office=lawyer'],contabil:['office=accountant'],imobiliaria:['office=estate_agent'],oficina:['shop=car_repair','amenity=car_wash'],academia_luta:['leisure=sports_centre','sport=martial_arts'],salao_festa:['leisure=hall','amenity=events_venue'],mercado:['shop=convenience','shop=supermarket'],papelaria:['shop=stationery','shop=books'],informatica:['shop=computer','office=it'],eletro:['shop=electronics','shop=mobile_phone']};
 const BR_RE=/brasil|brazil|brasileir|churrasc|picanha|feijoada|açaí|acai|coxinha|pastel|samba|tapioca|bossa|mineir|paulist|carioca|nordest/i;
 function isBR(t){if(!t)return false;const s=((t.name||'')+' '+(t.cuisine||'')+' '+(t['origins']||'')).toLowerCase();return BR_RE.test(s)||(t.cuisine||'').toLowerCase().includes('brazilian');}
+// Overpass tem 1 servidor só? fora do ar = busca morre. Aqui ele tenta 1 a 1 até um responder.
+// (osm.ch é SÓ da Suíça — "sucesso vazio" enganaria o teste, por isso entram só mirrors globais)
+const OVERPASS=['https://overpass-api.de/api/interpreter','https://overpass.kumi.systems/api/interpreter','https://maps.mail.ru/osm/tools/overpass/api/interpreter','https://overpass.private.coffee/api/interpreter'];
+async function overpass(txt){
+ let vazio=null;
+ for(const u of OVERPASS){
+  try{
+   const ctrl=('AbortController' in window)?new AbortController():null;
+   const t=ctrl?setTimeout(()=>ctrl.abort(),12000):0;
+   const r=await fetch(u+'?data='+encodeURIComponent(txt),{headers:{Accept:'application/json'},signal:ctrl?ctrl.signal:undefined});
+   if(t)clearTimeout(t);
+   if(!r.ok)continue;
+   const j=await r.json();
+   if(j&&j.elements&&j.elements.length)return j; // dados de verdade: usa e para
+   vazio=vazio||j;                               // respondeu vazio: tenta o próximo mirror
+  }catch(e){}
+ }
+ if(vazio)return vazio; // todos vazios: devolve vazio (a busca avisa "nenhum por aqui")
+ throw new Error('Overpass fora do ar em todos os servidores');
+}
 let mapsQueue=[];
-async function buscarMaps(){const cid=document.getElementById('maps-cidade').value||'São Paulo';const cat=document.getElementById('maps-cat').value;
-const pais=(document.getElementById('maps-pais')?.value||'Brasil').trim();
+async function buscarMaps(){const cat=document.getElementById('maps-cat').value;
+const ec=cidadeEscolhida(); // null = "Todas as cidades" → busca no país do select
+const pais=paisLido();
 const soSemSite=document.getElementById('maps-semsite')?.checked!==false;
 const soComFone=document.getElementById('maps-comfone')?.checked===true;
-const geoQ=(cid+(pais?', '+pais:''));const catLabel=document.getElementById('maps-cat').selectedOptions[0].text;
+const local=ec?ec.cid:(pais||'São Paulo');
+const paisGeo=ec?ec.pais:pais;
+const geoQ=(local+(paisGeo&&local!==paisGeo?', '+paisGeo:''));const catLabel=document.getElementById('maps-cat').selectedOptions[0].text;
 document.getElementById('link-gmaps').href='https://www.google.com/maps/search/'+encodeURIComponent(catLabel+' em '+geoQ);
-document.getElementById('maps-frame').src='https://www.google.com/maps?q='+encodeURIComponent(catLabel+' em '+geoQ)+'&output=embed';
 document.getElementById('maps-status').textContent='⏳ Localizando '+geoQ+'...';
 try{
 const g=await(await fetch('https://nominatim.openstreetmap.org/search?format=json&limit=1&q='+encodeURIComponent(geoQ),{headers:{Accept:'application/json'}})).json();
 if(!g.length)throw 0;const lat=+g[0].lat,lon=+g[0].lon;
+mapaIr(lat,lon,catLabel+' em '+geoQ);
 document.getElementById('maps-status').textContent='⏳ Buscando '+catLabel+' SEM site em '+geoQ+' (5km)...';
 let q='';
 {const tags=OSM[cat]||['name~'+cat];q=tags.map(t=>{const[k,v]=t.split('=');return 'nwr["'+k+'"~"'+v+'",i](around:5000,'+lat+','+lon+');';}).join('');}
-const url='https://overpass-api.de/api/interpreter?data='+encodeURIComponent('[out:json][timeout:25];('+q+');out center 40;');
-const j=await(await fetch(url)).json();
+const j=await overpass('[out:json][timeout:25];('+q+');out center 40;');
 const todos=(j.elements||[]).filter(e=>e.tags?.name);
 function temSite(t){if(!t)return false;const v=(t.website||t['contact:website']||t.url||t['contact:url']||'').trim();return v.length>4;}
 function temFone(t){if(!t)return false;const v=(t['contact:phone']||t.phone||t['contact:mobile']||t.mobile||'').trim();return v.replace(/\D/g,'').length>=8;}
@@ -1451,10 +1722,10 @@ const comSite=todos.filter(e=>temSite(e.tags)).length;
 let filtrados=todos.filter(e=>soSemSite?!temSite(e.tags):true);
 if(soComFone)filtrados=filtrados.filter(e=>temFone(e.tags));
 const comFone=todos.filter(e=>temFone(e.tags)).length;
-mapsQueue=filtrados.slice(0,20).map((e,i)=>({nome:e.tags?.name||('Comércio '+(i+1)+' · '+cat),tel:(e.tags?.['contact:phone']||e.tags?.phone||e.tags?.['contact:mobile']||e.tags?.mobile||'').replace(/^\+/,'')||'',categoria:catLabel(e.tags?.shop||e.tags?.amenity||e.tags?.cuisine||e.tags?.office||cat),origem:'Google Maps',servico:'Site Institucional',end:e.tags?.['addr:street']||e.tags?.['addr:suburb']||geoQ,lat:e.lat||e.center?.lat,lon:e.lon||e.center?.lon,semSite:true,foneReal:temFone(e.tags)}));
+mapsQueue=filtrados.slice(0,20).map((e,i)=>({nome:e.tags?.name||('Comércio '+(i+1)+' · '+cat),tel:(e.tags?.['contact:phone']||e.tags?.phone||e.tags?.['contact:mobile']||e.tags?.mobile||'').replace(/^\+/,'')||'',categoria:(e.tags?.shop||e.tags?.amenity||e.tags?.cuisine||e.tags?.office||catLabel),origem:'Google Maps',servico:'Site Institucional',end:e.tags?.['addr:street']||e.tags?.['addr:suburb']||geoQ,lat:e.lat||e.center?.lat,lon:e.lon||e.center?.lon,semSite:true,foneReal:temFone(e.tags)}));
 if(!mapsQueue.length)throw 1;
 document.getElementById('maps-status').innerHTML='✅ <b>'+mapsQueue.length+' candidatos sem site no cadastro em '+geoQ+'</b> ('+todos.length+' achados · '+comSite+' com site descartados · '+comFone+' com telefone no cadastro) — <b>confira no Google antes de abordar</b>';
-document.getElementById('maps-result').innerHTML=mapsQueue.map((m,i)=>'<div style="padding:.6rem 0;border-bottom:1px solid #eee;display:flex;justify-content:space-between;gap:.5rem;flex-wrap:wrap"><div><b>'+m.nome+'</b> <span class="tag" style="background:#FEF3C7;color:#92400E">⚠️ sem site no cadastro — verificar</span>'+(m.foneReal?'<span class="tag" style="background:#D1FAE5">📞 fone real</span>':'<span class="tag" style="background:#FEE2E2;color:#991B1B">sem fone — completar</span>')+'<br><small>'+m.end+' · '+pais+' · <a target=_blank href="https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(m.nome+' '+geoQ)+'">ver no Maps ↗</a> · <a target=_blank href="https://www.google.com/search?q='+encodeURIComponent(m.nome+' '+geoQ)+'">checar site/fone 🔍</a></small></div><button class="btn btn-p" onclick="addMap('+i+')">+ Funil</button></div>').join('')+'<button class="btn-g" style="margin-top:.8rem" onclick="addAllMap()">+ Adicionar todos ao funil</button>';
+document.getElementById('maps-result').innerHTML=mapsQueue.map((m,i)=>'<div style="padding:.6rem 0;border-bottom:1px solid #eee;display:flex;justify-content:space-between;gap:.5rem;flex-wrap:wrap"><div><b>'+m.nome+'</b> <span class="tag" style="background:#FEF3C7;color:#92400E">⚠️ sem site no cadastro — verificar</span>'+(m.foneReal?'<span class="tag" style="background:#D1FAE5">📞 fone real</span>':'<span class="tag" style="background:#FEE2E2;color:#991B1B">sem fone — completar</span>')+'<br><small>'+m.end+' · '+pais+' · <a target=_blank href="https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(m.nome+' '+geoQ)+'">ver no Maps ↗</a> · <a target=_blank href="https://www.google.com/search?q='+encodeURIComponent(m.nome+' '+geoQ)+'">checar site/fone 🔍</a></small><div style="display:flex;gap:.3rem;flex-wrap:wrap"><button class="btn btn-v" onclick="prevNegocio('+i+')">📍 Prévia</button><button class="btn btn-p" onclick="addMap('+i+')">+ Funil</button></div></div>').join('')+'<button class="btn-g" style="margin-top:.8rem" onclick="addAllMap()">+ Adicionar todos ao funil</button>';
 notif('📍 Maps: '+mapsQueue.length+' candidatos',catLabel+' em '+geoQ+' · '+comSite+' com site descartados');
 }catch(e){document.getElementById('maps-status').textContent='⚠️ Nenhum SEM site aqui ou API instável — tente outra categoria ou cidade. Use o botão Google Maps como referência.';}}
 function addMap(i){const m=mapsQueue[i];if(!m)return;
@@ -1470,6 +1741,147 @@ acaoReal('📍 Lead do mapa',m.nome+' · '+(m.categoria||'comércio')+' · ficha
 toast('✅ '+m.nome+' no funil com a ficha preenchida.',null,null);
 alert(m.foneReal?('✅ '+m.nome+' no funil com fone real!'):('✅ '+m.nome+' no funil SEM fone — abra a ficha e complete o WhatsApp após checar no Google.'));}
 function addAllMap(){let comFone=0;mapsQueue.forEach((m,i)=>{if(m.foneReal)comFone++;DB.leads.unshift({id:Date.now()+i,nome:m.nome,tel:telE164(m.tel),telBruto:m.tel||'',email:'',empresa:m.nome,segmento:m.categoria||'',origem:'Google Maps',servico:'Site Institucional',valor:997,etapa:'novo',prob:30,tags:['sem site'],canal:m.foneReal?'whatsapp_provavel':'ligacao',tipoFone:m.foneReal?'celular':'fixo',semSite:true,statusSite:'sem_presenca',obs:'Endereço: '+(m.end||'—')+'\nSEM SITE no cadastro — é o alvo.\nFonte: busca no mapa · '+(m.foneReal?'celular (WhatsApp provável)':'sem fone no cadastro'),data:new Date().toLocaleString('pt-BR')});});save();acaoReal('📍 Fila cheia via Maps','+'+mapsQueue.length+' candidatos ('+comFone+' com fone real) — ficha preenchida');toast('✅ '+mapsQueue.length+' leads no funil com ficha preenchida!',null,null);}
+// ════ MAPA INTERATIVO (Leaflet) + PRÉVIA DO LOCAL + MENSAGEM AUTOMÁTICA ════
+// Clicou num ponto do mapa → prévia do local (endereço + comércios por perto),
+// escolhe a empresa e o que ela precisa → mensagem pronta p/ WhatsApp.
+let mapL=null,mPrev=null,mArcs=[],prevFone='',prevEnd='',prevLat=0,prevLon=0,MAPA_PERTO=[];
+// Tiles: se o provedor negar ("Access Blocked"/403), troca sozinho p/ o próximo.
+const TILES=[
+ {u:'https://tile.openstreetmap.org/{z}/{x}/{y}.png',a:'© OpenStreetMap'},
+ {u:'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',s:['a','b','c','d'],a:'© OpenStreetMap · © CARTO'},
+ {u:'https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}',a:'© Esri'}
+];
+let tileIdx=0,tileLayer=null,tileErrs=0;
+function tileMonta(){
+ if(!mapL)return;
+ if(tileLayer){try{mapL.removeLayer(tileLayer);}catch(e){}}
+ const t=TILES[tileIdx];tileErrs=0;
+ tileLayer=L.tileLayer(t.u,Object.assign({maxZoom:19,attribution:t.a},t.s?{subdomains:t.s}:{}));
+ tileLayer.on('tileerror',()=>{tileErrs++;if(tileErrs>=4&&tileIdx<TILES.length-1){tileIdx++;tileMonta();}});
+ tileLayer.addTo(mapL);
+}
+function initMaps(){
+ const el=document.getElementById('maps-frame');if(!el)return;
+ if(!window.L){const fb=document.getElementById('maps-frame-fb');if(fb){fb.style.display='block';el.style.display='none';}return;}
+ if(mapL){setTimeout(()=>{try{mapL.invalidateSize();}catch(e){}},250);return;}
+ try{
+  // nomes simples: o Leaflet 1.9 já resolve relativo à pasta do CSS (vendor/leaflet/images/)
+  L.Icon.Default.mergeOptions({iconUrl:'marker-icon.png',iconRetinaUrl:'marker-icon-2x.png',shadowUrl:'marker-shadow.png'});
+  mapL=L.map('maps-frame',{scrollWheelZoom:true}).setView([-23.5505,-46.6333],12);
+  tileMonta();
+  mapL.on('click',ev=>cliqueMapa(ev.latlng.lat,ev.latlng.lng));
+  setTimeout(()=>{try{mapL&&mapL.invalidateSize();}catch(e){}},350);
+ }catch(e){const fb=document.getElementById('maps-frame-fb');if(fb){fb.style.display='block';el.style.display='none';}}
+}
+function mapaIr(lat,lon,q){
+ const fb=document.getElementById('maps-frame-fb');if(fb)fb.src='https://www.google.com/maps?q='+encodeURIComponent(q)+'&output=embed';
+ if(!mapL)return;
+ try{
+  mapL.setView([lat,lon],13);
+  mArcs.forEach(m=>{try{mapL.removeLayer(m);}catch(e){}});mArcs=[];
+  const c=L.circle([lat,lon],{radius:5000,color:'#2563EB',weight:1,fillColor:'#2563EB',fillOpacity:.05}).addTo(mapL);mArcs.push(c);
+  mapsQueue.forEach((m,i)=>{if(!m.lat||!m.lon)return;const mk=L.marker([m.lat,m.lon]).addTo(mapL).bindTooltip(m.nome,{direction:'top',opacity:.95});mk.on('click',()=>prevNegocio(i));mArcs.push(mk);});
+ }catch(e){}
+}
+function osmFone(t){if(!t)return '';return String(t['contact:phone']||t.phone||t['contact:mobile']||t.mobile||'').trim();}
+function prevAbrir(){const p=document.getElementById('maps-preview');if(!p)return;p.style.display='block';try{p.scrollIntoView({behavior:'smooth',block:'nearest'});}catch(e){}}
+function prevFoneSt(){const s=document.getElementById('prev-fone-st');if(s)s.textContent=prevFone?('📞 '+prevFone):'⚠️ sem telefone no cadastro — pesquise no Google';}
+// prévia de um resultado/marcador da busca
+function prevNegocio(i){
+ const m=mapsQueue[i];if(!m)return;
+ prevFone=m.tel||'';prevEnd=m.end||'';prevLat=m.lat||0;prevLon=m.lon||0;
+ prevAbrir();
+ const inf=document.getElementById('prev-info');
+ if(inf)inf.innerHTML='<b>🏪 '+esc(m.nome)+'</b><br><small>📍 '+esc(m.end||'—')+(paisLido()?' · '+esc(paisLido()):'')+'</small> '+(m.foneReal?'<span class="tag" style="background:#D1FAE5">📞 fone real</span>':'<span class="tag" style="background:#FEE2E2;color:#991B1B">sem fone</span>');
+ const pk=document.getElementById('prev-picks');if(pk)pk.innerHTML='';
+ const em=document.getElementById('prev-empresa');if(em)em.value=m.nome;
+ prevFoneSt();gerarMsgPrev();
+}
+// clique num ponto vazio do mapa → endereço + comércios por perto
+async function cliqueMapa(lat,lon){
+ prevLat=lat;prevLon=lon;prevFone='';prevEnd='';MAPA_PERTO=[];
+ prevAbrir();
+ if(mapL){try{if(mPrev)mapL.removeLayer(mPrev);mPrev=L.marker([lat,lon]).addTo(mapL);}catch(e){}}
+ const cat=document.getElementById('maps-cat').value;
+ const catLabel=document.getElementById('maps-cat').selectedOptions[0].text;
+ const inf=document.getElementById('prev-info');
+ if(inf)inf.innerHTML='<b>📍 Prévia do local</b> — <span class="legend">clique noutro ponto p/ trocar</span><br><span class="legend" id="prev-end">🔎 lat '+lat.toFixed(4)+' · lon '+lon.toFixed(4)+' — buscando o endereço…</span>';
+ const pk=document.getElementById('prev-picks');if(pk)pk.innerHTML='<span class="legend">🔎 Procurando '+esc(catLabel)+' por perto…</span>';
+ const em=document.getElementById('prev-empresa');if(em)em.value='';
+ const fs=document.getElementById('prev-fone-st');if(fs)fs.textContent='';
+ gerarMsgPrev();
+ try{
+  const r=await(await fetch('https://nominatim.openstreetmap.org/reverse?format=json&zoom=18&accept-language=pt-BR&lat='+lat+'&lon='+lon)).json();
+  prevEnd=r.display_name||'';
+  const pe=document.getElementById('prev-end');if(pe)pe.innerHTML='📍 <b>'+esc(prevEnd)+'</b>';
+  const tipo=((r.type||'')+' '+(r.category||'')).toLowerCase().split(/\s+/);
+  const ehNegocio=tipo.some(t=>/^(shop|amenity|office|tourism|leisure|craft|cafe|bar|restaurant|hotel|supermarket|pharmacy|bank|clinic|hairdresser|beauty)$/.test(t));
+  const nomeLocal=String(r.name||'').trim();
+  if(ehNegocio&&nomeLocal&&em){em.value=nomeLocal;gerarMsgPrev();}
+ }catch(e){}
+ try{
+  const tags=OSM[cat]||['name~'+cat];
+  const q=tags.map(t=>{const kv=t.split('=');return 'nwr["'+kv[0]+'"~"'+kv[1]+'",i](around:1500,'+lat+','+lon+');';}).join('');
+  const j=await overpass('[out:json][timeout:20];('+q+');out center 25;');
+  const perto=(j.elements||[]).filter(e=>e.tags&&e.tags.name).slice(0,8);
+  MAPA_PERTO=perto.map(e=>({nome:e.tags.name,tel:osmFone(e.tags).replace(/^\+/,''),end:(e.tags['addr:street']||'')}));
+  const box=document.getElementById('prev-picks');
+  if(box)box.innerHTML=perto.length?('<b>🏪 '+esc(catLabel)+' por perto — clique p/ escolher quem conversar:</b><br>'+perto.map((e,i)=>'<button class="btn btn-v" style="margin:.2rem .2rem 0 0" onclick="escolherPerto('+i+')">'+esc(e.tags.name)+(osmFone(e.tags)?' 📞':'')+'</button>').join('')):'<span class="legend">Nenhum '+esc(catLabel)+' catalogado aqui — digite o nome da empresa na mão.</span>';
+ }catch(e){const box=document.getElementById('prev-picks');if(box)box.innerHTML='<span class="legend">O mapa aberto não respondeu agora — digite o nome da empresa na mão.</span>';}
+}
+function escolherPerto(i){
+ const m=(MAPA_PERTO||[])[i];if(!m)return;
+ prevFone=m.tel||'';
+ if(m.end)prevEnd=m.end+(prevEnd?' · '+prevEnd:'');
+ const em=document.getElementById('prev-empresa');if(em)em.value=m.nome;
+ prevFoneSt();gerarMsgPrev();
+}
+// ── mensagem automática: muda conforme o que a empresa precisa ──
+const LOJA_LINK='https://rickdigitalestudio.github.io/profissional-rickdutra/loja-virtual-completa.html';
+const NECESSIDADES={
+ site:{t:'Site Institucional',f:'Um site profissional que apresenta a empresa e capta cliente no Google, com WhatsApp direto.',p:'R$ 997'},
+ loja:{t:'Loja Virtual',f:'Loja virtual que vende de madrugada, para todo o Brasil, sem depender de aplicativo de delivery.',p:'R$ 2.497',l:LOJA_LINK},
+ landing:{t:'Landing Page',f:'Página única focada em converter visitante em cliente na hora, com formulário e WhatsApp.',p:'R$ 697'},
+ fanpage:{t:'Fanpage Profissional',f:'Fanpage que dá credibilidade e vende no Instagram e no WhatsApp com posts profissionais.',p:'R$ 497'},
+ seo:{t:'Google Maps + SEO local',f:'Aparecer no Google Maps da sua cidade quando o cliente busca seu tipo de negócio.',p:'R$ 350'},
+ manut:{t:'Manutenção Mensal',f:'Atualizações, suporte e melhorias todo mês para o site nunca ficar parado.',p:'R$ 297'},
+ exemplo:{t:'Site Institucional',f:'Loja virtual vende de madrugada, para todo o Brasil, sem depender de aplicativo de delivery.',p:'R$ 997',l:LOJA_LINK}
+};
+function gerarMsgPrev(){
+ const el=document.getElementById('prev-msg');if(!el)return;
+ const em=(document.getElementById('prev-empresa')||{}).value||'';
+ const emp=String(em).trim()||'sua empresa';
+ const k=(document.getElementById('prev-need')||{}).value||'site';
+ const n=NECESSIDADES[k]||NECESSIDADES.site;
+ const pf=(DB.cfg&&DB.cfg.pf)||'https://rickdigitalestudio.github.io/profissional-rickdutra/';
+ el.value='Olá! Vi que a '+emp+' ainda não tem site. '+n.f+' Posso montar em 10 dias, a partir de '+n.p+'. Meu trabalho: '+(n.l||pf);
+}
+async function enviarMsgPrev(){
+ const msg=String(((document.getElementById('prev-msg')||{}).value)||'').trim();
+ if(!msg)return alert('Gere a mensagem primeiro.');
+ const bruto=String(prevFone||'').replace(/\D/g,'');
+ const quem=((document.getElementById('prev-empresa')||{}).value||'o local').trim();
+ if(bruto.length<8){copiarTextoSilent(msg);return alert('⚠️ Este local não tem telefone no cadastro.\n\nA mensagem foi copiada — pesquise o número do negócio no Google, complete na ficha e cole a mensagem. (Ou use 📋 Copiar mensagem.)');}
+ const c=evoCfg();
+ if(c.url&&c.key){try{await evoSend(bruto,msg);acaoReal('💬 Mensagem automática',quem+' · enviada via API');return alert('✅ Mensagem enviada automática para '+quem+'!');}catch(e){}}
+ window.open(waLink(bruto,msg),'_blank');
+ acaoReal('💬 Mensagem automática',quem+' · WhatsApp aberto com a mensagem pronta ('+n_titulo()+')');
+}
+function n_titulo(){const k=(document.getElementById('prev-need')||{}).value||'site';return (NECESSIDADES[k]||NECESSIDADES.site).t;}
+function addPrevFunil(){
+ const em=String(((document.getElementById('prev-empresa')||{}).value)||'').trim();
+ const k=(document.getElementById('prev-need')||{}).value||'site';
+ const n=NECESSIDADES[k]||NECESSIDADES.site;
+ const cat=document.getElementById('maps-cat').selectedOptions[0].text;
+ const msg=String(((document.getElementById('prev-msg')||{}).value)||'');
+ const nome=em||String(prevEnd||'Local').split(',')[0].trim()||'Novo local';
+ const lead={id:Date.now()+Math.random(),nome,tel:telE164(prevFone),telBruto:prevFone||'',email:'',empresa:nome,segmento:cat,origem:'Google Maps',servico:n.t,valor:Number(String(n.p).replace(/\D/g,''))||997,etapa:'novo',prob:30,tags:['sem site'],canal:prevFone?'whatsapp_provavel':'ligacao',tipoFone:prevFone?'celular':'fixo',semSite:true,statusSite:'sem_presenca',
+ obs:'Endereço: '+(prevEnd||'—')+'\nNecessidade: '+n.t+'\nMensagem pronta: '+msg,
+ data:new Date().toLocaleString('pt-BR')};
+ DB.leads.unshift(lead);save();
+ acaoReal('📍 Lead da prévia do mapa',nome+' · '+n.t+' · ficha preenchida');
+ toast('✅ '+nome+' no funil com a ficha preenchida.',null,null);
+}
 // BANNER
 function desenharBanner(){const c=document.getElementById('bannerCanvas'),x=c.getContext('2d');const m=document.getElementById('b-modelo').value;
 let g=x.createLinearGradient(0,0,1080,1080);
@@ -1586,7 +1998,7 @@ mutirao:{titulo:'🤝 Mutirão de acompanhamento',passos:[
 {n:'Thiago Martins',d:'avançando 1 quente para negociação',fn:()=>{const q=DB.leads.find(l=>l.etapa==='quente');if(q)q.etapa='negociacao';}},
 {n:'Sofia Mendes',d:'conferindo pós-venda dos clientes',fn:()=>notif('🤝 Mutirão concluído','Cobranças criadas + quente avançado')}]},
 varredura:{titulo:'📍 Varredura nacional (sem site)',passos:[
-{n:'Beatriz Rocha',d:'apontando radar p/ São Paulo · beleza',fn:()=>{document.getElementById('maps-cidade').value='São Paulo SP';document.getElementById('maps-pais').value='Brasil';document.getElementById('maps-cat').value='beleza';}},
+{n:'Beatriz Rocha',d:'apontando radar p/ São Paulo · beleza',fn:()=>{document.getElementById('maps-pais').value='Brasil';paisMudou();document.getElementById('maps-cidade').value='São Paulo SP|brasil';document.getElementById('maps-cat').value='beleza';}},
 {n:'Gabriel Santos',d:'disparando a busca no mapa',fn:()=>buscarMaps()},
 {n:'Renata Duarte',d:'registrando resultado da varredura',fn:()=>acaoReal('📍 Varredura executada','Busca rodada — confira o mapa e jogue no funil (só fone real entra no disparo)')}]}};
 let opRodando=false;
@@ -1738,6 +2150,7 @@ if(DB.acoes?.length)document.getElementById('acoes-reais').innerHTML=DB.acoes.sl
 try{document.getElementById('cfg-meta').value=DB.cfg.meta||10000;document.getElementById('cfg-pin').value=DB.cfg.pin||'';document.getElementById('cfg-perfil').value=DB.cfg.perfil||'proprietario';if(DB.cfg.modelos)document.getElementById('cfg-modelos').value=DB.cfg.modelos;}catch(e){}
 try{aplicarPerfil();}catch(e){}
 desenharBanner();gerarIdeias();render();verificarAutomacao();
+try{montarPaises();montarCidades();paisMudou();}catch(e){}
 if(DB.plantao&&DB.plantao.on){try{retomarPlantao();render();}catch(e){}}
 </script>
 </body>

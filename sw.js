@@ -1,5 +1,5 @@
-const CACHE='rick-digital-v37';
-const FILES=['./','./index.html','./manifest.json','./icon.svg','./icon-512.png','./qrcode-celular.html','./fotos/livia.jpg','./fotos/nina.jpg','./fotos/vitoria.jpg'];
+const CACHE='rick-digital-v40';
+const FILES=['./','./index.html','./manifest.json','./icon.svg','./icon-512.png','./qrcode-celular.html','./vendor/leaflet/leaflet.js','./vendor/leaflet/leaflet.css','./vendor/leaflet/images/marker-icon.png','./vendor/leaflet/images/marker-icon-2x.png','./vendor/leaflet/images/marker-shadow.png','./fotos/livia.jpg','./fotos/nina.jpg','./fotos/vitoria.jpg'];
 const ABS='https://rickdigitalestudio.github.io/estudio-rick-digital';
 
 // Arquivos que precisam SEMPRE ser a versao mais nova do servidor.

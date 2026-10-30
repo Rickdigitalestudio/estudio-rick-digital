@@ -45,6 +45,24 @@ Abra `index.html` no navegador — **sem servidor, sem build, sem API key**. Fun
 - **🔎 Verificar WhatsApp** — confirma na Evolution se o número existe;
   linha fixa vira "Ligar", celular sem zap vira "Rede social"
 - **Cidade/Bairro + País** (funciona no mundo todo)
+  - 🌍 **País: só selecionar** — `<select>` com **177 países** (apenas nomes,
+    sem digitação); a bandeira do país escolhido aparece ao lado do campo
+  - 📍 **Cidade / Bairro: um select só, com as cidades de TODOS os países**
+    (agrupadas por país, ~8 mil cidades) — a primeira opção (padrão) é
+    **“🏙️ Todas as cidades”**; escolhendo uma cidade, a busca usa o país
+    **dela** automaticamente
+  - Ordem do formulário: **País → Cidade / Bairro → Categoria**
+- 🗺️ **Mapa interativo + prévia do local** (Leaflet + OSM, sem chave e
+  **sem CDN — os arquivos do Leaflet ficam no próprio projeto** em
+  `vendor/leaflet/`, então o mapa não quebra se o CDN estiver bloqueado)
+  - **Clique em qualquer ponto**: mostra a **prévia** (endereço) e os comércios
+    da categoria **por perto** em 1,5 km — clique no deles para escolher
+  - Cada resultado/marcador tem botão **📍 Prévia**
+  - A prévia já vem com **nome da empresa** (auto) + **“O que ela precisa”** e
+    monta a **mensagem automática** — troque a necessidade e a mensagem muda
+  - Botões: **💬 Mandar mensagem automática** (wa.me ou Evolution API) ·
+    📋 Copiar · **+ Adicionar ao funil** (ficha já preenchida)
+  - Sem telefone no cadastro: copia a mensagem e avisa para completar o número
 - **🇧🇷 Modo brasileiros no exterior**: filtra por `cuisine=brazilian` + nome (brasil, churrasco, picanha, feijoada, açaí, coxinha…)
 - Botões **Buscar / 🔄 Atualizar / + Funil / + Todos**
 - Importação CSV (`nome,telefone,origem`) + links de captura p/ site, WhatsApp e TikTok
@@ -200,10 +218,18 @@ Mensagens diretas usam `wa.me/55+DDD+numero` com texto pré-preenchido por lead/
    (WhatsApp / direct na rede / roteiro de ligação)
 7. Se modo BR ligado, mantém só `isBR()` (regex + cuisine)
 8. Exibe as oportunidades com selo de canal + prova + ação em 1 clique
+9. **Mapa da região**: clique em qualquer ponto → prévia do local (Nominatim
+   reverse) + comércios da categoria por perto (Overpass) → escolha da empresa
+   e do que ela precisa → **mensagem automática pronta** p/ WhatsApp
 
 > 📖 Detalhes e ativação da checagem real de WhatsApp: [`automacao/GUIA-CANAIS.md`](automacao/GUIA-CANAIS.md)
 
 > Limites gratuitos do OSM se aplicam. Se instável, use o botão `Abrir referência no Google Maps`.
+
+> 🗺️ O mapa interativo usa **Leaflet** (dentro do projeto, em `vendor/leaflet/`).
+> Os tiles têm **3 provedores com troca automática**: OpenStreetMap → CARTO →
+> Esri — se um negar o carregamento (**"Access Blocked"/403**), o mapa sozinho
+> passa p/ o próximo. Se todos falharem, cai no embed do Google Maps.
 
 ## 🤝 Contribuindo
 
