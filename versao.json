@@ -1,5 +1,5 @@
 {
-  "build": "2026.10.30-1",
+  "build": "2026.10.30-2",
   "data": "2026-10-30T00:00:00Z",
-  "nota": "Integracao OSM de busca de locais (Nominatim): caixa 'Ir ate la' com busca por endereco e link colado do Google/OSM, resultados em botoes, previa + mensagem automatica, e botoes de gerar Link OSM / Link Google do ponto."
+  "nota": "Gerador de Leads: Pais e Cidade/Bairro voltam a ser campos de texto (voce escreve o lugar que quiser, padrao Brasil) com bandeira do pais ao lado; busca cidade + pais sem duplicar. Mantidos mapa com troca de tiles, Overpass com mirrors e busca de locais OSM."
 }

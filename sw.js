@@ -1,4 +1,4 @@
-const CACHE='rick-digital-v41';
+const CACHE='rick-digital-v42';
 const FILES=['./','./index.html','./manifest.json','./icon.svg','./icon-512.png','./qrcode-celular.html','./vendor/leaflet/leaflet.js','./vendor/leaflet/leaflet.css','./vendor/leaflet/images/marker-icon.png','./vendor/leaflet/images/marker-icon-2x.png','./vendor/leaflet/images/marker-shadow.png','./fotos/livia.jpg','./fotos/nina.jpg','./fotos/vitoria.jpg'];
 const ABS='https://rickdigitalestudio.github.io/estudio-rick-digital';
 

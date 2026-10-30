@@ -192,8 +192,8 @@ canvas#bannerCanvas{width:100%;max-width:420px;border-radius:16px;border:1px sol
 </div>
 <div class="panel"><h3>📍 Prospecção Google Maps por categoria <span class="legend">(referência Maps + OSM)</span></h3>
 <div class="grid2">
-<div><label>🌍 País (funciona no mundo todo) <span id="pais-flag" style="font-size:1.1rem"></span></label><select id="maps-pais" onchange="paisMudou()"><option value="">— Escolha o país na lista —</option></select></div>
-<div><label>📍 Cidade / Bairro</label><select id="maps-cidade"><option value="todas">🏙️ Todas as cidades</option></select></div>
+<div><label>🌍 País (funciona no mundo todo) <span id="pais-flag" style="font-size:1.1rem"></span></label><input id="maps-pais" value="Brasil" placeholder="Escreva o país — Ex: Brasil, Portugal, Estados Unidos" autocomplete="off" oninput="paisMudou()" onchange="paisMudou()"></div>
+<div><label>📍 Cidade / Bairro</label><input id="maps-cidade" value="São Paulo SP" placeholder="Escreva a cidade ou bairro — Ex: Lisboa, Vila Ema, Orlando" autocomplete="off"></div>
 </div>
 <div class="grid2" style="margin-top:.6rem">
 <div><label>Categoria p/ buscar seu lead</label><select id="maps-cat">
@@ -565,7 +565,7 @@ Oi {nome}! Passando pra retomar nossa conversa sobre {servico} — ainda faz sen
 const KEY='crm-estudio-rick-v3';
 
 // ════ ATUALIZACAO / BUILD ════
-const BUILD='2026.10.30-1';
+const BUILD='2026.10.30-2';
 const ABS_BASE='https://rickdigitalestudio.github.io/estudio-rick-digital';
 // Estado da atualizacao (preenchido por checarVersao)
 const UPD={remota:'',nova:false,quando:0,erro:''};
@@ -1464,220 +1464,19 @@ const PAISES=[
 ['Ucrânia','UA'],['Uruguai','UY'],['Uzbequistão','UZ'],['Vanuatu','VU'],['Venezuela','VE'],['Vietnã','VN']
 ];
 function bandeira(uf){try{return String.fromCodePoint.apply(null,[...String(uf||'')].map(c=>0x1F1E6+c.charCodeAt(0)-65));}catch(e){return '🏳️';}}
-function montarPaises(){const s=document.getElementById('maps-pais');if(!s)return;
- s.innerHTML='<option value="">— Escolha o país na lista —</option>'+PAISES.map(p=>'<option value="'+p[0]+'"'+(p[0]==='Brasil'?' selected':'')+'>'+p[0]+'</option>').join('');}
-// Cidade/Bairro: UM select só, com as cidades de TODOS os países (agrupadas por
-// país). O valor guarda a cidade e o país ("Lisboa|portugal") — assim a busca
-// sabe o país certo da cidade mesmo se o select de país estiver em outro.
-function montarCidades(){
- const cs=document.getElementById('maps-cidade');if(!cs)return;
- let h='<option value="todas">🏙️ Todas as cidades</option>';
- PAISES.forEach(p=>{const c=CIDADES[chavePais(p[0])];if(!c)return;
-  h+='<optgroup label="'+p[0]+'">'+c.split(',').map(x=>{const t=x.trim();return t?'<option value="'+t+'|'+chavePais(p[0])+'">'+t+'</option>':'';}).join('')+'</optgroup>';});
- cs.innerHTML=h;
-}
-// lê a cidade escolhida: null = "Todas as cidades"
-function cidadeEscolhida(){
- const cs=document.getElementById('maps-cidade');const v=cs?cs.value:'';
- if(!v||v==='todas')return null;
- const i=v.lastIndexOf('|');
- if(i<0)return {cid:v,pais:paisLido()};
- const k=v.slice(i+1);
- const p=PAISES.find(x=>chavePais(x[0])===k);
- return {cid:v.slice(0,i),pais:p?p[0]:paisLido()};
-}
-// mantido p/ compat: o país agora vem de um select (sem bandeira no valor)
+// País: você escreve qualquer país (padrão Brasil). A bandeira do país
+// conhecido aparece ao lado (ver paisMudou, mais abaixo).
+// limpaPais: remove símbolos colados na frente (ex: bandeira) e aparando espaços
 function limpaPais(v){return String(v||'').replace(/^[^\p{L}\p{N}]+/u,'').trim();}
 function chavePais(v){return String(v||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]/g,'');}
-function paisLido(){return (document.getElementById('maps-pais')||{}).value||'Brasil';}
-// Cidades/bairros sugeridos por país — o campo Cidade / Bairro vira lista
-// assim que o país é escolhido (continua aceitando qualquer texto digitado).
-const CIDADES={
-'albania':'Tirana,Durrës,Vlorë,Elbasan',
-'alemanha':'Berlim,Munique,Hamburgo,Colônia,Frankfurt,Stuttgart,Dortmund,Essen,Lipsia,Bremen',
-'andorra':'Andorra a Vella,Encamp,Pas de la Casa,La Massana',
-'arabiasaudita':'Riade,Jeddah,Dammam,Meca,Medina',
-'argelia':'Argel,Oran,Constantine,Annaba,Blida',
-'argentina':'Buenos Aires,Córdoba,Rosário,Mendoza,La Plata,Santa Fe,Mar del Plata',
-'armenia':'Yerevan,Gyumri,Vanadzor',
-'australia':'Sydney,Melbourne,Brisbane,Perth,Adelaide,Gold Coast,Canberra,Hobart',
-'austria':'Viena,Graz,Salzburgo,Linz,Innsbruck',
-'azerbaijao':'Bacu,Ganja,Sumqayit,Mingachevir',
-'bahamas':'Nassau,Freeport,West End',
-'bangladesh':'Daca,Chittagong,Rangpur,Khulna,Sylhet',
-'barbados':'Bridgetown,Speightstown,Oistins',
-'barein':'Manama,Muharraq,Riffa',
-'belarus':'Minsko,Gomel,Mogilev,Vitebsk,Brest',
-'belgica':'Bruxelas,Antuérpia,Gante,Bruges,Liège,Mons',
-'belize':'Belmopan,San Ignacio,Belize City,Dangriga',
-'benin':'Porto-Novo,Cotonou,Parakou,Abomey',
-'bolivia':'La Paz,Santa Cruz de la Sierra,Cochabamba,El Alto,Sucre,Tarija',
-'bosnia':'Sarajevo,Banja Luka,Tuzla,Mostar,Zenica',
-'botsuana':'Gaborone,Francistown,Maun,Serowe',
-'brasil':'São Paulo SP,Rio de Janeiro RJ,Belo Horizonte MG,Salvador BA,Fortaleza CE,Curitiba PR,Recife PE,Porto Alegre RS,Brasília DF,Goiânia GO,Manaus AM,Belém PA,Vitória ES,Florianópolis SC,Natal RN,João Pessoa PB,Maceió AL,Aracaju SE,Teresina PI,Campo Grande MS,Cuiabá MT,Palmas TO,Boa Vista RR,Macapá AP,Porto Velho RO,Rio Branco AC,São Luís MA,Santos SP,Campinas SP,Guarulhos SP,São Bernardo do Campo SP,Osasco SP,Niterói RJ,Duque de Caxias RJ,Uberlândia MG,Contagem MG,Juiz de Fora MG,Londrina PR,Maringá PR,Joinville SC,Blumenau SC,Caxias do Sul RS,Pelotas RS,Feira de Santana BA,Petrolina PE,Caruaru PE,Ananindeua PA,Cariacica ES,Vila Velha ES',
-'brunei':'Bandar Seri Begawan,Tutong,Muara,Bangar',
-'bulgaria':'Sófia,Plovdiv,Varna,Burgas,Ruse,Pleven',
-'burkinafaso':'Ouagadougou,Bobo-Dioulasso,Koudougou,Banfora',
-'burundi':'Bujumbura,Gitega,Ngozi,Ruyigi',
-'butao':'Timbu,Paro,Punakha,Phuntsholing',
-'caboverde':'Praia,Mindelo,Porto Novo,Santa Maria',
-'camaroes':'Iaundé,Duala,Bamenda,Bafoussam,Garoua',
-'camboja':'Nom Pen,Siem Reap,Sihanoukville,Battambang',
-'canada':'Toronto,Vancouver,Montreal,Calgary,Ottawa,Edmonton,Winnipeg,Quebec,Halifax,Victoria',
-'catar':'Doha,Al Rayyan,Al Wakrah,Umm Salal',
-'cazaquistao':'Astana,Almaty,Shymkent,Karaganda,Aktobe',
-'chade':"N'Djamena,Moundou,Sarh,Abeche",
-'chile':'Santiago,Valparaíso,Concepción,Antofagasta,Viña del Mar,Temuco',
-'china':'Pequim,Xangai,Guangzhou,Shenzhen,Chengdu,Hangzhou,Wuhan,Xian,Chongqing,Tianjin,Suzhou,Qingdao',
-'chipre':'Nicósia,Limassol,Larnaca,Pafos,Famagusta',
-'colombia':'Bogotá,Medellín,Cali,Barranquilla,Bucaramanga,Cartagena,Santa Marta',
-'comores':'Moroni,Mutsamudu,Fomboni',
-'coreiadosul':'Seul,Busan,Incheon,Daejeon,Daegu,Gwangju,Jeju,Changwon',
-'costarica':'San José,Alajuela,Cartago,Heredia,Liberia,Limón',
-'croacia':'Zagreb,Split,Rijeka,Osijek,Dubrovnik,Zadar',
-'dinamarca':'Copenhague,Aarhus,Odense,Aalborg,Esbjerg,Roskilde',
-'djibouti':'Djibouti,Ali Sabieh,Dikhil,Obock',
-'dominica':'Roseau,Portsmouth,Marigot,Castle Bruce',
-'egito':'Cairo,Alexandria,Giza,Luxor,Aswan,Sharm El Sheikh,Mansoura',
-'elsalvador':'San Salvador,Santa Ana,San Miguel,Ahuachapán',
-'emiradosarabesunidos':'Abu Dabi,Dubai,Sharjah,Ajman,Ras al-Khaimah,Fujairah',
-'equador':'Quito,Guayaquil,Cuenca,Portoviejo,Machala,Loja',
-'eritreia':'Asmara,Massawa,Keren,Assab',
-'eslovaquia':'Bratislava,Košice,Prešov,Nitra,Žilina',
-'eslovenia':'Liubliana,Maribor,Celje,Koper,Ptuj',
-'espanha':'Madrid,Barcelona,Valencia,Sevilla,Zaragoza,Málaga,Bilbao,Palma,Alicante,Murcia,Granada,Vigo,A Coruña',
-'estadosunidosdaamerica':'Nova York,Los Angeles,Miami,Orlando,Chicago,Houston,Phoenix,Filadélfia,San Antonio,San Diego,Dallas,San Francisco,Las Vegas,Boston,Atlanta,Washington,Seattle,Denver,Detroit,Portland,Honolulu,Anchorage,Minneapolis',
-'estonia':'Tallinn,Tartu,Pärnu,Narva',
-'eswatini':'Mbabane,Manzini,Big Bend,Malkerns',
-'etiopia':'Adis Abeba,Dire Dawa,Mekelle,Bahir Dar,Hawassa',
-'federacaodarussia':'Moscou,São Petersburgo,Novosibirsk,Ecaterimburgo,Kazan,Sochi,Vladivostok,Krasnoyarsk,Nijni Novgorod,Samara',
-'fiji':'Suva,Nadi,Lautoka,Labasa',
-'filipinas':'Manila,Cebu,Quezon City,Davao,Makati,Taguig,Caloocan,Iloilo',
-'finlandia':'Helsinque,Espoo,Tampere,Vantaa,Oulu,Turku',
-'franca':'Paris,Marselha,Lyon,Toulouse,Nice,Nantes,Bordeaux,Lille,Strasburgo,Rennes,Reims',
-'gabao':'Libreville,Port-Gentil,Franceville,Oyem',
-'gambia':'Banjul,Serekunda,Bakau,Kanifing',
-'gana':'Acra,Kumasi,Tamale,Takoradi,Abengourou',
-'georgia':'Tiflis,Batumi,Kutaisi,Rustavi',
-'granada':'Saint George,Gouyave,Saint David',
-'grecia':'Atenas,Tessalônica,Patras,Heraklio,Rodos,Volos',
-'guatemala':'Cidade da Guatemala,Antigua Guatemala,Quetzaltenango,Cobán,Petén',
-'guiana':'Georgetown,Linden,New Amsterdam,Anna Regina',
-'guine':'Conacri,Kankan,Nzérékoré,Kindia',
-'guinebissau':'Bissau,Bafatá,Gabú,Bambada',
-'guineequatorial':'Malabo,Bata,Ebebiyin,Mongomo',
-'haiti':'Porto Príncipe,Cap-Haïtien,Carrefour,Delmas',
-'holandapaisesbaixos':'Amsterdã,Roterdã,Haia,Utrecht,Eindhoven,Maastricht,Groningen,Breda',
-'honduras':'Tegucigalpa,San Pedro Sula,La Ceiba,Choloma',
-'hungria':'Budapeste,Debrecen,Szeged,Miskolc,Pécs,Győr',
-'iemen':'Sana,Aden,Taiz,Hodeidah',
-'ilhasmarshall':'Majuro,Ebeye,Arno,Jaluit',
-'ilhassalomao':'Honiara,Auki,Gizo,San Isabel',
-'india':'Nova Délhi,Mumbai,Bangalore,Calcuta,Chennai,Hyderabad,Ahmedabad,Pune,Jaipur,Lucknow,Goa,Indore',
-'indonesia':'Jacarta,Surabaya,Bandung,Medan,Semarang,Denpasar,Yogyakarta,Makassar',
-'ira':'Teerã,Isfahan,Mashad,Shiraz,Tabriz,Karaj',
-'iraque':'Bagdade,Basra,Mossul,Erbil,Najaf,Kerbala',
-'irlanda':'Dublin,Cork,Limerick,Galway,Waterford,Kilkenny',
-'islandia':'Reykjavík,Kópavogur,Hafnarfjörður,Akureyri',
-'israel':'Tel Aviv,Jerusalém,Haifa,Eilat,Beersheba',
-'italia':'Roma,Milão,Nápoles,Turim,Veneza,Florença,Gênova,Bolonha,Palermo,Catânia,Verona',
-'jamaica':'Kingston,Montego Bay,Spanish Town,Portmore',
-'japao':'Tóquio,Osaka,Nagoya,Sapporo,Fukuoka,Kyoto,Yokohama,Kobe,Hiroshima,Sendai,Okinawa',
-'jordania':'Amã,Aqaba,Irbid,Zarqa,Ajloun',
-'kiribati':'Tarawa,Betio,Butaritari,Kiritimati',
-'kuwait':'Cidade do Kuwait,Al Ahmadi,Al Jahra,Hawalli',
-'lesoto':'Maseru,Teyateyaneng,Mafeteng,Butha-Buthe',
-'letonia':'Riga,Daugavpils,Liepaja,Jelgava,Ogre',
-'libano':'Beirute,Tripoli,Saida,Zahlé,Baalbek',
-'liberia':'Monróvia,Gbarnga,Buchanan,Kakata',
-'libia':'Trípoli,Bengasi,Misrata,Sabha,Sirte',
-'liechtenstein':'Vaduz,Schaan,Balzers,Eschen',
-'lituania':'Vilnius,Kaunas,Klaipeda,Siauliai,Panevezys',
-'luxemburgo':'Luxemburgo,Esch-sur-Alzette,Differdange,Vianden',
-'macedoniadonorte':'Skopje,Ohrid,Prilep,Bitola,Tetovo',
-'madagascar':'Antananarivo,Toamasina,Antsirabe,Fianarantsoa',
-'malasia':'Kuala Lumpur,Penang,Johor Bahru,Ipoh,Malaca,Kota Kinabalu,Kuching,Shah Alam',
-'malaui':'Lilongwe,Blantyre,Mzuzu,Zomba',
-'maldivas':'Malé,Addu,Hulhume,North Malé',
-'mali':'Bamako,Sikasso,Mopti,Ségou,Tombouctou',
-'malta':'Valeta,Birkirkara,Mosta,Sliema,Gozo',
-'marrocos':'Rabat,Casablanca,Marrakech,Fez,Tânger,Agadir,Oujda,Meknès',
-'mauricio':'Port Louis,Curepipe,Quatre Bornes,Vacoas',
-'mauritania':'Nouakchott,Nouadhibou,Rosso,Kiffa',
-'mexico':'Cidade do México,Guadalajara,Monterrey,Cancún,Puebla,Tijuana,Mérida,Querétaro,León,Acapulco,Toluca',
-'micronesiaestadosfederadosda':'Palikir,Weno,Kolonia,Colonia',
-'mocambique':'Maputo,Beira,Nampula,Matola,Chimoio,Nacala',
-'moldavia':'Chisinau,Balti,Tiraspol,Bender',
-'monaco':'Mônaco,Monte Carlo,La Condamine,Fontvieille',
-'mongolia':'Ulan Bator,Erdenet,Darhan,Choibalsan',
-'montenegro':'Podgorica,Budva,Kotor,Niksic,Herceg Novi',
-'namibia':'Windhoek,Walvis Bay,Swakopmund,Oshakati',
-'nauru':'Yaren,Anibare,Aiwo,Denigomodu',
-'nepal':'Catmandu,Pokhara,Lalitpur,Biratnagar,Bhaktapur',
-'nicaragua':'Managua,León,Granada,Masaya,Chinandega,Estelí',
-'niger':'Niamey,Zinder,Agadez,Tahoua',
-'noruega':'Oslo,Bergen,Trondheim,Stavanger,Tromsø,Kristiansand',
-'novazelandia':'Auckland,Wellington,Christchurch,Hamilton,Dunedin,Queenstown,Tauranga',
-'oma':'Mascate,Salalah,Sohar,Sur',
-'palestinaobservador':'Ramala,Gaza,Nablus,Hebron,Betléem',
-'panama':'Cidade do Panamá,Colón,David,San Miguelito,Chitré',
-'papuanovaguine':'Port Moresby,Lae,Madang,Kokopo',
-'paquistao':'Islamabad,Karachi,Lahore,Faisalabad,Rawalpindi,Multan,Peshawar,Quetta',
-'paraguai':'Assunção,Ciudad del Este,San Lorenzo,Luque,Filadélfia',
-'peru':'Lima,Arequipa,Trujillo,Cusco,Chiclayo,Piura,Iquitos',
-'polonia':'Varsóvia,Cracóvia,Lodz,Gdansk,Breslávia,Poznan,Katowice,Wroclaw',
-'portugal':'Lisboa,Porto,Braga,Coimbra,Faro,Funchal,Aveiro,Guimarães,Setúbal,Évora,Leiria,Viseu',
-'quenia':'Nairobi,Mombasa,Kisumu,Nakuru,Eldoret,Thika',
-'quirguistao':'Bishkek,Osh,Jalal-Abad,Karakol',
-'reinounido':'Londres,Manchester,Birmingham,Glasgow,Liverpool,Leeds,Bristol,Edimburgo,Cardiff,Belfast,Sheffield,Nottingham',
-'republicacentroafricana':'Bangui,Bimbo,Berbérati,Bambari',
-'republicademocraticadocongo':'Kinshasa,Lubumbashi,Goma,Matadi,Kisangani,Bukavu',
-'republicadominicana':'Santo Domingo,Santiago de los Caballeros,Punta Cana,La Romana,Puerto Plata',
-'romenia':'Bucareste,Cluj-Napoca,Timisoara,Iasi,Constanta,Brasov,Sibiu',
-'ruanda':'Kigali,Butare,Musanze,Huye',
-'samoa':'Apia,Vaitele,Safata,Manono',
-'santasevaticanoobservador':'Cidade do Vaticano,Borgo Romano',
-'santalucia':'Castries,Gros Islet,Vieux Fort,Anse La Raye',
-'saocristovaoeneves':'Basseterre,Charlestown,Sandy Point,Dieppe Bay',
-'saomarinho':'São Marinho,Borgo Maggiore,Serravalle,Dominante',
-'saotomeeprincipe':'São Tomé,Santo Amaro,Neves,Trindade',
-'saovicenteegranadinas':'Kingstown,Port Elizabeth,Georgetown,Chateaubelair',
-'senegal':'Dakar,Saint-Louis,Touba,Thiès,Diamniadio,Ziguinchor',
-'serraleoa':'Freetown,Bo,Makeni,Kenema,Port Loko',
-'servia':'Belgrado,Novi Sad,Nis,Kragujevac,Subotica',
-'seychelles':'Victoria,Anse Royale,Port Glaud,Takamaka',
-'singapura':'Singapura,Jurong,Tampines,Bedok,Woodlands',
-'siria':'Damasco,Alepo,Latakia,Homs,Hama',
-'somalia':'Mogadishu,Hargeisa,Bosaso,Kismayo',
-'srilanka':'Colombo,Kandy,Galle,Jaffna,Negombo,Kurunegala',
-'sudao':'Cartum,Omdurman,Port Sudan,Kassala,El Obeid',
-'sudaodosul':'Juba,Wau,Rumbek,Yei',
-'suecia':'Estocolmo,Gotemburgo,Malmö,Uppsala,Linköping,Västerås',
-'suica':'Berno,Zurique,Genebra,Basileia,Lucerna,Lausanne,St. Gallen',
-'tailandia':'Bangkok,Chiang Mai,Phuket,Pattaya,Hat Yai,Nakhon Ratchasima,Udon Thani',
-'tajiquistao':'Dushanbe,Khujand,Bokhtar,Kulob',
-'tanzania':'Dar es Salaam,Dodoma,Arusha,Zanzibar,Mwanza,Mbeya',
-'tchequia':'Praga,Brno,Ostrava,Plzen,Pardubice,Usti nad Labem',
-'timorleste':'Dili,Baucau,Lospalos,Ainaro',
-'trinidadetobago':'Port of Spain,San Fernando,Chaguanas,Arima',
-'tunisia':'Tunes,Sfax,Sousse,Nabeul,Bizerte',
-'turcomenistao':'Asgabat,Turkmenabat,Dashoguz,Balkanabat',
-'turquia':'Ancara,Istambul,Esmirna,Antalya,Bursa,Adana,Gaziantep,Konya,Trabzon',
-'tuvalu':'Funafuti,Nanumea,Nukufetau,Niutao',
-'ucrania':'Kiev,Lviv,Odessa,Kharkiv,Dnipro,Zaporozhie,Vinnytsia',
-'uruguai':'Montevidéu,Punta del Este,Salto,Maldonado,Tacuarembó',
-'uzbequistao':'Tashkent,Samarkand,Bukhara,Andijan,Namangan',
-'vanuatu':'Port Vila,Luganville,Efate,Santo',
-'venezuela':'Caracas,Maracaibo,Valencia,Barquisimeto,Maracay,Barcelona',
-'vietna':'Hanói,Cidade de Ho Chi Minh,Da Nang,Haiphong,Can Tho,Nha Trang'
-};
+function paisLido(){return String((document.getElementById('maps-pais')||{}).value||'').trim()||'Brasil';}
 function paisMudou(){
- const s=document.getElementById('maps-pais');if(!s)return;
- const sel=s.value||'Brasil';
- const p=PAISES.find(x=>x[0]===sel);
+ const inp=document.getElementById('maps-pais');if(!inp)return;
+ const limpo=limpaPais(inp.value);
+ if(limpo!==inp.value)inp.value=limpo;
+ const k=chavePais(limpo);
+ const p=(k?PAISES.find(x=>chavePais(x[0])===k):0)||(k.length>2?PAISES.find(x=>chavePais(x[0]).startsWith(k)):0);
  const fl=document.getElementById('pais-flag');if(fl)fl.textContent=p?bandeira(p[1]):'';
- // a lista de cidades é única (todos os países); ela não muda aqui.
- // o país do select vale quando a cidade está em "Todas as cidades".
 }
 // MAPS
 const OSM={fitness:['leisure=fitness_centre','sport=fitness'],beleza:['shop=beauty','shop=hairdresser','shop=nail'],barbearia:['shop=hairdresser','craft=barber'],restaurante:['amenity=restaurant','amenity=fast_food'],lanchonete:['amenity=fast_food','amenity=cafe'],padaria:['shop=bakery','shop=pastry'],roupas:['shop=clothes','shop=shoes'],pet:['shop=pet','amenity=veterinary'],farmacia:['amenity=pharmacy'],dentista:['amenity=dentist','healthcare=dentist'],clinica:['amenity=clinic','amenity=doctors'],advocacia:['office=lawyer'],contabil:['office=accountant'],imobiliaria:['office=estate_agent'],oficina:['shop=car_repair','amenity=car_wash'],academia_luta:['leisure=sports_centre','sport=martial_arts'],salao_festa:['leisure=hall','amenity=events_venue'],mercado:['shop=convenience','shop=supermarket'],papelaria:['shop=stationery','shop=books'],informatica:['shop=computer','office=it'],eletro:['shop=electronics','shop=mobile_phone']};
@@ -1704,14 +1503,12 @@ async function overpass(txt){
  throw new Error('Overpass fora do ar em todos os servidores');
 }
 let mapsQueue=[];
-async function buscarMaps(){const cat=document.getElementById('maps-cat').value;
-const ec=cidadeEscolhida(); // null = "Todas as cidades" → busca no país do select
+async function buscarMaps(){const cid=String((document.getElementById('maps-cidade')||{}).value||'').trim();const cat=document.getElementById('maps-cat').value;
 const pais=paisLido();
 const soSemSite=document.getElementById('maps-semsite')?.checked!==false;
 const soComFone=document.getElementById('maps-comfone')?.checked===true;
-const local=ec?ec.cid:(pais||'São Paulo');
-const paisGeo=ec?ec.pais:pais;
-const geoQ=(local+(paisGeo&&local!==paisGeo?', '+paisGeo:''));const catLabel=document.getElementById('maps-cat').selectedOptions[0].text;
+// cidade + país na busca (não duplica o país se você já escreveu ele na cidade)
+const geoQ=cid?(chavePais(cid).includes(chavePais(pais))?cid:cid+', '+pais):(pais||'São Paulo');const catLabel=document.getElementById('maps-cat').selectedOptions[0].text;
 document.getElementById('link-gmaps').href='https://www.google.com/maps/search/'+encodeURIComponent(catLabel+' em '+geoQ);
 document.getElementById('maps-status').textContent='⏳ Localizando '+geoQ+'...';
 try{
@@ -2050,7 +1847,7 @@ mutirao:{titulo:'🤝 Mutirão de acompanhamento',passos:[
 {n:'Thiago Martins',d:'avançando 1 quente para negociação',fn:()=>{const q=DB.leads.find(l=>l.etapa==='quente');if(q)q.etapa='negociacao';}},
 {n:'Sofia Mendes',d:'conferindo pós-venda dos clientes',fn:()=>notif('🤝 Mutirão concluído','Cobranças criadas + quente avançado')}]},
 varredura:{titulo:'📍 Varredura nacional (sem site)',passos:[
-{n:'Beatriz Rocha',d:'apontando radar p/ São Paulo · beleza',fn:()=>{document.getElementById('maps-pais').value='Brasil';paisMudou();document.getElementById('maps-cidade').value='São Paulo SP|brasil';document.getElementById('maps-cat').value='beleza';}},
+{n:'Beatriz Rocha',d:'apontando radar p/ São Paulo · beleza',fn:()=>{document.getElementById('maps-pais').value='Brasil';paisMudou();document.getElementById('maps-cidade').value='São Paulo SP';document.getElementById('maps-cat').value='beleza';}},
 {n:'Gabriel Santos',d:'disparando a busca no mapa',fn:()=>buscarMaps()},
 {n:'Renata Duarte',d:'registrando resultado da varredura',fn:()=>acaoReal('📍 Varredura executada','Busca rodada — confira o mapa e jogue no funil (só fone real entra no disparo)')}]}};
 let opRodando=false;
@@ -2202,7 +1999,7 @@ if(DB.acoes?.length)document.getElementById('acoes-reais').innerHTML=DB.acoes.sl
 try{document.getElementById('cfg-meta').value=DB.cfg.meta||10000;document.getElementById('cfg-pin').value=DB.cfg.pin||'';document.getElementById('cfg-perfil').value=DB.cfg.perfil||'proprietario';if(DB.cfg.modelos)document.getElementById('cfg-modelos').value=DB.cfg.modelos;}catch(e){}
 try{aplicarPerfil();}catch(e){}
 desenharBanner();gerarIdeias();render();verificarAutomacao();
-try{montarPaises();montarCidades();paisMudou();}catch(e){}
+try{paisMudou();}catch(e){}
 if(DB.plantao&&DB.plantao.on){try{retomarPlantao();render();}catch(e){}}
 </script>
 </body>

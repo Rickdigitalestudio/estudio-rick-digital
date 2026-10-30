@@ -45,12 +45,11 @@ Abra `index.html` no navegador — **sem servidor, sem build, sem API key**. Fun
 - **🔎 Verificar WhatsApp** — confirma na Evolution se o número existe;
   linha fixa vira "Ligar", celular sem zap vira "Rede social"
 - **Cidade/Bairro + País** (funciona no mundo todo)
-  - 🌍 **País: só selecionar** — `<select>` com **177 países** (apenas nomes,
-    sem digitação); a bandeira do país escolhido aparece ao lado do campo
-  - 📍 **Cidade / Bairro: um select só, com as cidades de TODOS os países**
-    (agrupadas por país, ~8 mil cidades) — a primeira opção (padrão) é
-    **“🏙️ Todas as cidades”**; escolhendo uma cidade, a busca usa o país
-    **dela** automaticamente
+  - 🌍 **País: você escreve o que quiser** (padrão **Brasil**) — a bandeira do
+    país reconhecido aparece ao lado enquanto você digita
+  - 📍 **Cidade / Bairro: você escreve o que quiser** (ex: Lisboa, Vila Ema,
+    Orlando) — o país do campo acima entra na busca junto (sem duplicar se
+    você já escreveu o país na cidade)
   - Ordem do formulário: **País → Cidade / Bairro → Categoria**
 - 🗺️ **Mapa interativo + prévia do local** (Leaflet + OSM, sem chave e
   **sem CDN — os arquivos do Leaflet ficam no próprio projeto** em
