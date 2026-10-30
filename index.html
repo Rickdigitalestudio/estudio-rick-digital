@@ -231,13 +231,13 @@ canvas#bannerCanvas{width:100%;max-width:420px;border-radius:16px;border:1px sol
 </div>
 <div style="margin-top:.8rem">
 <div style="display:flex;gap:.5rem;margin-top:.6rem;flex-wrap:wrap">
-<input id="maps-busca-local" style="flex:1;min-width:220px" placeholder="🔎 Buscar endereço, bairro, cidade — ou cole um link do Google Maps / OpenStreetMap" autocomplete="off" onkeydown="if(event.key==='Enter')buscaLocal()">
+<input id="maps-busca-local" style="flex:1;min-width:220px" placeholder="🔎 Google Maps: cole o link do lugar, ou escreva o nome (ex: Praça da Sé, São Paulo)" autocomplete="off" onkeydown="if(event.key==='Enter')buscaLocal()">
 <button class="btn-g" onclick="buscaLocal()">📍 Ir até lá</button>
 </div>
 <div id="maps-busca-res" style="margin-top:.4rem"></div>
 <div id="maps-frame" style="width:100%;height:320px;border:1px solid #ddd;border-radius:10px;background:#E5E7EB"></div>
 <iframe id="maps-frame-fb" title="mapa da busca" style="display:none;width:100%;height:280px;border:1px solid #ddd;border-radius:10px" loading="lazy" src="https://www.google.com/maps?q=S%C3%A3o%20Paulo%20SP%2C%20Brasil&output=embed"></iframe>
-<p class="legend">Mapa da região pesquisada — use a <b>🔎 busca de local</b> acima (endereço ou link colado do Google/OSM) ou <b>clique em qualquer ponto</b> para ver a <b>prévia do local</b> e escolher a mensagem automática (o nome da empresa e o que ela precisa entram sozinhos). Locais: © colaboradores do OpenStreetMap · Nominatim.</p>
+<p class="legend">Mapa da região pesquisada — use a <b>🔎 busca de local</b> acima (nome do lugar ou link do Google Maps colado) ou <b>clique em qualquer ponto</b> para ver a <b>prévia do local</b> e escolher a mensagem automática (o nome da empresa e o que ela precisa entram sozinhos).</p>
 </div>
 <p class="legend" style="margin-top:.5rem">🎯 Filtro: remove quem tem site <b>registrado</b> no cadastro aberto (OSM). O cadastro nem sempre sabe o site real — por isso cada resultado vem com <b>“checar no Google”</b>: confirme em 10 segundos antes de abordar.</p>
 <div id="maps-status" style="margin:.7rem 0"></div>
@@ -263,8 +263,7 @@ canvas#bannerCanvas{width:100%;max-width:420px;border-radius:16px;border:1px sol
 <button class="btn-g" onclick="enviarMsgPrev()">💬 Mandar mensagem automática</button>
 <button class="btn btn-v" onclick="copiarTexto(document.getElementById('prev-msg').value)">📋 Copiar mensagem</button>
 <button class="btn btn-p" onclick="addPrevFunil()">+ Adicionar ao funil</button>
-<button class="btn btn-v" onclick="copiarLinkLocal('osm')">📍 Link OSM</button>
-<button class="btn btn-v" onclick="copiarLinkLocal('g')">📍 Link Google</button>
+<button class="btn btn-v" onclick="copiarLinkLocal()">📍 Link Google</button>
 <span class="legend" id="prev-fone-st"></span>
 </div>
 <p class="legend" style="margin-top:.4rem">A mensagem muda conforme <b>o que ela precisa</b> — troque o item acima. Exemplo: <i>“Olá! Vi que a Buffet Hero Kids ainda não tem site…”</i></p>
@@ -565,7 +564,7 @@ Oi {nome}! Passando pra retomar nossa conversa sobre {servico} — ainda faz sen
 const KEY='crm-estudio-rick-v3';
 
 // ════ ATUALIZACAO / BUILD ════
-const BUILD='2026.10.30-2';
+const BUILD='2026.10.30-3';
 const ABS_BASE='https://rickdigitalestudio.github.io/estudio-rick-digital';
 // Estado da atualizacao (preenchido por checarVersao)
 const UPD={remota:'',nova:false,quando:0,erro:''};
@@ -1564,17 +1563,16 @@ function tileMonta(){
  tileLayer.on('tileerror',()=>{tileErrs++;if(tileErrs>=4&&tileIdx<TILES.length-1){tileIdx++;tileMonta();}});
  tileLayer.addTo(mapL);
 }
-// ════ INTEGRAÇÃO OSM p/ BUSCA DE LOCAIS (ideia do nextcloud/integration_openstreetmap) ════
-// Busca endereço/ponto pelo Nominatim, resolve link colado (Google/OSM) e
-// gera link do ponto (OSM + Google Maps) — igual ao "search provider" de lá.
-let BUSCA_LOCAL=[],buscaBusy=false;
-// lê coordenadas de um link colado (Google Maps / OpenStreetMap / outro)
+// ════ BUSCA DE LOCAL NO MAPA — 100% GOOGLE MAPS ════
+// Cola o link do Google Maps → o mapa voa até o ponto (as coordenadas vêm do
+// próprio link). Escreveu o nome (ou veio link sem coordenadas) → o lugar abre
+// no embed do Google Maps + link p/ abrir no Maps completo.
+let buscaBusy=false;
+// lê coordenadas/nome de um link colado do Google Maps
 function linkCoords(u){
  u=String(u||'');
  let m=u.match(/@(-?\d+\.\d+),(-?\d+\.\d+)/);if(m)return [+m[1],+m[2]];               // google.com/maps/@lat,lon,17z
  m=u.match(/[?&](?:q|query)=(-?\d+\.\d+),(-?\d+\.\d+)/);if(m)return [+m[1],+m[2]];    // ?q=lat,lon
- m=u.match(/#map=\d+\/(-?\d+\.\d+)\/(-?\d+\.\d+)/);if(m)return [+m[1],+m[2]];          // osm.org/#map=17/lat/lon
- m=u.match(/[?&]mlat=(-?\d+\.\d+)[^&]*&mlon=(-?\d+\.\d+)/);if(m)return [+m[1],+m[2]]; // osm.org/?mlat&mlon
  m=u.match(/\/place\/([^\/?#]+)/);if(m)return {nome:decodeURIComponent(m[1].replace(/\+/g,' '))}; // google /place/Nome/
  return null;
 }
@@ -1585,29 +1583,30 @@ async function buscaLocal(){
  if(buscaBusy)return;buscaBusy=true;
  const st=document.getElementById('maps-busca-res');if(st)st.innerHTML='<span class="legend">🔎 procurando “'+esc(txt)+'”…</span>';
  try{
-  const lc=/^https?:\/\//i.test(txt)?linkCoords(txt):null;
+  const ehLink=/^https?:\/\//i.test(txt);
+  const lc=ehLink?linkCoords(txt):null;
+  // 1) link do Google Maps com coordenadas → voa até lá + prévia
   if(lc&&Array.isArray(lc)){await localIr(lc[0],lc[1],'ponto do link colado');if(st)st.innerHTML='';return;}
+  // 2) link que não dá para ler (ex: curto maps.app.goo.gl) → orienta
+  if(ehLink&&!lc){if(st)st.innerHTML='<span class="legend">Esse link não traz o ponto. Link curto (maps.app.goo.gl): abra no navegador e copie o link completo (google.com/maps/…), ou simplesmente escreva o nome do lugar.</span>';return;}
+  // 3) nome (ou link /place/) → mostra no Google Maps (embed)
   const q=(lc&&lc.nome)||txt;
-  const r=await(await fetch('https://nominatim.openstreetmap.org/search?format=json&limit=5&accept-language=pt-BR&q='+encodeURIComponent(q),{headers:{Accept:'application/json'}})).json();
-  if(!r.length){if(st)st.innerHTML='<span class="legend">Nada encontrado — tente o nome completo (ex: “Praça da Sé, São Paulo”). Link curto do Google (maps.app.goo.gl) não dá para abrir direto: pesquise pelo nome.</span>';return;}
-  BUSCA_LOCAL=r.map(x=>({lat:+x.lat,lon:+x.lon,nome:x.display_name}));
-  if(st)st.innerHTML='<b>📍 '+r.length+' locais achados — clique p/ ir até lá:</b><br>'+BUSCA_LOCAL.map((x,i)=>'<button class="btn btn-v" style="margin:.2rem .2rem 0 0" onclick="localEscolher('+i+')">'+esc(String(x.nome).slice(0,90))+'</button>').join('');
-  if(r.length===1)localEscolher(0);
- }catch(e){if(st)st.innerHTML='<span class="legend">Busca de local fora do ar agora — tente de novo em instantes.</span>';}
+  const fb=document.getElementById('maps-frame-fb');
+  if(fb){fb.src='https://www.google.com/maps?q='+encodeURIComponent(q)+'&output=embed';fb.style.display='block';}
+  if(st)st.innerHTML='<b>📍 No Google Maps:</b> <a class="btn btn-v" target="_blank" href="https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(q)+'">abrir “'+esc(String(q).slice(0,60))+'” ↗</a> <span class="legend">— clique num ponto do mapa acima p/ a prévia. Para o mapa voar direto no lugar, copie o link dele no Maps (Compartilhar → copiar link) e cole aqui.</span>';
+ }catch(e){if(st)st.innerHTML='<span class="legend">Não consegui abrir agora — tente de novo em instantes.</span>';}
  finally{buscaBusy=false;}
 }
-function localEscolher(i){const x=BUSCA_LOCAL[i];if(!x)return;localIr(x.lat,x.lon,x.nome);}
 // voa até o ponto e abre a prévia + comércios por perto (mesmo fluxo do clique)
 async function localIr(lat,lon,nome){
  mapaIr(lat,lon,nome||'local');
  await cliqueMapa(lat,lon,nome);
  const st=document.getElementById('maps-busca-res');if(st)st.innerHTML='<span class="legend">📍 Em <b>'+esc(String(nome||'').slice(0,90))+'</b> — prévia abaixo ↓</span>';
 }
-// gera o link do ponto que está na prévia (OSM ou Google Maps)
-function copiarLinkLocal(t){
- if(!prevLat&&!prevLon)return alert('Clique num ponto do mapa (ou busque um local) primeiro.');
- const u=(t==='osm')?('https://www.openstreetmap.org/#map=17/'+prevLat+'/'+prevLon):('https://www.google.com/maps/@'+prevLat+','+prevLon+',17z');
- copiarTexto(u);
+// gera o link Google Maps do ponto que está na prévia
+function copiarLinkLocal(){
+ if(!prevLat&&!prevLon)return alert('Clique num ponto do mapa (ou cole um link do Google Maps) primeiro.');
+ copiarTexto('https://www.google.com/maps/@'+prevLat+','+prevLon+',17z');
 }
 function initMaps(){
  const el=document.getElementById('maps-frame');if(!el)return;

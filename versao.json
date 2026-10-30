@@ -1,5 +1,5 @@
 {
-  "build": "2026.10.30-2",
+  "build": "2026.10.30-3",
   "data": "2026-10-30T00:00:00Z",
-  "nota": "Gerador de Leads: Pais e Cidade/Bairro voltam a ser campos de texto (voce escreve o lugar que quiser, padrao Brasil) com bandeira do pais ao lado; busca cidade + pais sem duplicar. Mantidos mapa com troca de tiles, Overpass com mirrors e busca de locais OSM."
+  "nota": "Gerador de Leads: busca de local agora 100% Google Maps (cola o link do Google Maps e o mapa voa com previa, ou digita o nome e abre no embed do Google Maps). Removida a integracao integration_openstreetmap (busca por nome via OSM/Nominatim e botao Link OSM). Mantidos: busca por categoria com Google Maps, clique no mapa, Link Google, geocodificacao interna e embed de reserva."
 }
